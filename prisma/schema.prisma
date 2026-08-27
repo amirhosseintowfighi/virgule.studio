@@ -1,0 +1,310 @@
+// ==========================================================================
+// Virgule Studio — Prisma Schema (Production Ready)
+// Next.js 15 · PostgreSQL · Prisma ORM
+// ==========================================================================
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ---------- Enums ----------
+enum PostStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+}
+
+enum CategoryType {
+  BLOG
+  PORTFOLIO
+}
+
+enum FormType {
+  CONTACT
+  PROJECT
+  NEWSLETTER
+}
+
+// ---------- Auth & Access ----------
+model User {
+  id           String        @id @default(cuid())
+  name         String
+  email        String        @unique
+  passwordHash String
+  avatarUrl    String?
+  bio          String?
+  isActive     Boolean       @default(true)
+  roleId       String
+  role         Role          @relation(fields: [roleId], references: [id])
+  posts        Post[]
+  sessions     Session[]
+  activities   ActivityLog[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([roleId])
+}
+
+model Role {
+  id          String       @id @default(cuid())
+  name        String       @unique // ADMIN | EDITOR | AUTHOR | VIEWER
+  description String?
+  permissions Permission[] @relation("RolePermissions")
+  users       User[]
+}
+
+model Permission {
+  id    String @id @default(cuid())
+  key   String @unique // post.create, post.publish, user.manage, ...
+  label String
+  roles Role[] @relation("RolePermissions")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionToken String   @unique
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  identifier String
+  token     String   @unique
+  expiresAt DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------- Taxonomy ----------
+model Category {
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  description String?
+  type        CategoryType
+  posts       Post[]
+  projects    Project[]
+
+  @@index([type])
+}
+
+model Tag {
+  id    String @id @default(cuid())
+  name  String
+  slug  String @unique
+  posts Post[] @relation("PostTags")
+}
+
+// ---------- Blog ----------
+model Post {
+  id            String     @id @default(cuid())
+  title         String
+  slug          String     @unique
+  excerpt       String?
+  content       String     @db.Text // Markdown
+  featuredImage String?
+  status        PostStatus @default(DRAFT)
+  readingTime   Int?
+  views         Int        @default(0)
+  authorId      String
+  author        User       @relation(fields: [authorId], references: [id])
+  categoryId    String?
+  category      Category?  @relation(fields: [categoryId], references: [id])
+  tags          Tag[]      @relation("PostTags")
+  comments      Comment[]
+  seo           Seo?
+  publishedAt   DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([status, publishedAt])
+  @@index([categoryId])
+  @@index([authorId])
+}
+
+model Comment {
+  id          String    @id @default(cuid())
+  postId      String
+  post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorName  String
+  authorEmail String
+  content     String    @db.Text
+  approved    Boolean   @default(false)
+  parentId    String?
+  parent      Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies     Comment[] @relation("CommentReplies")
+  createdAt   DateTime  @default(now())
+
+  @@index([postId])
+  @@index([approved])
+}
+
+// ---------- Portfolio ----------
+model Project {
+  id           String    @id @default(cuid())
+  title        String
+  slug         String    @unique
+  client       String?
+  year         Int?
+  url          String?
+  summary      String?
+  content      String?   @db.Text
+  coverImage   String?
+  technologies String[]
+  features     String[]
+  featured     Boolean   @default(false)
+  order        Int       @default(0)
+  gallery      Media[]
+  categoryId   String?
+  category     Category? @relation(fields: [categoryId], references: [id])
+  seo          Seo?
+  createdAt    DateTime  @default(now())
+
+  @@index([categoryId])
+  @@index([featured])
+}
+
+// ---------- Services ----------
+model Service {
+  id      String  @id @default(cuid())
+  title   String
+  slug    String  @unique
+  icon    String?
+  summary String?
+  content String? @db.Text
+  features String[]
+  order   Int     @default(0)
+  active  Boolean @default(true)
+  seo     Seo?
+}
+
+// ---------- Static / CMS pages ----------
+model Page {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String   @db.Text
+  published Boolean  @default(true)
+  seo       Seo?
+  updatedAt DateTime @updatedAt
+}
+
+// ---------- Pricing ----------
+model Plan {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  price       Int // Toman
+  period      String   @default("پروژه‌ای")
+  description String?
+  features    String[]
+  highlighted Boolean  @default(false)
+  order       Int      @default(0)
+}
+
+// ---------- FAQ ----------
+model Faq {
+  id       String  @id @default(cuid())
+  question String
+  answer   String  @db.Text
+  category String?
+  order    Int     @default(0)
+}
+
+// ---------- Media library ----------
+model Media {
+  id        String   @id @default(cuid())
+  url       String // Cloudinary secure_url
+  publicId  String? // Cloudinary public_id
+  alt       String?
+  width     Int?
+  height    Int?
+  format    String?
+  bytes     Int?
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+}
+
+// ---------- Forms ----------
+model FormSubmission {
+  id        String   @id @default(cuid())
+  type      FormType
+  payload   Json
+  ip        String?
+  userAgent String?
+  isSpam    Boolean  @default(false)
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([type, read])
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  confirmed Boolean  @default(false)
+  token     String?  @unique
+  createdAt DateTime @default(now())
+}
+
+// ---------- SEO (polymorphic 1:1) ----------
+model Seo {
+  id        String   @id @default(cuid())
+  metaTitle String?
+  metaDesc  String?
+  ogImage   String?
+  canonical String?
+  noindex   Boolean  @default(false)
+  jsonLd    Json?
+  postId    String?  @unique
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  projectId String?  @unique
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  serviceId String?  @unique
+  service   Service? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  pageId    String?  @unique
+  page      Page?    @relation(fields: [pageId], references: [id], onDelete: Cascade)
+}
+
+// ---------- Redirects & Settings & Logs ----------
+model Redirect {
+  id        String   @id @default(cuid())
+  from      String   @unique
+  to        String
+  status    Int      @default(301)
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique // logo, favicon, social, smtp, analytics, header, footer
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String?
+  entityId  String?
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity])
+}
