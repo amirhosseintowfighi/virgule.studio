@@ -27,6 +27,22 @@ services:
     expose:
       - "3000"
 
+
+  # اجرای یک‌باره: docker compose run --rm migrate
+  migrate:
+    build:
+      context: .
+      target: builder
+    profiles: ["tools"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-virgule}:${POSTGRES_PASSWORD:-virgule}@db:5432/${POSTGRES_DB:-virgule}?schema=public
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-info@virgule.studio}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Virgule@1404}
+    command: sh -c "npx prisma db push --skip-generate && npx prisma db seed"
+
   nginx:
     image: nginx:alpine
     restart: unless-stopped

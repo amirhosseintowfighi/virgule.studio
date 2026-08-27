@@ -53,7 +53,7 @@ cp .env.example .env
 
 # قراردادن گواهی SSL در nginx/certs/ (fullchain.pem, privkey.pem)
 
-# بیلد و اجرا
+# بیلد و اجرا (یا به‌جای همه‌ی این مراحل: ./deploy.sh)
 docker compose up -d --build
 
 # اجرای migration و seed
@@ -63,7 +63,6 @@ docker compose exec web npx prisma db seed
 
 ساختار: `nginx` (پورت 80/443) ← `web` (Next.js standalone) ← `db` (PostgreSQL).
 
-> یادآوری: در `next.config.ts` گزینه‌ی `output: "standalone"` را برای خروجی Docker فعال کنید.
 
 ---
 

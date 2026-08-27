@@ -19,10 +19,10 @@ cp /etc/letsencrypt/live/virgule.studio/privkey.pem nginx/certs/
 ## ۳. اجرا
 
 ```bash
-docker compose up -d --build
-docker compose exec web npx prisma migrate deploy
-docker compose exec web npx prisma db seed
+./deploy.sh
 ```
+
+اسکریپت: کد را از گیت می‌گیرد، `.env` را (بار اول، با مقادیر تصادفی) می‌سازد، در نبودِ گواهی واقعی یک گواهی self-signed می‌سازد، کانتینرها را بالا می‌آورد و اسکیما + داده‌ی اولیه را اعمال می‌کند. برای به‌روزرسانی دوباره همین را اجرا کن.
 
 ## ۴. راه‌اندازی بدون Docker (PM2)
 
