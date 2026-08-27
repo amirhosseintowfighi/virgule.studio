@@ -5,7 +5,7 @@ const config: Config = {
 	theme: {
 		extend: {
 			fontFamily: {
-				sans: ["var(--font-vazirmatn)", "var(--font-inter)", "sans-serif"],
+				sans: ["var(--font-iranyekan)", "var(--font-inter)", "sans-serif"],
 				latin: ["var(--font-inter)", "sans-serif"],
 			},
 			maxWidth: {
