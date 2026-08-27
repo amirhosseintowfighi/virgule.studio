@@ -10,7 +10,9 @@ export function DeletePostButton({ id }: { id: string }) {
 		<button
 			disabled={pending}
 			onClick={() => {
-				if (confirm("این مقاله حذف شود؟")) start(() => deletePost(id))
+				if (confirm("این مقاله حذف شود؟")) start(async () => {
+						await deletePost(id)
+					})
 			}}
 			className="text-[var(--color-error)] disabled:opacity-50"
 		>

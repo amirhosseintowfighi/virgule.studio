@@ -1,7 +1,7 @@
 "use client"
 
-import { useActionState } from "react"
-import { upsertPost, type PostFormState } from "@/server/actions/posts"
+import { useFormStatus } from "react-dom"
+import { savePost } from "@/server/actions/posts"
 
 type Category = { id: string; name: string }
 type Tag = { id: string; name: string }
@@ -15,10 +15,21 @@ type Post = {
 	categoryId: string | null
 } | null
 
-const initial: PostFormState = {}
-
 const inputCls =
 	"w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-sm outline-none focus:border-[var(--color-primary)]"
+
+function SubmitButton() {
+	const { pending } = useFormStatus()
+	return (
+		<button
+			type="submit"
+			disabled={pending}
+			className="rounded-[var(--radius-full)] bg-[var(--color-primary)] px-6 py-3 text-sm font-semibold text-white disabled:opacity-50"
+		>
+			{pending ? "در حال ذخیره..." : "ذخیره"}
+		</button>
+	)
+}
 
 export function PostEditor({
 	post,
@@ -28,10 +39,8 @@ export function PostEditor({
 	categories: Category[]
 	tags: Tag[]
 }) {
-	const [state, action, pending] = useActionState(upsertPost, initial)
-
 	return (
-		<form action={action} className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
+		<form action={savePost} className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
 			{post && <input type="hidden" name="id" value={post.id} />}
 
 			<div>
@@ -69,20 +78,11 @@ export function PostEditor({
 				<select name="status" defaultValue={post?.status ?? "DRAFT"} className={inputCls}>
 					<option value="DRAFT">پیش‌نویس</option>
 					<option value="PUBLISHED">منتشرشده</option>
-					<option value="ARCHIVED">بایگانی‌شده</option>
+					<option value="SCHEDULED">زمان‌بندی‌شده</option>
 				</select>
 			</div>
 
-			{state.error && <p className="text-sm text-[var(--color-error)]">{state.error}</p>}
-			{state.success && <p className="text-sm text-[var(--color-success)]">ذخیره شد.</p>}
-
-			<button
-				type="submit"
-				disabled={pending}
-				className="rounded-[var(--radius-full)] bg-[var(--color-primary)] px-6 py-3 text-sm font-semibold text-white disabled:opacity-50"
-			>
-				{pending ? "در حال ذخیره..." : "ذخیره"}
-			</button>
+			<SubmitButton />
 		</form>
 	)
 }

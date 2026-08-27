@@ -1,9 +1,9 @@
 "use client"
 
 import { useActionState } from "react"
-import { loginAction, type LoginState } from "@/server/actions/auth"
+import { loginAction, type ActionState } from "@/server/actions/auth"
 
-const initial: LoginState = {}
+const initial: ActionState = {}
 
 const inputCls =
 	"w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-sm outline-none focus:border-[var(--color-primary)]"

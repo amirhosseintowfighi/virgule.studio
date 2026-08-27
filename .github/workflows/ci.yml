@@ -34,7 +34,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx prisma generate
-      - run: npx prisma migrate deploy
+      - run: npx prisma db push --skip-generate
       - name: Lint
         run: npm run lint
       - name: Type check

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import type { MetadataRoute } from "next"
 import prisma from "@/lib/prisma"
 import { PostStatus } from "@prisma/client"

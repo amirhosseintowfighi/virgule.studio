@@ -10,7 +10,6 @@ export const metadata: Metadata = {
 
 export default async function FaqPage() {
 	const faqs = await prisma.faq.findMany({
-		where: { active: true },
 		orderBy: { order: "asc" },
 	})
 	const items = faqs.map((f) => ({ q: f.question, a: f.answer }))

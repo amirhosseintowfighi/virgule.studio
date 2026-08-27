@@ -1,6 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import { redirect } from "next/navigation"
 import prisma from "@/lib/prisma"
 import { postSchema } from "@/lib/validators"
 import { requirePermission } from "@/lib/rbac"
@@ -26,12 +27,12 @@ export async function upsertPost(input: unknown, id?: string) {
 		categoryId: data.categoryId || null,
 		publishedAt:
 			data.status === "PUBLISHED" ? new Date() : data.publishedAt ? new Date(data.publishedAt) : null,
-		tags: data.tagIds ? { set: data.tagIds.map((t) => ({ id: t })) } : undefined,
 	}
+	const tagIds = data.tagIds?.map((t) => ({ id: t }))
 
 	const post = id
-		? await prisma.post.update({ where: { id }, data: payload })
-		: await prisma.post.create({ data: { ...payload, authorId: session.userId } })
+		? await prisma.post.update({ where: { id }, data: { ...payload, tags: tagIds && { set: tagIds } } })
+		: await prisma.post.create({ data: { ...payload, authorId: session.userId, tags: tagIds && { connect: tagIds } } })
 
 	await prisma.activityLog.create({
 		data: { userId: session.userId, action: id ? "post.update" : "post.create", entity: "Post", entityId: post.id },
@@ -50,4 +51,26 @@ export async function deletePost(id: string) {
 	})
 	revalidatePath("/dashboard/posts")
 	return { success: true }
+}
+
+/** ذخیره‌ی مقاله از فرم پنل (هم‌الگو با saveService/saveProject). */
+export async function savePost(formData: FormData) {
+	const id = String(formData.get("id") ?? "").trim()
+	const str = (k: string) => {
+		const v = String(formData.get(k) ?? "").trim()
+		return v.length ? v : undefined
+	}
+	await upsertPost(
+		{
+			title: str("title"),
+			slug: str("slug"),
+			excerpt: str("excerpt"),
+			content: str("content"),
+			featuredImage: str("featuredImage"),
+			status: str("status") ?? "DRAFT",
+			categoryId: str("categoryId"),
+		},
+		id || undefined
+	)
+	redirect("/dashboard/posts")
 }
