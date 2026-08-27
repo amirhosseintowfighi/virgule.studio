@@ -1,0 +1,162 @@
+@import "./tokens.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+	margin: 0;
+	background: var(--color-surface);
+	color: var(--color-ink);
+	font-family: var(--font-vazirmatn), var(--font-inter), system-ui, sans-serif;
+	line-height: 1.7;
+	-webkit-font-smoothing: antialiased;
+	transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+/* اعداد و لاتین با Inter */
+.font-latin { font-family: var(--font-inter), sans-serif; }
+
+a { color: inherit; text-decoration: none; }
+
+::selection { background: var(--color-primary); color: #fff; }
+
+/* Focus قابل دسترس */
+:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
+	border-radius: var(--radius-sm);
+}
+
+/* ===== متن گرادیانی ===== */
+.text-gradient {
+	background-image: linear-gradient(115deg, var(--color-primary) 0%, #7c3aed 45%, #ec4899 100%);
+	background-size: 200% 200%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	color: transparent;
+	animation: gradientShift 8s ease infinite;
+}
+
+/* متن توخالی (فقط خط دور) */
+.text-outline {
+	color: transparent;
+	-webkit-text-stroke: 1.5px var(--color-border);
+}
+
+/* پس‌زمینه‌ی گرادیانی متحرک */
+.aurora {
+	background-image: linear-gradient(120deg, var(--color-primary), #7c3aed, #ec4899, var(--color-primary));
+	background-size: 300% 300%;
+	animation: gradientShift 14s ease infinite;
+}
+
+/* ===== Keyframes ===== */
+@keyframes gradientShift {
+	0%, 100% { background-position: 0% 50%; }
+	50% { background-position: 100% 50%; }
+}
+@keyframes floatY {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-20px); }
+}
+@keyframes floatY2 {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(16px); }
+}
+@keyframes blobMorph {
+	0%, 100% { border-radius: 42% 58% 63% 37% / 42% 44% 56% 58%; }
+	50% { border-radius: 62% 38% 34% 66% / 58% 63% 37% 42%; }
+}
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+@keyframes pulseSoft {
+	0%, 100% { opacity: .55; transform: scale(1); }
+	50% { opacity: .9; transform: scale(1.06); }
+}
+@keyframes marqueeX {
+	from { transform: translateX(0); }
+	to { transform: translateX(-50%); }
+}
+
+.animate-float { animation: floatY 9s var(--ease) infinite; }
+.animate-float-slow { animation: floatY2 12s var(--ease) infinite; }
+.animate-blob { animation: blobMorph 16s ease-in-out infinite; }
+.animate-spin-slow { animation: spinSlow 44s linear infinite; }
+.animate-spin-med { animation: spinSlow 16s linear infinite; }
+.animate-pulse-soft { animation: pulseSoft 6s ease-in-out infinite; }
+
+/* ===== مارکی (نوار متحرک) ===== */
+.marquee {
+	-webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+	mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee-track {
+	display: flex;
+	width: max-content;
+	animation: marqueeX 30s linear infinite;
+}
+.marquee-track.reverse { animation-direction: reverse; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
+/* ===== کرسر سفارشی ===== */
+@media (hover: hover) and (pointer: fine) {
+	.has-custom-cursor, .has-custom-cursor * { cursor: none !important; }
+}
+.cursor-dot {
+	position: fixed; top: 0; left: 0;
+	width: 7px; height: 7px; border-radius: 999px;
+	background: var(--color-primary);
+	pointer-events: none; z-index: 99999;
+}
+.cursor-ring {
+	position: fixed; top: 0; left: 0;
+	width: 38px; height: 38px; border-radius: 999px;
+	border: 1.5px solid var(--color-primary);
+	pointer-events: none; z-index: 99999;
+	transition: width .2s var(--ease), height .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease);
+}
+.cursor-ring.hovered {
+	width: 62px; height: 62px;
+	background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+/* ===== نوار پیشرفت اسکرول ===== */
+.scroll-progress {
+	position: fixed; top: 0; left: 0; right: 0;
+	height: 3px; z-index: 9998;
+	transform-origin: 0 50%;
+}
+
+/* ===== پری‌لودر ===== */
+.preloader {
+	position: fixed; inset: 0; z-index: 100000;
+	background: var(--color-surface);
+	display: flex; align-items: center; justify-content: center;
+	transition: opacity .6s var(--ease), visibility .6s var(--ease);
+}
+.preloader.done { opacity: 0; visibility: hidden; }
+
+/* ===== کارت سه‌بعدی ===== */
+.tilt {
+	transform-style: preserve-3d;
+	transition: transform .18s var(--ease), box-shadow .3s var(--ease);
+	will-change: transform;
+}
+
+/* پنهان‌کردن اسکرول‌بار */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ===== انیمیشن Reveal ===== */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+.reveal.in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+	* { animation: none !important; transition: none !important; }
+	.reveal { opacity: 1 !important; transform: none !important; }
+	.marquee-track { animation: none !important; }
+}
