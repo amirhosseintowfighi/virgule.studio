@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import prisma from "@/lib/prisma"
+import { safe } from "@/lib/safe"
 import { PostStatus } from "@prisma/client"
 import { PageHead } from "@/components/ui/container"
 import { Reveal } from "@/components/ui/reveal"
@@ -24,14 +25,17 @@ export default async function BlogPage({ searchParams }: Props) {
 	}
 
 	const [posts, total] = await Promise.all([
-		prisma.post.findMany({
-			where,
-			include: { author: true, category: true },
-			orderBy: { publishedAt: "desc" },
-			skip: (current - 1) * PER_PAGE,
-			take: PER_PAGE,
-		}),
-		prisma.post.count({ where }),
+		safe(
+			prisma.post.findMany({
+				where,
+				include: { author: true, category: true },
+				orderBy: { publishedAt: "desc" },
+				skip: (current - 1) * PER_PAGE,
+				take: PER_PAGE,
+			}),
+			[]
+		),
+		safe(prisma.post.count({ where }), 0),
 	])
 
 	const pages = Math.ceil(total / PER_PAGE)

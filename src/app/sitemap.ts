@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic"
 
 import type { MetadataRoute } from "next"
 import prisma from "@/lib/prisma"
+import { safe } from "@/lib/safe"
 import { PostStatus } from "@prisma/client"
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://virgule.studio"
@@ -24,12 +25,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 	}))
 
 	const [posts, services, projects] = await Promise.all([
-		prisma.post.findMany({
-			where: { status: PostStatus.PUBLISHED },
-			select: { slug: true, updatedAt: true },
-		}),
-		prisma.service.findMany({ where: { active: true }, select: { slug: true, updatedAt: true } }),
-		prisma.project.findMany({ select: { slug: true, updatedAt: true } }),
+		safe(
+			prisma.post.findMany({
+				where: { status: PostStatus.PUBLISHED },
+				select: { slug: true, updatedAt: true },
+			}),
+			[]
+		),
+		safe(prisma.service.findMany({ where: { active: true }, select: { slug: true, updatedAt: true } }), []),
+		safe(prisma.project.findMany({ select: { slug: true, updatedAt: true } }), []),
 	])
 
 	const dynamicRoutes = [

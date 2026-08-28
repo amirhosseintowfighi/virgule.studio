@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import prisma from "@/lib/prisma"
+import { safe } from "@/lib/safe"
 import { PageHead } from "@/components/ui/container"
 import { Reveal } from "@/components/ui/reveal"
 
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 }
 
 export default async function PricingPage() {
-	const plans = await prisma.plan.findMany({ orderBy: { order: "asc" } })
+	const plans = await safe(prisma.plan.findMany({ orderBy: { order: "asc" } }), [])
 
 	return (
 		<>
@@ -21,6 +22,7 @@ export default async function PricingPage() {
 			/>
 
 			<div className="px-[var(--pad)] pb-[var(--sec)]">
+				{plans.length === 0 && <p className="body-t">فهرست پلن‌ها در دسترس نیست. برای دریافت قیمت تماس بگیرید.</p>}
 				<Reveal as="rule" />
 				{plans.map((plan, i) => (
 					<div key={plan.id}>

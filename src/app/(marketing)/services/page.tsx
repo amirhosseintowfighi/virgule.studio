@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import prisma from "@/lib/prisma"
+import { safe } from "@/lib/safe"
 import { PageHead } from "@/components/ui/container"
 import { Reveal } from "@/components/ui/reveal"
 
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 }
 
 export default async function ServicesPage() {
-	const services = await prisma.service.findMany({ where: { active: true }, orderBy: { order: "asc" } })
+	const services = await safe(prisma.service.findMany({ where: { active: true }, orderBy: { order: "asc" } }), [])
 
 	return (
 		<>
@@ -22,6 +23,7 @@ export default async function ServicesPage() {
 			/>
 
 			<div className="px-[var(--pad)] pb-[var(--sec)]">
+				{services.length === 0 && <p className="body-t">فهرست خدمات در دسترس نیست.</p>}
 				<Reveal as="rule" />
 				<ul>
 					{services.map((s, i) => (

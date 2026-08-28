@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import prisma from "@/lib/prisma"
+import { safe } from "@/lib/safe"
 import { PageHead } from "@/components/ui/container"
 import { Reveal } from "@/components/ui/reveal"
 
@@ -10,10 +11,10 @@ export const metadata: Metadata = {
 }
 
 export default async function PortfolioPage() {
-	const projects = await prisma.project.findMany({
+	const projects = await safe(prisma.project.findMany({
 		orderBy: [{ featured: "desc" }, { order: "asc" }],
 		include: { category: true },
-	})
+	}), [])
 
 	return (
 		<>
