@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import prisma from "@/lib/prisma"
-import { Card } from "@/components/ui/card"
-import { Section } from "@/components/ui/container"
-import { Button } from "@/components/ui/button"
+import { PageHead } from "@/components/ui/container"
+import { Reveal } from "@/components/ui/reveal"
 
 export const metadata: Metadata = {
 	title: "تعرفه",
@@ -10,56 +10,62 @@ export const metadata: Metadata = {
 }
 
 export default async function PricingPage() {
-	const plans = await prisma.plan.findMany({
-		orderBy: { order: "asc" },
-	})
+	const plans = await prisma.plan.findMany({ orderBy: { order: "asc" } })
 
 	return (
-		<Section
-			eyebrow="تعرفه"
-			title="پلنی مناسب هر کسب‌وکار"
-			subtitle="قیمت‌ها شفاف و بدون هزینه‌ی پنهان است. اگر مطمئن نیستید کدام پلن مناسب شماست، یک مشاوره‌ی رایگان رزرو کنید تا کنار هم بهترین مسیر را انتخاب کنیم."
-		>
-			<div className="grid gap-6 md:grid-cols-3">
-				{plans.map((plan) => (
-					<Card
-						key={plan.id}
-						className={plan.highlighted ? "border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]" : ""}
-					>
-						{plan.highlighted && (
-							<span className="mb-3 inline-block rounded-[var(--radius-full)] bg-[var(--color-primary)] px-3 py-1 text-xs font-semibold text-white">
-								پیشنهاد ویژه
-							</span>
-						)}
-						<h3 className="text-lg font-bold">{plan.name}</h3>
-						{plan.description && (
-							<p className="mt-1 text-sm text-[var(--color-muted)]">{plan.description}</p>
-						)}
-						<div className="my-4">
-							{plan.price > 0 ? (
-								<>
-									<span className="font-latin text-3xl font-extrabold">
-										{plan.price.toLocaleString("fa-IR")}
-									</span>
-									<span className="text-sm text-[var(--color-muted)]"> تومان / {plan.period}</span>
-								</>
-							) : (
-								<span className="text-2xl font-extrabold">تماس بگیرید</span>
-							)}
-						</div>
-						<ul className="mb-6 space-y-2 text-sm">
-							{plan.features.map((f) => (
-								<li key={f} className="flex items-center gap-2">
-									<span className="text-[var(--color-primary)]">✔</span> {f}
-								</li>
-							))}
-						</ul>
-						<Button href="/request-project" variant={plan.highlighted ? "filled" : "outlined"} className="w-full">
-							انتخاب پلن
-						</Button>
-					</Card>
+		<>
+			<PageHead
+				label="Pricing"
+				lines={[<>پلنی مناسب</>, <>هر کسب‌وکار</>]}
+				lead="قیمت‌ها شفاف و بدون هزینه‌ی پنهان است. اگر مطمئن نیستید کدام پلن مناسب شماست، یک مشاوره‌ی رایگان رزرو کنید."
+			/>
+
+			<div className="px-[var(--pad)] pb-[var(--sec)]">
+				<Reveal as="rule" />
+				{plans.map((plan, i) => (
+					<div key={plan.id}>
+						<Reveal
+							delay={i * 70}
+							className="grid gap-8 py-12 md:grid-cols-[minmax(0,22rem)_1fr_auto] md:items-start md:gap-16"
+						>
+							<div>
+								<div className="flex items-center gap-4">
+									<span className="meta font-latin">{String(i + 1).padStart(2, "0")}</span>
+									<h2 className="h3">{plan.name}</h2>
+									{plan.highlighted && <span className="meta-fa accent">پیشنهاد ویژه</span>}
+								</div>
+								{plan.description && <p className="body-t mt-3 text-[15px]">{plan.description}</p>}
+								<div className="mt-6">
+									{plan.price > 0 ? (
+										<div className="flex items-baseline gap-2">
+											<span className="num h2">{plan.price.toLocaleString("fa-IR")}</span>
+											<span className="meta-fa">تومان / {plan.period}</span>
+										</div>
+									) : (
+										<span className="h3">تماس بگیرید</span>
+									)}
+								</div>
+							</div>
+
+							<ul className="grid gap-x-10 gap-y-3 sm:grid-cols-2">
+								{plan.features.map((f) => (
+									<li key={f} className="flex items-baseline gap-3 text-[15px]">
+										<span className="accent" aria-hidden="true">
+											—
+										</span>
+										{f}
+									</li>
+								))}
+							</ul>
+
+							<Link href="/request-project" className={plan.highlighted ? "btn btn--solid" : "btn"}>
+								انتخاب پلن
+							</Link>
+						</Reveal>
+						<Reveal as="rule" />
+					</div>
 				))}
 			</div>
-		</Section>
+		</>
 	)
 }

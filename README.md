@@ -2,7 +2,7 @@
 
 > **ویرگول؛ مکثی که دیده می‌شود.**
 
-وب‌سایت شرکتی حرفه‌ای استودیوی طراحی و توسعه‌ی وب ویرگول، ساخته‌شده با Next.js 15 و طراحی Material Design 3.
+وب‌سایت استودیوی طراحی و توسعه‌ی وب ویرگول. Next.js 15، محیط تاریک، تایپوگرافی نمایشی و سیستم حرکتی سبک.
 
 ---
 
@@ -10,12 +10,12 @@
 
 | لایه | فناوری |
 |------|---------|
-| Frontend | Next.js 15 (App Router)، React 19، TypeScript، Tailwind CSS، MUI، Framer Motion |
+| Frontend | Next.js 15 (App Router)، React 19، TypeScript، Tailwind CSS |
 | Backend | Server Actions، Route Handlers، Prisma ORM |
 | Database | PostgreSQL 16 |
 | Auth | JWT (jose)، bcrypt، RBAC نقش‌محور |
-| فرم | React Hook Form + Zod |
-| رسانه | Cloudinary |
+| فرم | Server Actions + Zod |
+| حرکت | CSS/rAF دست‌ساز + Lenis (اسکرول نرم) |
 | دیپلوی | Docker، Docker Compose، Nginx، HTTPS |
 | تست | Vitest (unit)، Playwright (E2E) |
 

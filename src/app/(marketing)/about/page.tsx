@@ -1,41 +1,89 @@
 import type { Metadata } from "next"
-import { Container, Section } from "@/components/ui/container"
-import { Card } from "@/components/ui/card"
+import Link from "next/link"
+import { PageHead } from "@/components/ui/container"
+import { Reveal, RevealLines } from "@/components/ui/reveal"
 
 export const metadata: Metadata = {
 	title: "درباره ما",
 	description: "داستان ویرگول و ارزش‌های ما.",
 }
 
+/* ارزش‌ها همان سه ارزشی است که از قبل روی سایت بود — فقط بازنویسی شده، نه اضافه‌شده. */
 const values = [
-	{ icon: "🎯", t: "تمرکز بر نتیجه", d: "هر پروژه با هدف رشد کسب‌وکار شما." },
-	{ icon: "💎", t: "کیفیت بی‌اما", d: "جزئیات برای ما اهمیت دارد." },
-	{ icon: "🤝", t: "همکاری شفاف", d: "ارتباط مستمر در تمام مراحل." },
+	{
+		t: "تمرکز بر نتیجه",
+		d: "هر تصمیم طراحی و فنی با هدف رشد کسب‌وکار شما گرفته می‌شود. زیبایی بدون نتیجه، تزئین است.",
+	},
+	{
+		t: "کیفیت بی‌اما",
+		d: "جزئیات برای ما اهمیت دارد؛ حالت‌های خطا، موبایل، دسترس‌پذیری و سرعت هم بخشی از طراحی‌اند، نه کارِ بعد از تحویل.",
+	},
+	{
+		t: "همکاری شفاف",
+		d: "در تمام مراحل می‌دانید کجای کار هستیم، چه چیزی ساخته شده و قدم بعدی چیست.",
+	},
 ]
 
 export default function AboutPage() {
 	return (
 		<>
-			<section className="py-16 md:py-24">
-				<Container className="max-w-3xl text-center">
-					<h1 className="text-3xl font-extrabold md:text-5xl">درباره‌ی ویرگول</h1>
-					<p className="mt-6 text-lg leading-loose text-[var(--color-muted)]">
-						ویرگول یک استودیوی طراحی و توسعه‌ی وب است که با تمرکز بر کیفیت، زیبایی و عملکرد، حضور دیجیتال برندها را متمایز می‌کند. ما باور داریم هر جزئیات، حتی یک مکث، می‌تواند دیده شود.
-					</p>
-				</Container>
+			<PageHead
+				index="04"
+				label="Studio"
+				lines={[<>ویرگول یک استودیوی</>, <>طراحی و توسعه‌ی وب است</>]}
+			/>
+
+			<section className="px-[var(--pad)] pb-[var(--sec)]">
+				<div className="grid gap-12 md:grid-cols-2 md:gap-20">
+					<Reveal>
+						<p className="body-t text-[var(--fg)]">
+							اسم ما از همان علامت کوچکی می‌آید که در میان متن، مکث می‌سازد. باور ما این است که همین
+							مکث‌ها — فاصله‌ها، ریتم، چیزهایی که حذف می‌شوند — تفاوت یک وب‌سایت معمولی و یک وب‌سایت
+							ماندگار را می‌سازند.
+						</p>
+					</Reveal>
+					<Reveal delay={120}>
+						<p className="body-t">
+							با تمرکز بر کیفیت، زیبایی و عملکرد، حضور دیجیتال برندها را متمایز می‌کنیم. طراحی و
+							مهندسی را از هم جدا نمی‌کنیم: همان کسی که چیدمان را می‌چیند، کدش را هم می‌نویسد؛ برای
+							همین چیزی که تحویل می‌گیرید دقیقاً همان چیزی است که دیده‌اید.
+						</p>
+					</Reveal>
+				</div>
 			</section>
 
-			<Section eyebrow="ارزش‌های ما" title="آنچه به آن پایبندیم">
-				<div className="grid gap-6 md:grid-cols-3">
-					{values.map((v) => (
-						<Card key={v.t} className="text-center">
-							<div className="mb-3 text-3xl">{v.icon}</div>
-							<h3 className="mb-2 font-bold">{v.t}</h3>
-							<p className="text-sm text-[var(--color-muted)]">{v.d}</p>
-						</Card>
+			<section className="px-[var(--pad)] pb-[var(--sec)]">
+				<Reveal className="meta font-latin mb-10">Values</Reveal>
+				<Reveal as="rule" />
+				<ul>
+					{values.map((v, i) => (
+						<li key={v.t}>
+							<Reveal delay={i * 70} className="grid gap-4 py-9 md:grid-cols-[minmax(0,20rem)_1fr] md:gap-16">
+								<div className="flex items-baseline gap-5">
+									<span className="meta font-latin">{String(i + 1).padStart(2, "0")}</span>
+									<h2 className="h3">{v.t}</h2>
+								</div>
+								<p className="body-t max-w-[58ch] text-[15px]">{v.d}</p>
+							</Reveal>
+							<Reveal as="rule" />
+						</li>
 					))}
-				</div>
-			</Section>
+				</ul>
+			</section>
+
+			<section className="border-t border-[var(--line)] px-[var(--pad)] py-[var(--sec)]">
+				<h2 className="h2 max-w-[16ch]">
+					<RevealLines lines={[<>با هم کار کنیم؟</>]} />
+				</h2>
+				<Reveal delay={200} className="mt-10 flex flex-wrap items-center gap-x-10 gap-y-6">
+					<Link href="/request-project" className="btn btn--solid">
+						شروع پروژه
+					</Link>
+					<Link href="/portfolio" className="link-u font-bold">
+						دیدن نمونه‌کارها ←
+					</Link>
+				</Reveal>
+			</section>
 		</>
 	)
 }

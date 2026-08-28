@@ -1,15 +1,17 @@
 "use client"
 
 import { Preloader } from "./preloader"
-import { CustomCursor } from "./custom-cursor"
+import { Cursor } from "./cursor"
+import { SmoothScroll } from "./smooth-scroll"
 import { ScrollProgress } from "./scroll-progress"
 
-/** جمع‌کننده‌ی افکت‌های سراسری سایت. */
+/** افکت‌های سراسری سایت عمومی. */
 export function SiteFx() {
 	return (
 		<>
 			<Preloader />
-			<CustomCursor />
+			<SmoothScroll />
+			<Cursor />
 			<ScrollProgress />
 		</>
 	)

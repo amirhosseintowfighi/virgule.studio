@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import prisma from "@/lib/prisma"
-import { Section } from "@/components/ui/container"
+import { PageHead } from "@/components/ui/container"
 import { FaqAccordion } from "@/components/marketing/faq-accordion"
 
 export const metadata: Metadata = {
@@ -9,16 +9,17 @@ export const metadata: Metadata = {
 }
 
 export default async function FaqPage() {
-	const faqs = await prisma.faq.findMany({
-		orderBy: { order: "asc" },
-	})
+	const faqs = await prisma.faq.findMany({ orderBy: { order: "asc" } })
 	const items = faqs.map((f) => ({ q: f.question, a: f.answer }))
 
 	return (
-		<Section eyebrow="سوالات متداول" title="هر چه باید بدانید">
-			<div className="mx-auto max-w-3xl">
-				<FaqAccordion items={items} />
+		<>
+			<PageHead label="FAQ" lines={[<>هر چه</>, <>باید بدانید</>]} />
+			<div className="px-[var(--pad)] pb-[var(--sec)]">
+				<div className="max-w-[70rem]">
+					<FaqAccordion items={items} />
+				</div>
 			</div>
-		</Section>
+		</>
 	)
 }

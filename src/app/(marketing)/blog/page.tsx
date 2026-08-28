@@ -1,12 +1,12 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import prisma from "@/lib/prisma"
 import { PostStatus } from "@prisma/client"
-import { Card } from "@/components/ui/card"
-import { Section } from "@/components/ui/container"
-import Link from "next/link"
+import { PageHead } from "@/components/ui/container"
+import { Reveal } from "@/components/ui/reveal"
 
 export const metadata: Metadata = {
-	title: "وبلاگ",
+	title: "یادداشت‌ها",
 	description: "مقالات و آموزش‌های ویرگول درباره‌ی طراحی، توسعه و سئو.",
 }
 
@@ -37,49 +37,65 @@ export default async function BlogPage({ searchParams }: Props) {
 	const pages = Math.ceil(total / PER_PAGE)
 
 	return (
-		<Section eyebrow="وبلاگ" title="آخرین مقالات">
-			<form className="mx-auto mb-10 max-w-md" action="/blog">
-				<input
-					name="q"
-					defaultValue={q}
-					placeholder="جستجو در مقالات..."
-					className="w-full rounded-[var(--radius-full)] border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-3 text-sm"
-				/>
-			</form>
+		<>
+			<PageHead label="Journal" lines={[<>یادداشت‌ها</>]}>
+				<Reveal delay={240} className="mt-10 max-w-md">
+					<form action="/blog">
+						<label>
+							<span className="meta-fa">جستجو</span>
+							<input name="q" defaultValue={q} placeholder="در مقالات جستجو کنید…" className="field" />
+						</label>
+					</form>
+				</Reveal>
+			</PageHead>
 
-			<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-				{posts.map((p) => (
-					<Link key={p.id} href={`/blog/${p.slug}`}>
-						<Card className="h-full">
-							<div className="mb-1 text-xs text-[var(--color-primary)]">{p.category?.name}</div>
-							<h3 className="mb-2 font-bold leading-snug">{p.title}</h3>
-							<p className="text-sm text-[var(--color-muted)]">{p.excerpt}</p>
-							<div className="mt-4 flex items-center justify-between text-xs text-[var(--color-muted)]">
-								<span>{p.author?.name}</span>
-								<span className="font-latin">{p.readingTime} دقیقه</span>
-							</div>
-						</Card>
-					</Link>
-				))}
+			<div className="px-[var(--pad)] pb-[var(--sec)]">
+				{posts.length === 0 ? (
+					<p className="body-t">مقاله‌ای پیدا نشد.</p>
+				) : (
+					<>
+						<Reveal as="rule" />
+						<ul>
+							{posts.map((p, i) => (
+								<li key={p.id}>
+									<Link href={`/blog/${p.slug}`} className="row-i py-9">
+										<div className="relative z-10 grid gap-4 md:grid-cols-[1fr_auto] md:items-baseline md:gap-12">
+											<div>
+												<div className="mb-3 flex items-center gap-5">
+													<span className="meta font-latin">{String(i + 1).padStart(2, "0")}</span>
+													{p.category && <span className="meta-fa">{p.category.name}</span>}
+												</div>
+												<h2 className="row-i__t h3 max-w-[24ch]">{p.title}</h2>
+												{p.excerpt && <p className="body-t mt-3 max-w-[62ch] text-[15px]">{p.excerpt}</p>}
+											</div>
+											<div className="flex items-center gap-5 md:flex-col md:items-end md:gap-2">
+												{p.author && <span className="meta-fa">{p.author.name}</span>}
+												{p.readingTime && <span className="meta font-latin">{p.readingTime} min</span>}
+											</div>
+										</div>
+									</Link>
+									<Reveal as="rule" />
+								</li>
+							))}
+						</ul>
+					</>
+				)}
+
+				{pages > 1 && (
+					<nav className="mt-14 flex gap-6" aria-label="صفحه‌بندی">
+						{Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
+							<Link
+								key={n}
+								href={`/blog?page=${n}${q ? `&q=${q}` : ""}`}
+								aria-current={n === current ? "page" : undefined}
+								className={n === current ? "num accent font-bold" : "num link-u text-[var(--fg-3)]"}
+							>
+								{String(n).padStart(2, "0")}
+							</Link>
+						))}
+					</nav>
+				)}
 			</div>
-
-			{pages > 1 && (
-				<div className="mt-10 flex justify-center gap-2">
-					{Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
-						<Link
-							key={n}
-							href={`/blog?page=${n}${q ? `&q=${q}` : ""}`}
-							className={`font-latin rounded-[var(--radius-md)] border px-4 py-2 text-sm ${
-								n === current
-									? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white"
-									: "border-[var(--color-border)]"
-							}`}
-						>
-							{n}
-						</Link>
-					))}
-				</div>
-			)}
-		</Section>
+		</>
 	)
 }

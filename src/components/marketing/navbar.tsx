@@ -1,86 +1,131 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
-import { useTheme } from "@/components/providers/theme-provider"
-import { Button } from "@/components/ui/button"
-import { Container } from "@/components/ui/container"
-import { Logo } from "@/components/ui/logo"
+import { useEffect, useRef, useState } from "react"
+import { clsx } from "clsx"
+import { LogoMark } from "@/components/ui/logo"
 
 const links = [
-	{ href: "/services", label: "خدمات" },
-	{ href: "/portfolio", label: "نمونه‌کارها" },
-	{ href: "/blog", label: "وبلاگ" },
-	{ href: "/pricing", label: "تعرفه" },
-	{ href: "/about", label: "درباره ما" },
-	{ href: "/contact", label: "تماس" },
+	{ href: "/services", label: "خدمات", en: "Services" },
+	{ href: "/portfolio", label: "نمونه‌کارها", en: "Work" },
+	{ href: "/about", label: "درباره", en: "About" },
+	{ href: "/pricing", label: "تعرفه", en: "Pricing" },
+	{ href: "/blog", label: "یادداشت‌ها", en: "Journal" },
+	{ href: "/contact", label: "تماس", en: "Contact" },
 ]
 
 export function Navbar() {
-	const { theme, toggle } = useTheme()
 	const [open, setOpen] = useState(false)
+	const [hidden, setHidden] = useState(false)
+	const last = useRef(0)
+
+	// پایین که می‌روی کنار می‌رود، بالا که برمی‌گردی پیدا می‌شود.
+	useEffect(() => {
+		const onScroll = () => {
+			const y = window.scrollY
+			setHidden(y > 140 && y > last.current)
+			last.current = y
+		}
+		window.addEventListener("scroll", onScroll, { passive: true })
+		return () => window.removeEventListener("scroll", onScroll)
+	}, [])
+
+	useEffect(() => {
+		document.body.classList.toggle("lock", open)
+		const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false)
+		window.addEventListener("keydown", onKey)
+		return () => {
+			window.removeEventListener("keydown", onKey)
+			document.body.classList.remove("lock")
+		}
+	}, [open])
 
 	return (
-		<header className="sticky top-0 z-50 pt-3 md:pt-4">
-			<Container>
-				<div className="flex h-14 items-center justify-between gap-3 rounded-[var(--radius-full)] border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-3 pr-5 shadow-[var(--elev-2)] backdrop-blur-xl">
-					<Link href="/" aria-label="ویرگول">
-						<Logo />
+		<>
+			<header
+				className={clsx(
+					"fixed inset-x-0 top-0 z-[9995] transition-transform duration-500",
+					hidden && !open && "-translate-y-full"
+				)}
+				style={{ transitionTimingFunction: "var(--ease)" }}
+			>
+				<div className="flex items-center justify-between px-[var(--pad)] py-5">
+					<Link href="/" aria-label="ویرگول، خانه" className="flex items-center gap-3">
+						<LogoMark className="h-8 w-8 text-[var(--fg)]" />
+						<span className="text-[15px] font-bold">ویرگول</span>
 					</Link>
 
-					<nav className="hidden items-center gap-1 md:flex">
+					<nav className="hidden items-center gap-9 md:flex" aria-label="ناوبری اصلی">
 						{links.map((l) => (
-							<Link
-								key={l.href}
-								href={l.href}
-								className="rounded-[var(--radius-full)] px-4 py-2 text-sm font-medium text-[var(--color-ink)] transition-colors hover:bg-[var(--color-surface-2)]"
-							>
+							<Link key={l.href} href={l.href} className="link-u text-sm font-medium">
 								{l.label}
 							</Link>
 						))}
 					</nav>
 
-					<div className="flex items-center gap-2">
-						<button
-							onClick={toggle}
-							aria-label="تغییر حالت روشن/تاریک"
-							className="rounded-[var(--radius-full)] border border-[var(--color-border)] p-2 text-sm transition-colors hover:bg-[var(--color-surface-2)]"
-						>
-							{theme === "dark" ? "☀️" : "🌙"}
-						</button>
-						<Button href="/request-project" className="hidden md:inline-flex">
-							ثبت سفارش
-						</Button>
+					<div className="flex items-center gap-4">
+						<Link href="/request-project" className="hidden text-sm font-bold md:inline-block link-u accent">
+							شروع پروژه
+						</Link>
 						<button
 							onClick={() => setOpen((v) => !v)}
-							aria-label="منو"
-							className="rounded-[var(--radius-full)] border border-[var(--color-border)] p-2 md:hidden"
+							aria-expanded={open}
+							aria-controls="fullmenu"
+							aria-label={open ? "بستن منو" : "باز کردن منو"}
+							className="relative z-10 grid h-11 w-11 place-items-center rounded-full border border-[var(--line-2)] md:hidden"
 						>
-							☰
+							<span className="relative block h-[9px] w-4">
+								<span
+									className={clsx(
+										"absolute inset-x-0 top-0 h-px bg-current transition-transform duration-500",
+										open && "translate-y-[4px] rotate-45"
+									)}
+								/>
+								<span
+									className={clsx(
+										"absolute inset-x-0 bottom-0 h-px bg-current transition-transform duration-500",
+										open && "-translate-y-[4px] -rotate-45"
+									)}
+								/>
+							</span>
 						</button>
 					</div>
 				</div>
-			</Container>
+			</header>
 
-			{open && (
-				<Container className="md:hidden">
-					<div className="mt-2 flex flex-col rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-2 shadow-[var(--elev-2)]">
-						{links.map((l) => (
+			{/* منوی تمام‌صفحه — نه یک کشوی معمولی */}
+			<div id="fullmenu" className={clsx("menu md:hidden", open && "open")} hidden={!open}>
+				<div className="flex h-full flex-col justify-between px-[var(--pad)] pb-12 pt-28">
+					<nav aria-label="ناوبری موبایل">
+						{links.map((l, i) => (
 							<Link
 								key={l.href}
 								href={l.href}
-								className="rounded-[var(--radius-md)] px-4 py-2.5 text-sm hover:bg-[var(--color-surface-2)]"
 								onClick={() => setOpen(false)}
+								className="menu-item border-b border-[var(--line)] py-5"
 							>
-								{l.label}
+								<span
+									className="flex items-baseline justify-between"
+									style={{ transitionDelay: `${140 + i * 60}ms` }}
+								>
+									<span className="h3">{l.label}</span>
+									<span className="meta font-latin">{String(i + 1).padStart(2, "0")}</span>
+								</span>
 							</Link>
 						))}
-						<Button href="/request-project" className="mt-2" onClick={() => setOpen(false)}>
-							ثبت سفارش
-						</Button>
+					</nav>
+					<div className="menu-item">
+						<span style={{ transitionDelay: "560ms" }}>
+							<Link href="/request-project" onClick={() => setOpen(false)} className="btn btn--solid w-full">
+								شروع پروژه
+							</Link>
+							<a href="mailto:info@virgule.studio" className="meta font-latin mt-6 block">
+								info@virgule.studio
+							</a>
+						</span>
 					</div>
-				</Container>
-			)}
-		</header>
+				</div>
+			</div>
+		</>
 	)
 }

@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
-import prisma from "@/lib/prisma"
-import { Card } from "@/components/ui/card"
-import { Section } from "@/components/ui/container"
 import Link from "next/link"
+import prisma from "@/lib/prisma"
+import { PageHead } from "@/components/ui/container"
+import { Reveal } from "@/components/ui/reveal"
 
 export const metadata: Metadata = {
 	title: "خدمات",
@@ -10,23 +10,48 @@ export const metadata: Metadata = {
 }
 
 export default async function ServicesPage() {
-	const services = await prisma.service.findMany({
-		where: { active: true },
-		orderBy: { order: "asc" },
-	})
+	const services = await prisma.service.findMany({ where: { active: true }, orderBy: { order: "asc" } })
 
 	return (
-		<Section eyebrow="خدمات" title="آنچه در ویرگول ارائه می‌دهیم">
-			<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-				{services.map((s) => (
-					<Link key={s.id} href={`/services/${s.slug}`}>
-						<Card className="h-full">
-							<h3 className="mb-2 font-bold">{s.title}</h3>
-							<p className="text-sm text-[var(--color-muted)]">{s.summary}</p>
-						</Card>
-					</Link>
-				))}
+		<>
+			<PageHead
+				index="01"
+				label="Services"
+				lines={[<>چه کاری</>, <>انجام می‌دهیم</>]}
+				lead="هر پروژه از صفر طراحی می‌شود. لیست زیر خدماتی است که واقعاً انجام می‌دهیم — نه هر چیزی که بشود فروخت."
+			/>
+
+			<div className="px-[var(--pad)] pb-[var(--sec)]">
+				<Reveal as="rule" />
+				<ul>
+					{services.map((s, i) => (
+						<li key={s.id}>
+							<Link href={`/services/${s.slug}`} className="row-i py-9 md:py-12">
+								<div className="relative z-10 flex items-baseline gap-6 md:gap-12">
+									<span className="meta font-latin w-8 shrink-0 pt-2">{String(i + 1).padStart(2, "0")}</span>
+									<div className="min-w-0 flex-1">
+										<h2 className="row-i__t h3">{s.title}</h2>
+										{s.summary && <p className="body-t mt-3 max-w-[62ch] text-[15px]">{s.summary}</p>}
+										{s.features.length > 0 && (
+											<ul className="mt-5 flex flex-wrap gap-x-8 gap-y-2">
+												{s.features.slice(0, 4).map((f) => (
+													<li key={f} className="meta-fa">
+														{f}
+													</li>
+												))}
+											</ul>
+										)}
+									</div>
+									<span className="row-i__go accent hidden shrink-0 self-center text-2xl md:block" aria-hidden="true">
+										←
+									</span>
+								</div>
+							</Link>
+							<Reveal as="rule" />
+						</li>
+					))}
+				</ul>
 			</div>
-		</Section>
+		</>
 	)
 }

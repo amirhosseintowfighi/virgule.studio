@@ -21,6 +21,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="fa" dir="rtl" className={`${iranYekan.variable} ${inter.variable}`}>
+			<head>
+				{/* بدون جاوااسکریپت، محتوا نباید پشت انیمیشن‌های ورود پنهان بماند */}
+				<script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+			</head>
 			<body>
 				<ThemeProvider>{children}</ThemeProvider>
 			</body>

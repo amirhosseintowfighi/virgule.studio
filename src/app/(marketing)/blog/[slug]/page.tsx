@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import prisma from "@/lib/prisma"
 import { PostStatus } from "@prisma/client"
-import { Container } from "@/components/ui/container"
+import { Reveal } from "@/components/ui/reveal"
 import Link from "next/link"
 
 type Props = { params: Promise<{ slug: string }> }
@@ -47,48 +47,46 @@ export default async function ArticlePage({ params }: Props) {
 	const jsonLdHtml = { __html: JSON.stringify(jsonLd) }
 
 	return (
-		<article className="py-12 md:py-20">
-			<Container className="max-w-3xl">
-				{/* Breadcrumb */}
-				<nav className="mb-6 text-sm text-[var(--color-muted)]">
-					<Link href="/">خانه</Link> / <Link href="/blog">وبلاگ</Link> /{" "}
-					<span className="text-[var(--color-ink)]">{post.title}</span>
-				</nav>
+			<article>
+			<div className="mx-auto max-w-[70ch] px-[var(--pad)] pb-[var(--sec)] pt-[clamp(110px,15vw,180px)]">
+				<Reveal className="meta-fa mb-8">
+					<Link href="/blog" className="link-u">→ همه‌ی یادداشت‌ها</Link>
+				</Reveal>
 
-				<div className="mb-2 text-sm text-[var(--color-primary)]">{post.category?.name}</div>
-				<h1 className="text-3xl font-extrabold leading-tight md:text-4xl">{post.title}</h1>
-				<div className="mt-4 flex items-center gap-4 text-sm text-[var(--color-muted)]">
-					<span>{post.author?.name}</span>
-					<span className="font-latin">{post.readingTime} دقیقه مطالعه</span>
+				{post.category && <div className="meta-fa mb-4">{post.category.name}</div>}
+				<h1 className="h1">{post.title}</h1>
+				<div className="mt-6 flex flex-wrap items-center gap-6">
+					{post.author && <span className="meta-fa">{post.author.name}</span>}
+					{post.readingTime && <span className="meta font-latin">{post.readingTime} min read</span>}
 				</div>
 
-				<div className="prose prose-lg mt-8 max-w-none leading-loose">
+				<div className="mt-14 space-y-6">
 					{post.content.split("\n\n").map((para, i) => (
-						<p key={i} className="mb-4">{para}</p>
+						<p key={i} className="body-t text-[var(--fg)]">{para}</p>
 					))}
 				</div>
 
-				<div className="mt-8 flex flex-wrap gap-2">
+				<div className="mt-12 flex flex-wrap gap-x-6 gap-y-2">
 					{post.tags.map((t) => (
-						<Link key={t.id} href={`/blog/tag/${t.slug}`} className="rounded-[var(--radius-full)] bg-[var(--color-surface-2)] px-3 py-1 text-xs">
+						<Link key={t.id} href={`/blog/tag/${t.slug}`} className="meta-fa link-u">
 							#{t.name}
 						</Link>
 					))}
 				</div>
 
 				{related.length > 0 && (
-					<div className="mt-14">
-						<h2 className="mb-4 text-xl font-bold">مقالات مرتبط</h2>
+					<div className="mt-20">
+						<h2 className="meta font-latin mb-6">Related</h2>
 						<div className="grid gap-4 md:grid-cols-3">
 							{related.map((r) => (
-								<Link key={r.id} href={`/blog/${r.slug}`} className="rounded-[var(--radius-md)] border border-[var(--color-border)] p-4 text-sm font-semibold hover:shadow-[var(--elev-1)]">
+								<Link key={r.id} href={`/blog/${r.slug}`} className="link-u block border-t border-[var(--line)] pt-4 font-bold">
 									{r.title}
 								</Link>
 							))}
 						</div>
 					</div>
 				)}
-			</Container>
+			</div>
 			<script type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml} />
 		</article>
 	)

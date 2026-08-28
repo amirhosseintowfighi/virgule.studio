@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
-import { Container, Section } from "@/components/ui/container"
+import { PageHead } from "@/components/ui/container"
+import { Reveal } from "@/components/ui/reveal"
 import { ContactForm } from "@/components/marketing/contact-form"
 
 export const metadata: Metadata = {
@@ -9,23 +10,42 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
 	return (
-		<Section eyebrow="تماس" title="با ما گفتگو کنید">
-			<div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
-				<div className="space-y-4">
-					<p className="text-[var(--color-muted)]">
-						برای شروع پروژه یا پرسش، فرم روبه‌رو را پر کنید یا مستقیم تماس بگیرید.
-					</p>
-					<div className="rounded-[var(--radius-md)] border border-[var(--color-border)] p-4">
-						<div className="text-sm text-[var(--color-muted)]">ایمیل</div>
-						<div className="font-latin font-semibold">info@virgule.studio</div>
+		<>
+			<PageHead
+				index="05"
+				label="Contact"
+				lines={[<>پروژه‌ای در</>, <>ذهن دارید؟</>]}
+				lead="فرم را پر کنید یا مستقیم تماس بگیرید. معمولاً همان روز کاری جواب می‌دهیم."
+			/>
+
+			<section className="px-[var(--pad)] pb-[var(--sec)]">
+				<div className="grid gap-16 md:grid-cols-[minmax(0,24rem)_1fr] md:gap-24">
+					<div>
+						<Reveal>
+							<div className="meta-fa mb-3">ایمیل</div>
+							<a href="mailto:info@virgule.studio" className="link-u font-latin h3" dir="ltr">
+								info@virgule.studio
+							</a>
+						</Reveal>
+						<Reveal delay={90} className="mt-10">
+							<div className="meta-fa mb-3">تلفن</div>
+							<a href="tel:09999571001" className="link-u num h3" dir="ltr">
+								0999 957 1001
+							</a>
+						</Reveal>
+						<Reveal delay={180} className="mt-10">
+							<div className="meta-fa mb-3">وب‌سایت</div>
+							<span className="font-latin h3" dir="ltr">
+								virgule.studio
+							</span>
+						</Reveal>
 					</div>
-					<div className="rounded-[var(--radius-md)] border border-[var(--color-border)] p-4">
-						<div className="text-sm text-[var(--color-muted)]">تلفن</div>
-						<div className="font-latin font-semibold">09999571001</div>
-					</div>
+
+					<Reveal delay={120}>
+						<ContactForm />
+					</Reveal>
 				</div>
-				<ContactForm />
-			</div>
-		</Section>
+			</section>
+		</>
 	)
 }

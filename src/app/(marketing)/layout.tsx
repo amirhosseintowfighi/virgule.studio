@@ -6,17 +6,20 @@ import { SiteFx } from "@/components/fx/site-fx"
 // اگر ترافیک بالا رفت، به‌جای این خط روی هر صفحه `export const revalidate = 60` بگذار.
 export const dynamic = "force-dynamic"
 
-export default function MarketingLayout({
-	children,
-}: {
-	children: React.ReactNode
-}) {
+/**
+ * پوسته‌ی سایت عمومی. کلاس `site` محیط تاریک برند را قفل می‌کند —
+ * یک محیط واحد برای کل تجربه‌ی عمومی. پنل مدیریت روشن/تاریک خودش را دارد.
+ */
+export default function MarketingLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<>
+		<div className="site min-h-screen">
+			<a href="#main" className="skip-link">
+				رفتن به محتوای اصلی
+			</a>
 			<SiteFx />
 			<Navbar />
-			<main>{children}</main>
+			<main id="main">{children}</main>
 			<Footer />
-		</>
+		</div>
 	)
 }

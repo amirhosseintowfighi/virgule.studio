@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
-import prisma from "@/lib/prisma"
-import { Card } from "@/components/ui/card"
-import { Section } from "@/components/ui/container"
 import Link from "next/link"
+import prisma from "@/lib/prisma"
+import { PageHead } from "@/components/ui/container"
+import { Reveal } from "@/components/ui/reveal"
 
 export const metadata: Metadata = {
 	title: "نمونه‌کارها",
@@ -16,26 +16,57 @@ export default async function PortfolioPage() {
 	})
 
 	return (
-		<Section eyebrow="نمونه‌کارها" title="پروژه‌هایی که به آن‌ها افتخار می‌کنیم">
-			<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-				{projects.map((p) => (
-					<Link key={p.id} href={`/portfolio/${p.slug}`}>
-						<Card className="h-full">
-							<div className="mb-4 flex aspect-video items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-surface-2)] text-4xl">
-								🖼️
-							</div>
-							<div className="mb-1 text-xs text-[var(--color-primary)]">{p.category?.name}</div>
-							<h3 className="mb-1 font-bold">{p.title}</h3>
-							<p className="text-sm text-[var(--color-muted)]">{p.summary}</p>
-							<div className="mt-3 flex flex-wrap gap-2">
-								{p.technologies.slice(0, 3).map((t) => (
-									<span key={t} className="font-latin rounded-[var(--radius-full)] bg-[var(--color-surface-2)] px-3 py-1 text-xs">{t}</span>
-								))}
-							</div>
-						</Card>
-					</Link>
-				))}
+		<>
+			<PageHead
+				index="02"
+				label="Selected Work"
+				lines={[<>کارهایی که</>, <>ساخته‌ایم</>]}
+				lead="هر پروژه از صفر طراحی و ساخته شده. اینجا فقط کارهایی هست که واقعاً تحویل داده‌ایم."
+			/>
+
+			<div className="px-[var(--pad)] pb-[var(--sec)]">
+				{projects.length === 0 ? (
+					<p className="body-t">هنوز پروژه‌ای منتشر نشده است.</p>
+				) : (
+					<div className="grid gap-x-8 gap-y-[clamp(48px,7vw,96px)] md:grid-cols-2">
+						{projects.map((p, i) => (
+							<article key={p.id} className={i % 3 === 0 ? "md:col-span-2" : ""}>
+								<Link href={`/portfolio/${p.slug}`} data-cursor="مشاهده" className="group block">
+									<Reveal as="img-rv" className="rounded-[var(--radius-lg)]">
+										<div
+											className={`flex items-center justify-center overflow-hidden bg-[var(--bg-2)] ${
+												i % 3 === 0 ? "aspect-[16/7]" : "aspect-[4/3]"
+											}`}
+										>
+											{p.coverImage ? (
+												// eslint-disable-next-line @next/next/no-img-element
+												<img
+													src={p.coverImage}
+													alt={p.title}
+													loading="lazy"
+													decoding="async"
+													className="h-full w-full object-cover transition-transform duration-[1.1s] group-hover:scale-[1.04]"
+													style={{ transitionTimingFunction: "var(--ease)" }}
+												/>
+											) : (
+												<span className="stroke-text display leading-none">{p.title.slice(0, 2)}</span>
+											)}
+										</div>
+									</Reveal>
+									<div className="mt-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+										<h2 className="h3 link-u">{p.title}</h2>
+										<div className="flex items-center gap-5">
+											{p.category && <span className="meta-fa">{p.category.name}</span>}
+											{p.year && <span className="meta font-latin">{p.year}</span>}
+										</div>
+									</div>
+									{p.summary && <p className="body-t mt-2 max-w-[58ch] text-[15px]">{p.summary}</p>}
+								</Link>
+							</article>
+						))}
+					</div>
+				)}
 			</div>
-		</Section>
+		</>
 	)
 }
