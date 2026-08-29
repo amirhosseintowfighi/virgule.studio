@@ -6,7 +6,7 @@ import { submitProjectRequest, type FormState } from "@/server/actions/forms"
 const initial: FormState = {}
 
 const inputCls = "field"
-const labelCls = "meta-fa"
+const labelCls = "label"
 
 const budgets = ["تا ۱۰ میلیون تومان", "۱۰ تا ۳۰ میلیون تومان", "۳۰ تا ۸۰ میلیون تومان", "بیش از ۸۰ میلیون تومان"]
 const timelines = ["فوری (کمتر از ۱ ماه)", "۱ تا ۳ ماه", "۳ تا ۶ ماه", "انعطاف‌پذیر"]
@@ -19,7 +19,7 @@ export function ProjectRequestForm() {
 			{/* Honeypot — ضداسپم */}
 			<input type="text" name="website" className="hidden" tabIndex={-1} autoComplete="off" />
 
-			<div className="grid gap-x-10 md:grid-cols-2">
+			<div className="grid gap-x-10 gap-y-6 md:grid-cols-2">
 				<div>
 					<label className={labelCls}>نام و نام خانوادگی *</label>
 					<input name="name" required placeholder="مثلاً علی رضایی" className={inputCls} />
@@ -61,8 +61,16 @@ export function ProjectRequestForm() {
 				<textarea name="description" required rows={5} placeholder="درباره‌ی کسب‌وکار، هدف پروژه و انتظاراتتان برای‌مان بنویسید..." className={inputCls} />
 			</div>
 
-			{state.error && <p className="text-sm text-[var(--color-error)]">{state.error}</p>}
-			{state.success && <p className="text-sm text-[var(--color-success)]">{state.message}</p>}
+			{state.error && (
+				<p role="alert" className="border-[length:var(--bw-2)] border-[var(--color-error)] p-3 text-sm text-[var(--color-error)]">
+					{state.error}
+				</p>
+			)}
+			{state.success && (
+				<p role="status" className="border-[length:var(--bw-2)] border-[var(--color-success)] p-3 text-sm text-[var(--color-success)]">
+					{state.message}
+				</p>
+			)}
 
 			<button type="submit" disabled={pending} className="btn btn--solid mt-4 w-full disabled:opacity-50">
 				{pending ? "در حال ارسال…" : "ثبت درخواست و دریافت مشاوره‌ی رایگان"}

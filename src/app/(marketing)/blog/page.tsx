@@ -46,7 +46,7 @@ export default async function BlogPage({ searchParams }: Props) {
 				<Reveal delay={240} className="mt-10 max-w-md">
 					<form action="/blog">
 						<label>
-							<span className="meta-fa">جستجو</span>
+							<span className="label">جستجو</span>
 							<input name="q" defaultValue={q} placeholder="در مقالات جستجو کنید…" className="field" />
 						</label>
 					</form>

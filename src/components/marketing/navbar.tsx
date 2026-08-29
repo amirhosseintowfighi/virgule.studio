@@ -49,22 +49,29 @@ export function Navbar() {
 				)}
 				style={{ transitionTimingFunction: "var(--ease)" }}
 			>
-				<div className="flex items-center justify-between px-[var(--pad)] py-5">
+				<div className="flex items-center justify-between border-b-[length:var(--bw-2)] border-[var(--fg)] bg-[var(--bg)] px-[var(--pad)] py-4">
 					<Link href="/" aria-label="ویرگول، خانه" className="flex items-center gap-3">
 						<LogoMark className="h-8 w-8 text-[var(--fg)]" />
 						<span className="text-[15px] font-bold">ویرگول</span>
 					</Link>
 
-					<nav className="hidden items-center gap-9 md:flex" aria-label="ناوبری اصلی">
+					<nav className="hidden items-center md:flex" aria-label="ناوبری اصلی">
 						{links.map((l) => (
-							<Link key={l.href} href={l.href} className="link-u text-sm font-medium">
+							<Link
+								key={l.href}
+								href={l.href}
+								className="border-s-[length:var(--bw)] border-[var(--line)] px-5 py-2 text-sm font-bold transition-colors duration-150 hover:bg-[var(--fg)] hover:text-[var(--bg)]"
+							>
 								{l.label}
 							</Link>
 						))}
 					</nav>
 
 					<div className="flex items-center gap-4">
-						<Link href="/request-project" className="hidden text-sm font-bold md:inline-block link-u accent">
+						<Link
+							href="/request-project"
+							className="hidden border-[length:var(--bw-2)] border-[var(--fg)] bg-[var(--accent-fill)] px-4 py-2.5 text-sm font-bold text-white transition-colors duration-150 hover:bg-[var(--fg)] hover:text-[var(--bg)] md:inline-block"
+						>
 							شروع پروژه
 						</Link>
 						<button
@@ -72,7 +79,7 @@ export function Navbar() {
 							aria-expanded={open}
 							aria-controls="fullmenu"
 							aria-label={open ? "بستن منو" : "باز کردن منو"}
-							className="relative z-10 grid h-11 w-11 place-items-center rounded-full border border-[var(--line-2)] md:hidden"
+							className="relative z-10 grid h-11 w-11 place-items-center border-[length:var(--bw-2)] border-[var(--fg)] md:hidden"
 						>
 							<span className="relative block h-[9px] w-4">
 								<span
@@ -102,14 +109,16 @@ export function Navbar() {
 								key={l.href}
 								href={l.href}
 								onClick={() => setOpen(false)}
-								className="menu-item border-b border-[var(--line)] py-5"
+								className="menu-item border-b-[length:var(--bw-2)] border-[var(--fg)] py-5"
 							>
-								<span
-									className="flex items-baseline justify-between"
-									style={{ transitionDelay: `${140 + i * 60}ms` }}
-								>
-									<span className="h3">{l.label}</span>
-									<span className="meta font-latin">{String(i + 1).padStart(2, "0")}</span>
+								{/* لایه‌ی بیرونی حرکت ماسک را می‌گیرد (display:block از globals)، لایه‌ی درونی چیدمان را */}
+								<span style={{ transitionDelay: `${140 + i * 60}ms` }}>
+									<span className="flex items-baseline justify-between">
+										<span className="h3">{l.label}</span>
+										<span className="num text-xl font-bold text-[var(--fg-3)]">
+											{String(i + 1).padStart(2, "0")}
+										</span>
+									</span>
 								</span>
 							</Link>
 						))}

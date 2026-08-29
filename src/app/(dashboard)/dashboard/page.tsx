@@ -22,13 +22,13 @@ export default async function DashboardPage() {
 			<h1 className="text-2xl font-extrabold">داشبورد</h1>
 
 			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-				<StatCard label="کل مقالات" value={posts} icon="📝" hint={`${published} منتشرشده`} />
-				<StatCard label="نمونه‌کارها" value={projects} icon="💼" />
-				<StatCard label="فرم‌های دریافتی" value={submissions} icon="📩" />
-				<StatCard label="مشترکین خبرنامه" value={subscribers} icon="📧" />
+				<StatCard label="کل مقالات" value={posts} icon="posts" hint={`${published} منتشرشده`} />
+				<StatCard label="نمونه‌کارها" value={projects} icon="projects" />
+				<StatCard label="فرم‌های دریافتی" value={submissions} icon="submissions" />
+				<StatCard label="مشترکین خبرنامه" value={subscribers} icon="newsletter" />
 			</div>
 
-			<div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+			<div className="border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--elev-1)]">
 				<h2 className="mb-4 font-bold">آخرین پیام‌ها</h2>
 				<div className="space-y-2">
 					{latest.length === 0 && (
@@ -37,12 +37,12 @@ export default async function DashboardPage() {
 					{latest.map((s) => {
 						const p = s.payload as Record<string, string>
 						return (
-							<div key={s.id} className="flex items-center justify-between rounded-[var(--radius-md)] border border-[var(--color-border)] p-3 text-sm">
+							<div key={s.id} className="flex items-center justify-between border-[length:var(--bw)] border-[var(--color-border)] p-3 text-sm">
 								<div>
 									<span className="font-semibold">{p.name ?? "—"}</span>
 									<span className="mr-2 text-[var(--color-muted)]">{p.email}</span>
 								</div>
-								<span className="rounded-[var(--radius-full)] bg-[var(--color-surface-2)] px-2 py-0.5 text-xs">{s.type}</span>
+								<span className="border-[length:var(--bw)] border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 py-0.5 text-xs font-bold">{s.type}</span>
 							</div>
 						)
 					})}

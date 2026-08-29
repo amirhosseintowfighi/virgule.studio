@@ -7,6 +7,21 @@ export function Container({ className, children }: { className?: string; childre
 	)
 }
 
+/**
+ * برچسب شماره‌دار بخش — قاب ضخیم با سایه‌ی سخت.
+ * جای «eyebrow» ساده‌ی قبلی را می‌گیرد تا ساختار نشریه‌ای دیده شود.
+ */
+export function Slab({ index, label }: { index?: string; label: string }) {
+	return (
+		<Reveal className="w-fit">
+			<span className="slab font-latin">
+				{index && <b>{index}</b>}
+				{label}
+			</span>
+		</Reveal>
+	)
+}
+
 /** بخش استاندارد پنل مدیریت و صفحات فرعی. */
 export function Section({
 	id,
@@ -58,14 +73,9 @@ export function PageHead({
 	children?: React.ReactNode
 }) {
 	return (
-		<header className="px-[var(--pad)] pb-[clamp(48px,7vw,96px)] pt-[clamp(120px,16vw,200px)]">
-			{(index || label) && (
-				<Reveal className="meta font-latin mb-8 flex gap-4">
-					{index && <span>{index}</span>}
-					{label && <span>{label}</span>}
-				</Reveal>
-			)}
-			<h1 className="h1 max-w-[16ch]">
+		<header className="px-[var(--pad)] pb-[clamp(40px,6vw,80px)] pt-[clamp(112px,15vw,190px)]">
+			{label && <Slab index={index} label={label} />}
+			<h1 className={clsx("h1 max-w-[16ch]", label && "mt-8")}>
 				<RevealLines lines={lines} />
 			</h1>
 			{lead && (
@@ -74,6 +84,8 @@ export function PageHead({
 				</Reveal>
 			)}
 			{children}
+			{/* خطِ ضخیمِ پایانِ سربرگ — مرز صریح میان تیتر و محتوا */}
+			<Reveal as="rule" className="mt-[clamp(32px,5vw,64px)]" />
 		</header>
 	)
 }

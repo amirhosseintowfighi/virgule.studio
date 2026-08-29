@@ -32,7 +32,7 @@ const cols = [
 
 export function Footer() {
 	return (
-		<footer className="border-t border-[var(--line)] px-[var(--pad)] pb-10 pt-[clamp(56px,8vw,110px)]">
+		<footer className="relative z-[1] border-t-[length:var(--bw-2)] border-[var(--fg)] bg-[var(--bg)] px-[var(--pad)] pb-10 pt-[clamp(56px,8vw,110px)]">
 			<div className="grid gap-14 md:grid-cols-[1.4fr_repeat(3,minmax(0,1fr))] md:gap-10">
 				<div>
 					<LogoMark className="h-10 w-10 text-[var(--fg)]" />
@@ -49,7 +49,9 @@ export function Footer() {
 
 				{cols.map((c) => (
 					<nav key={c.head} aria-label={c.head}>
-						<h4 className="meta-fa mb-5">{c.head}</h4>
+						<h4 className="mb-5 border-b-[length:var(--bw-2)] border-[var(--fg)] pb-2 text-sm font-bold">
+							{c.head}
+						</h4>
 						<ul className="flex flex-col gap-3">
 							{c.links.map((l) => (
 								<li key={l.href}>
@@ -63,7 +65,7 @@ export function Footer() {
 				))}
 			</div>
 
-			<div className="mt-16 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--line)] pt-7">
+			<div className="mt-16 flex flex-wrap items-center justify-between gap-4 border-t-[length:var(--bw-2)] border-[var(--fg)] pt-7">
 				<span className="meta-fa">© {new Date().getFullYear()} ویرگول — تمامی حقوق محفوظ است.</span>
 				<span className="meta font-latin">Virgule Studio</span>
 			</div>

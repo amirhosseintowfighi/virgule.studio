@@ -28,7 +28,7 @@ export default function RequestProjectPage() {
 				<div className="grid gap-16 md:grid-cols-[minmax(0,20rem)_1fr] md:gap-24">
 					<div>
 						{assurances.map((a, i) => (
-							<Reveal key={a.t} delay={i * 80} className="border-b border-[var(--line)] py-6 first:pt-0">
+							<Reveal key={a.t} delay={i * 80} className="border-b-[length:var(--bw-2)] border-[var(--fg)] py-6 first:pt-0">
 								<div className="flex items-baseline gap-4">
 									<span className="meta font-latin">{String(i + 1).padStart(2, "0")}</span>
 									<div>

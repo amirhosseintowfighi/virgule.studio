@@ -4,18 +4,19 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { clsx } from "clsx"
 import { FULL_ACCESS_ROLES } from "@/lib/permissions"
+import { icons, type IconName } from "@/components/admin/icons"
 
-type NavItem = { href: string; label: string; icon: string; permission?: string }
+type NavItem = { href: string; label: string; icon: IconName; permission?: string }
 
 const items: NavItem[] = [
-	{ href: "/dashboard", label: "داشبورد", icon: "📊" },
-	{ href: "/dashboard/posts", label: "مقالات", icon: "📝", permission: "post:read" },
-	{ href: "/dashboard/projects", label: "نمونه‌کارها", icon: "💼", permission: "project:read" },
-	{ href: "/dashboard/categories", label: "دسته‌بندی‌ها", icon: "🏷️", permission: "project:read" },
-	{ href: "/dashboard/services", label: "خدمات", icon: "🛠️", permission: "service:read" },
-	{ href: "/dashboard/submissions", label: "فرم‌های دریافتی", icon: "📩", permission: "form:read" },
-	{ href: "/dashboard/users", label: "کاربران", icon: "👥", permission: "user:read" },
-	{ href: "/dashboard/settings", label: "تنظیمات و محتوا", icon: "⚙️", permission: "setting:manage" },
+	{ href: "/dashboard", label: "داشبورد", icon: "dashboard" },
+	{ href: "/dashboard/posts", label: "مقالات", icon: "posts", permission: "post:read" },
+	{ href: "/dashboard/projects", label: "نمونه‌کارها", icon: "projects", permission: "project:read" },
+	{ href: "/dashboard/categories", label: "دسته‌بندی‌ها", icon: "categories", permission: "project:read" },
+	{ href: "/dashboard/services", label: "خدمات", icon: "services", permission: "service:read" },
+	{ href: "/dashboard/submissions", label: "فرم‌های دریافتی", icon: "submissions", permission: "form:read" },
+	{ href: "/dashboard/users", label: "کاربران", icon: "users", permission: "user:read" },
+	{ href: "/dashboard/settings", label: "تنظیمات و محتوا", icon: "settings", permission: "setting:manage" },
 ]
 
 export function Sidebar({
@@ -29,8 +30,11 @@ export function Sidebar({
 	const can = (p?: string) => !p || FULL_ACCESS_ROLES.includes(role) || permissions.includes(p)
 
 	return (
-		<aside className="hidden w-64 shrink-0 border-l border-[var(--color-border)] bg-[var(--color-surface)] p-4 md:block">
-			<Link href="/dashboard" className="mb-6 flex items-center gap-2 px-2 font-extrabold">
+		<aside className="hidden w-64 shrink-0 border-s-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-surface)] p-3 md:block">
+			<Link
+				href="/dashboard"
+				className="mb-5 flex items-center gap-2 border-b-[length:var(--bw-2)] border-[var(--color-border)] px-2 pb-4 font-extrabold"
+			>
 				<span className="font-latin text-[var(--color-primary)]">Virgule</span> پنل
 			</Link>
 			<nav className="space-y-1">
@@ -42,14 +46,15 @@ export function Sidebar({
 						<Link
 							key={item.href}
 							href={item.href}
+							aria-current={active ? "page" : undefined}
 							className={clsx(
-								"flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-2.5 text-sm font-medium transition-colors",
+								"flex items-center gap-3 border-[length:var(--bw-2)] px-3 py-2.5 text-sm font-bold transition-colors duration-150",
 								active
-									? "bg-[var(--color-primary-container)] text-[var(--color-primary)]"
-									: "hover:bg-[var(--color-surface-2)]"
+									? "border-[var(--color-border)] bg-[var(--color-primary-fill)] text-white"
+									: "border-transparent hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)]"
 							)}
 						>
-							<span>{item.icon}</span>
+							{icons[item.icon]}
 							{item.label}
 						</Link>
 					)

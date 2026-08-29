@@ -13,23 +13,23 @@ export function ContactForm() {
 			{/* Honeypot — ضداسپم */}
 			<input type="text" name="website" className="hidden" tabIndex={-1} autoComplete="off" />
 
-			<div className="grid gap-x-10 sm:grid-cols-2">
+			<div className="grid gap-x-10 gap-y-6 sm:grid-cols-2">
 				<label className="block">
-					<span className="meta-fa">نام و نام خانوادگی</span>
+					<span className="label">نام و نام خانوادگی</span>
 					<input name="name" required className="field" placeholder="نام شما" />
 				</label>
 				<label className="block">
-					<span className="meta-fa">ایمیل</span>
+					<span className="label">ایمیل</span>
 					<input name="email" type="email" required className="field font-latin" dir="ltr" placeholder="you@example.com" />
 				</label>
 				<label className="block">
-					<span className="meta-fa">شماره تماس (اختیاری)</span>
+					<span className="label">شماره تماس (اختیاری)</span>
 					<input name="phone" className="field num" dir="ltr" placeholder="0912…" />
 				</label>
 			</div>
 
 			<label className="mt-6 block">
-				<span className="meta-fa">پیام شما</span>
+				<span className="label">پیام شما</span>
 				<textarea name="message" required rows={5} className="field resize-none" placeholder="کمی درباره‌ی پروژه بگویید…" />
 			</label>
 

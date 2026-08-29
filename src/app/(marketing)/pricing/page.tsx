@@ -32,9 +32,11 @@ export default async function PricingPage() {
 						>
 							<div>
 								<div className="flex items-center gap-4">
-									<span className="meta font-latin">{String(i + 1).padStart(2, "0")}</span>
+									<span className="num text-xl font-bold text-[var(--fg-3)]">{String(i + 1).padStart(2, "0")}</span>
 									<h2 className="h3">{plan.name}</h2>
-									{plan.highlighted && <span className="meta-fa accent">پیشنهاد ویژه</span>}
+									{plan.highlighted && (
+										<span className="border-[length:var(--bw-2)] border-[var(--fg)] bg-[var(--accent-fill)] px-2.5 py-1 text-[11px] font-bold text-white">پیشنهاد ویژه</span>
+									)}
 								</div>
 								{plan.description && <p className="body-t mt-3 text-[15px]">{plan.description}</p>}
 								<div className="mt-6">

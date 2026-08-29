@@ -19,14 +19,14 @@ export default async function SubmissionsPage() {
 					return (
 						<div
 							key={s.id}
-							className={`rounded-[var(--radius-lg)] border bg-[var(--color-surface)] p-4 ${
+							className={`border bg-[var(--color-surface)] p-4 ${
 								s.isSpam ? "border-[var(--color-error)]/40 opacity-60" : "border-[var(--color-border)]"
 							}`}
 						>
 							<div className="mb-2 flex items-center justify-between">
 								<div className="flex items-center gap-2">
 									<span className="font-semibold">{p.name ?? "—"}</span>
-									<span className="rounded-[var(--radius-full)] bg-[var(--color-primary-container)] px-2 py-0.5 text-xs text-[var(--color-primary)]">
+									<span className="bg-[var(--color-primary-container)] px-2 py-0.5 text-xs text-[var(--color-primary)]">
 										{formTypeLabel(s.type)}
 									</span>
 									{s.isSpam && <span className="text-xs text-[var(--color-error)]">اسپم</span>}

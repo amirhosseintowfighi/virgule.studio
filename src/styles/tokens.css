@@ -1,95 +1,124 @@
+/* ==========================================================================
+   ویرگول — سیستم طراحی
+   جهت: Editorial Grid + Brutalism (پیشنهاد ui-ux-pro-max)
+   قاعده‌ها: گوشه‌ی تیز، خط دیده‌شونده، سایه‌ی سخت (نه محو)، کنتراست بالا،
+   تایپ به‌عنوان قهرمان، شماره‌گذاری همه‌جا، یک رنگ تأکید.
+   ========================================================================== */
+
 :root {
 	/* ---- پنل مدیریت: حالت روشن ---- */
 	--color-primary: #a01fb0;
 	--color-primary-hover: #8a1a98;
+	/* سطح پرشده: متن سفید روی آن باید ۴.۵:۱ بدهد (در تم تاریک از --color-primary تیره‌تر است) */
+	--color-primary-fill: #a01fb0;
 	--color-primary-container: #f7e6fa;
 	--color-on-primary: #ffffff;
 
-	--color-ink: #16101f;
+	--color-ink: #0d0812;
 	--color-charcoal: #2e2740;
 	--color-surface: #ffffff;
-	--color-surface-2: #f6f4f9;
-	--color-border: #e6e2ed;
-	--color-muted: #6d6785;
+	--color-surface-2: #f4f1f7;
+	--color-border: #0d0812;
+	--color-muted: #5b5570;
 
-	--color-success: #10b981;
-	--color-warning: #f4ac0b;
-	--color-error: #dc1d49;
+	--color-success: #0f9d63;
+	--color-warning: #b26a00;
+	--color-error: #d01238;
 
 	/* Spacing */
 	--space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
 	--space-6: 24px; --space-8: 32px; --space-12: 48px; --space-16: 64px;
 
-	/* Radius */
-	--radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 24px;
-	--radius-full: 999px;
+	/* گوشه‌ها تیزند. توکن‌ها می‌مانند تا کامپوننت‌های موجود نشکنند. */
+	--radius-sm: 0; --radius-md: 0; --radius-lg: 0; --radius-xl: 0;
+	--radius-full: 0;
 
-	--elev-1: 0 1px 2px rgba(11,7,19,.06), 0 1px 3px rgba(11,7,19,.10);
-	--elev-2: 0 4px 8px rgba(11,7,19,.08), 0 2px 4px rgba(11,7,19,.06);
-	--elev-3: 0 10px 20px rgba(11,7,19,.10), 0 4px 8px rgba(11,7,19,.06);
+	/* ضخامت خط — ساختار باید دیده شود */
+	--bw: 1px;
+	--bw-2: 2px;
 
-	/* Motion — یک منحنی برای کل سایت */
+	/* سایه‌ی سخت، بدون محوشدگی. RTL: به سمت چپ‌ـ‌پایین می‌افتد. */
+	--elev-1: -3px 3px 0 var(--color-border);
+	--elev-2: -5px 5px 0 var(--color-border);
+	--elev-3: -8px 8px 0 var(--color-border);
+
+	/* Motion — ورودها آرام، ریزتعامل‌ها تقریباً آنی (لهجه‌ی براتالیستی) */
 	--ease: cubic-bezier(.16, 1, .3, 1);
 	--ease-io: cubic-bezier(.65, .05, .36, 1);
-	--dur: .28s;
+	--dur: .12s;
 
-	--container: 1240px;
+	--container: 1440px;
 }
 
 [data-theme="dark"] {
-	--color-primary: #c13bd1;
-	--color-primary-hover: #d05ade;
-	--color-primary-container: #2a1030;
-	--color-ink: #f4f1f7;
+	--color-primary: #d24ce2;
+	--color-primary-hover: #e478ef;
+	--color-primary-fill: #ac2ebc;
+	--color-primary-container: #2d1033;
+	--color-ink: #f6f3f9;
 	--color-charcoal: #d6d1e0;
-	--color-surface: #120c1d;
-	--color-surface-2: #1b1327;
-	--color-border: #2a2137;
-	--color-muted: #8f8aa3;
+	--color-surface: #0b0810;
+	--color-surface-2: #15101f;
+	--color-border: #f6f3f9;
+	--color-muted: #9a94ae;
 }
 
 /* ==========================================================================
    پوسته‌ی سایت عمومی — همیشه تاریک. یک محیط، یک لهجه‌ی بصری.
-   رنگ‌ها از پالت برند (night / indigo / magenta / crimson / amber) گرفته شده‌اند.
    ========================================================================== */
 .site {
-	--bg: #0b0713;
-	--bg-2: #120c1d;
-	--bg-3: #1b1327;
-	--fg: #f4f1f7;
-	--fg-2: #8f8aa3;
-	--fg-3: #5d5872;
-	--line: rgba(244, 241, 247, .11);
-	--line-2: rgba(244, 241, 247, .18);
+	--bg: #0a0710;
+	--bg-2: #120d1c;
+	--bg-3: #1c1529;
+	--fg: #f6f3f9;
+	--fg-2: #a49dba;
+	--fg-3: #8f88a8;
+
+	/* خط‌ها در براتالیسم دیده می‌شوند، نه اینکه حدس زده شوند. */
+	--line: rgba(246, 243, 249, .16);
+	--line-2: rgba(246, 243, 249, .34);
+	--line-3: var(--fg);
 
 	/* تنها رنگ تأکید */
-	--accent: #c13bd1;
+	--accent: #d24ce2;
 	--accent-deep: #ac2ebc;
+	/* سطح پرشده‌ی تأکید — تیره‌تر از --accent تا متن سفید روی آن ۴.۵:۱ بدهد */
+	--accent-fill: #ac2ebc;
+	--amber: #f4ac0b;
 	/* فقط برای نشان و نوارها، نه برای متن بدنه */
 	--brand-grad: linear-gradient(96deg, #10026f 0%, #ac2ebc 55%, #dc1d49 100%);
-	--amber: #f4ac0b;
 
-	/* مقیاس تایپوگرافی — سیال، بدون breakpoint */
-	--t-display: clamp(3.1rem, 11.5vw, 11rem);
-	--t-h1: clamp(2.5rem, 7vw, 6rem);
-	--t-h2: clamp(2rem, 4.6vw, 3.9rem);
-	--t-h3: clamp(1.35rem, 2.1vw, 1.9rem);
+	/* مقیاس تایپوگرافی — تایپ قهرمان است. سیال، بدون breakpoint. */
+	--t-display: clamp(3.4rem, 13vw, 13rem);
+	--t-h1: clamp(2.7rem, 8vw, 7rem);
+	--t-h2: clamp(2.1rem, 5.2vw, 4.4rem);
+	--t-h3: clamp(1.4rem, 2.3vw, 2.1rem);
 	--t-body: clamp(1rem, 1.05vw, 1.12rem);
-	--t-meta: .78rem;
+	--t-meta: .75rem;
 
 	/* ریتم عمودی */
 	--sec: clamp(88px, 13vw, 190px);
-	--pad: clamp(20px, 4.5vw, 64px);
+	--pad: clamp(18px, 4vw, 56px);
 
-	/* توکن‌های پنل را هم به همین محیط قفل می‌کنیم تا کامپوننت‌های مشترک نشکنند */
+	/* شبکه‌ی دیده‌شونده‌ی صفحه */
+	--cols: 12;
+	--gut: clamp(12px, 1.6vw, 28px);
+
+	/* سایه‌ی سخت در محیط تاریک از رنگ متن می‌آید */
+	--hard-1: -4px 4px 0 var(--fg);
+	--hard-2: -7px 7px 0 var(--fg);
+	--hard-accent: -7px 7px 0 var(--accent);
+
+	/* توکن‌های پنل را به همین محیط قفل می‌کنیم تا کامپوننت‌های مشترک نشکنند */
 	--color-surface: var(--bg);
 	--color-surface-2: var(--bg-2);
 	--color-ink: var(--fg);
 	--color-muted: var(--fg-2);
-	--color-border: var(--line);
+	--color-border: var(--fg);
 	--color-primary: var(--accent);
-	--color-primary-hover: #d05ade;
-	--color-primary-container: rgba(193, 59, 209, .14);
+	--color-primary-hover: #e478ef;
+	--color-primary-fill: #ac2ebc;
+	--color-primary-container: rgba(210, 76, 226, .16);
 
 	background: var(--bg);
 	color: var(--fg);

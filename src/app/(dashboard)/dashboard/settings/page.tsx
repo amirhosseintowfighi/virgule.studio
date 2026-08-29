@@ -78,7 +78,7 @@ export default async function SettingsAdminPage() {
 				<EntityForm action={saveSettingGroup} fields={seoFields} hidden={seoHidden} submitLabel="ذخیره‌ی تنظیمات سئو" />
 			</section>
 
-			<section className="rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border)] bg-[var(--color-surface-2)] p-6">
+			<section className="border border-dashed border-[var(--color-border)] bg-[var(--color-surface-2)] p-6">
 				<h2 className="mb-2 text-lg font-bold">🧩 ویرایشگر بصری صفحات (فاز بعدی)</h2>
 				<p className="text-sm leading-7 text-[var(--color-muted)]">
 					محتوای صفحات خدمات و نمونه‌کارها را هم‌اکنون می‌توانید به‌طور کامل از بخش‌های «خدمات» و «نمونه‌کارها» ویرایش کنید (عنوان، خلاصه، متن کامل چند‌پاراگرافی، ویژگی‌ها و...).

@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { PageHead } from "@/components/ui/container"
+import { PageHead, Slab } from "@/components/ui/container"
 import { Reveal, RevealLines } from "@/components/ui/reveal"
 
 export const metadata: Metadata = {
@@ -36,7 +36,7 @@ export default function AboutPage() {
 			<section className="px-[var(--pad)] pb-[var(--sec)]">
 				<div className="grid gap-12 md:grid-cols-2 md:gap-20">
 					<Reveal>
-						<p className="body-t text-[var(--fg)]">
+						<p className="body-t lead">
 							اسم ما از همان علامت کوچکی می‌آید که در میان متن، مکث می‌سازد. باور ما این است که همین
 							مکث‌ها — فاصله‌ها، ریتم، چیزهایی که حذف می‌شوند — تفاوت یک وب‌سایت معمولی و یک وب‌سایت
 							ماندگار را می‌سازند.
@@ -53,14 +53,15 @@ export default function AboutPage() {
 			</section>
 
 			<section className="px-[var(--pad)] pb-[var(--sec)]">
-				<Reveal className="meta font-latin mb-10">Values</Reveal>
+				<Slab label="Values" />
+				<div className="h-10" />
 				<Reveal as="rule" />
 				<ul>
 					{values.map((v, i) => (
 						<li key={v.t}>
 							<Reveal delay={i * 70} className="grid gap-4 py-9 md:grid-cols-[minmax(0,20rem)_1fr] md:gap-16">
 								<div className="flex items-baseline gap-5">
-									<span className="meta font-latin">{String(i + 1).padStart(2, "0")}</span>
+									<span className="num text-xl font-bold text-[var(--fg-3)]">{String(i + 1).padStart(2, "0")}</span>
 									<h2 className="h3">{v.t}</h2>
 								</div>
 								<p className="body-t max-w-[58ch] text-[15px]">{v.d}</p>
@@ -71,7 +72,7 @@ export default function AboutPage() {
 				</ul>
 			</section>
 
-			<section className="border-t border-[var(--line)] px-[var(--pad)] py-[var(--sec)]">
+			<section className="border-t-[length:var(--bw-2)] border-[var(--fg)] px-[var(--pad)] py-[var(--sec)]">
 				<h2 className="h2 max-w-[16ch]">
 					<RevealLines lines={[<>با هم کار کنیم؟</>]} />
 				</h2>

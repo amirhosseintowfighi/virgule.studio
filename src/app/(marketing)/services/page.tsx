@@ -30,21 +30,21 @@ export default async function ServicesPage() {
 						<li key={s.id}>
 							<Link href={`/services/${s.slug}`} className="row-i py-9 md:py-12">
 								<div className="relative z-10 flex items-baseline gap-6 md:gap-12">
-									<span className="meta font-latin w-8 shrink-0 pt-2">{String(i + 1).padStart(2, "0")}</span>
+									<span className="num w-10 shrink-0 pt-1 text-2xl font-bold text-[var(--fg-3)] md:text-4xl">{String(i + 1).padStart(2, "0")}</span>
 									<div className="min-w-0 flex-1">
 										<h2 className="row-i__t h3">{s.title}</h2>
 										{s.summary && <p className="body-t mt-3 max-w-[62ch] text-[15px]">{s.summary}</p>}
 										{s.features.length > 0 && (
 											<ul className="mt-5 flex flex-wrap gap-x-8 gap-y-2">
 												{s.features.slice(0, 4).map((f) => (
-													<li key={f} className="meta-fa">
+													<li key={f} className="tag">
 														{f}
 													</li>
 												))}
 											</ul>
 										)}
 									</div>
-									<span className="row-i__go accent hidden shrink-0 self-center text-2xl md:block" aria-hidden="true">
+									<span className="row-i__go hidden shrink-0 self-center text-2xl md:block" aria-hidden="true">
 										←
 									</span>
 								</div>

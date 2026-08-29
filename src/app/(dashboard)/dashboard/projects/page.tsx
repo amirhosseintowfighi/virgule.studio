@@ -20,7 +20,7 @@ export default async function ProjectsAdminPage() {
 				{canWrite && (
 					<Link
 						href="/dashboard/projects/new"
-						className="rounded-[var(--radius-full)] bg-[var(--color-primary)] px-5 py-2.5 text-sm font-semibold text-white"
+						className="border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-primary-fill)] px-5 py-2.5 text-sm font-bold text-white shadow-[var(--elev-1)] transition-shadow hover:shadow-none"
 					>
 						+ نمونه‌کار جدید
 					</Link>
@@ -28,11 +28,11 @@ export default async function ProjectsAdminPage() {
 			</div>
 
 			{projects.length === 0 ? (
-				<div className="rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border)] p-10 text-center text-[var(--color-muted)]">
+				<div className="border border-dashed border-[var(--color-border)] p-10 text-center text-[var(--color-muted)]">
 					هنوز نمونه‌کاری ثبت نشده است.
 				</div>
 			) : (
-				<div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
+				<div className="overflow-hidden border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-surface)]">
 					<table className="w-full text-right text-sm">
 						<thead className="bg-[var(--color-surface-2)] text-[var(--color-muted)]">
 							<tr>
@@ -53,7 +53,7 @@ export default async function ProjectsAdminPage() {
 									<td className="p-3 font-latin">{p.year ?? "—"}</td>
 									<td className="p-3">
 										{p.featured ? (
-											<span className="rounded-[var(--radius-full)] bg-[var(--color-primary-container)] px-2 py-0.5 text-xs text-[var(--color-primary)]">★ ویژه</span>
+											<span className="bg-[var(--color-primary-container)] px-2 py-0.5 text-xs text-[var(--color-primary)]">★ ویژه</span>
 										) : (
 											<span className="text-xs text-[var(--color-muted)]">—</span>
 										)}

@@ -93,7 +93,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
 			</header>
 
 			<div className="px-[var(--pad)]">
-				<Reveal as="img-rv" className="rounded-[var(--radius-lg)]">
+				<Reveal as="img-rv" className="card-b">
 					<div className="flex aspect-[16/8] items-center justify-center overflow-hidden bg-[var(--bg-2)]">
 						{project.coverImage ? (
 							// eslint-disable-next-line @next/next/no-img-element
@@ -128,7 +128,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
 						<ul className="max-w-[62ch]">
 							{project.features.map((f, i) => (
 								<li key={f}>
-									<Reveal delay={i * 50} className="flex items-baseline gap-5 border-b border-[var(--line)] py-5">
+									<Reveal delay={i * 50} className="flex items-baseline gap-5 border-b-[length:var(--bw-2)] border-[var(--fg)] py-5">
 										<span className="meta font-latin">{String(i + 1).padStart(2, "0")}</span>
 										<span>{f}</span>
 									</Reveal>
@@ -154,7 +154,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
 					<Chapter n={++n} title="تصاویر">
 						<div className="grid gap-6 sm:grid-cols-2">
 							{project.gallery.map((m) => (
-								<Reveal key={m.id} as="img-rv" className="rounded-[var(--radius-md)]">
+								<Reveal key={m.id} as="img-rv" className="card-b">
 									{/* eslint-disable-next-line @next/next/no-img-element */}
 									<img
 										src={m.url}

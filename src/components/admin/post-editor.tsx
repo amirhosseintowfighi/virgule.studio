@@ -16,7 +16,7 @@ type Post = {
 } | null
 
 const inputCls =
-	"w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-sm outline-none focus:border-[var(--color-primary)]"
+	"w-full border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-sm outline-none transition-shadow focus:border-[var(--color-primary)] focus:shadow-[var(--elev-1)]"
 
 function SubmitButton() {
 	const { pending } = useFormStatus()
@@ -24,7 +24,7 @@ function SubmitButton() {
 		<button
 			type="submit"
 			disabled={pending}
-			className="rounded-[var(--radius-full)] bg-[var(--color-primary)] px-6 py-3 text-sm font-semibold text-white disabled:opacity-50"
+			className="border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-primary-fill)] px-6 py-3 text-sm font-bold text-white shadow-[var(--elev-1)] transition-shadow hover:shadow-none disabled:opacity-50"
 		>
 			{pending ? "در حال ذخیره..." : "ذخیره"}
 		</button>
@@ -40,7 +40,7 @@ export function PostEditor({
 	tags: Tag[]
 }) {
 	return (
-		<form action={savePost} className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
+		<form action={savePost} className="space-y-4 border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-surface)] p-6">
 			{post && <input type="hidden" name="id" value={post.id} />}
 
 			<div>

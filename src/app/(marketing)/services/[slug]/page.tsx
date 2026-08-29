@@ -70,7 +70,7 @@ export default async function ServiceDetailPage({ params }: Props) {
 									<li key={f}>
 										<Reveal
 											delay={i * 50}
-											className="flex items-baseline gap-5 border-b border-[var(--line)] py-5"
+											className="flex items-baseline gap-5 border-b-[length:var(--bw-2)] border-[var(--fg)] py-5"
 										>
 											<span className="meta font-latin">{String(i + 1).padStart(2, "0")}</span>
 											<span>{f}</span>

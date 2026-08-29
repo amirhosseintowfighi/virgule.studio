@@ -33,7 +33,7 @@ export default async function PortfolioPage() {
 						{projects.map((p, i) => (
 							<article key={p.id} className={i % 3 === 0 ? "md:col-span-2" : ""}>
 								<Link href={`/portfolio/${p.slug}`} data-cursor="مشاهده" className="group block">
-									<Reveal as="img-rv" className="rounded-[var(--radius-lg)]">
+									<Reveal as="img-rv" className="card-b">
 										<div
 											className={`flex items-center justify-center overflow-hidden bg-[var(--bg-2)] ${
 												i % 3 === 0 ? "aspect-[16/7]" : "aspect-[4/3]"
