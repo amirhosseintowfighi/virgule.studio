@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify } from "jose"
 import bcrypt from "bcryptjs"
-import { cookies } from "next/headers"
+import { cookies, headers } from "next/headers"
 import prisma from "./prisma"
 
 const SESSION_COOKIE = "virgule_session"
@@ -59,12 +59,30 @@ export async function verifyToken(token: string): Promise<SessionPayload | null>
 }
 
 // ---------- Session cookie helpers ----------
+
+/**
+ * آیا خودِ درخواست روی HTTPS آمده؟
+ *
+ * پرچم Secure روی کوکی یعنی مرورگر آن را فقط روی HTTPS می‌فرستد. اگر بر اساس
+ * NODE_ENV تنظیم شود، روی سروری که با http سرو می‌شود کوکی اصلاً ذخیره یا
+ * فرستاده نمی‌شود: کاربر وارد می‌شود، به داشبورد می‌رسد، و صفحه‌ی بعدی دوباره
+ * به /login برمی‌گردد. (کروم برای localhost استثنا قائل می‌شود، سافاری نه —
+ * برای همین این باگ روی مرورگرها متفاوت دیده می‌شود.)
+ */
+async function isSecureRequest(): Promise<boolean> {
+	const h = await headers()
+	const proto = h.get("x-forwarded-proto")
+	if (proto) return proto.split(",")[0]!.trim() === "https"
+	// بدون هدر پراکسی، فقط وقتی HTTPS فرض می‌کنیم که واقعاً بدانیم
+	return false
+}
+
 export async function createSession(payload: SessionPayload) {
 	const token = await signToken(payload)
 	const store = await cookies()
 	store.set(SESSION_COOKIE, token, {
 		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
+		secure: await isSecureRequest(),
 		sameSite: "lax",
 		path: "/",
 		maxAge: MAX_AGE,

@@ -59,3 +59,5 @@ Thumbs.db
 *.key
 
 .pgdata/
+# فقط پوشه‌ی آپلودِ ریشه، نه هر پوشه‌ای به نام uploads
+/uploads/

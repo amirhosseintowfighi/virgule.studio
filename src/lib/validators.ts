@@ -11,6 +11,15 @@ const slug = z
 	.regex(/^[a-z0-9-]+$/, "اسلاگ فقط حروف کوچک انگلیسی، عدد و خط تیره.")
 
 // ---------- Auth ----------
+/** نشانی تصویر: یا http(s) بیرونی، یا مسیر آپلودِ داخلی. */
+const imageRef = z
+	.string()
+	.refine((v) => v === "" || /^https?:\/\//.test(v) || v.startsWith("/api/uploads/"), {
+		message: "لینک تصویر نامعتبر است.",
+	})
+	.optional()
+	.or(z.literal(""))
+
 export const loginSchema = z.object({
 	email: z.string().email("ایمیل معتبر نیست."),
 	password: z.string().min(8, "رمز عبور حداقل ۸ کاراکتر است."),
@@ -94,7 +103,9 @@ export const projectSchema = z.object({
 	url: z.string().url("لینک نامعتبر است.").optional().or(z.literal("")),
 	summary: z.string().optional(),
 	content: z.string().optional(),
-	coverImage: z.string().url("لینک تصویر نامعتبر است.").optional().or(z.literal("")),
+	// یا نشانی کامل بیرونی، یا مسیر نسبیِ فایلی که خودمان آپلود کرده‌ایم.
+	// z.string().url() مسیر نسبی را رد می‌کند و آپلود داخلی را از کار می‌انداخت.
+	coverImage: imageRef,
 	technologies: z.array(z.string()).default([]),
 	features: z.array(z.string()).default([]),
 	featured: z.boolean().default(false),

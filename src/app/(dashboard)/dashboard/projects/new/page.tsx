@@ -25,7 +25,7 @@ export default async function NewProjectPage() {
 			full: false,
 			options: [{ value: "", label: "— بدون دسته —" }, ...categories.map((c) => ({ value: c.id, label: c.name }))],
 		},
-		{ name: "coverImage", label: "آدرس تصویر کاور", type: "url", placeholder: "https://...", help: "اختیاری" },
+		{ name: "coverImage", label: "تصویر کاور", type: "image", help: "اسکرین‌شات سایتی که ساخته‌اید. JPEG، PNG، WebP یا GIF تا ۵ مگابایت. اگر خالی بماند، یک جلد تایپوگرافیک از روی نام پروژه ساخته می‌شود." },
 		{ name: "summary", label: "خلاصه‌ی کوتاه", type: "textarea", rows: 2 },
 		{ name: "content", label: "توضیحات کامل", type: "textarea", rows: 10, help: "شرح کامل پروژه. هر پاراگراف در یک خط خالی جدا." },
 		{ name: "technologies", label: "تکنولوژی‌ها", type: "list", help: "هر مورد در یک خط." },

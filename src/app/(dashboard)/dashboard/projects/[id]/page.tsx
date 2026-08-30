@@ -32,7 +32,7 @@ export default async function EditProjectPage({ params }: Props) {
 			defaultValue: project.categoryId ?? "",
 			options: [{ value: "", label: "— بدون دسته —" }, ...categories.map((c) => ({ value: c.id, label: c.name }))],
 		},
-		{ name: "coverImage", label: "آدرس تصویر کاور", type: "url", defaultValue: project.coverImage ?? "", help: "اختیاری" },
+		{ name: "coverImage", label: "تصویر کاور", type: "image", defaultValue: project.coverImage ?? "", help: "اسکرین‌شات سایتی که ساخته‌اید. JPEG، PNG، WebP یا GIF تا ۵ مگابایت. اگر خالی بماند، یک جلد تایپوگرافیک از روی نام پروژه ساخته می‌شود." },
 		{ name: "summary", label: "خلاصه‌ی کوتاه", type: "textarea", rows: 2, defaultValue: project.summary ?? "" },
 		{ name: "content", label: "توضیحات کامل", type: "textarea", rows: 10, defaultValue: project.content ?? "", help: "هر پاراگراف در یک خط خالی جدا." },
 		{ name: "technologies", label: "تکنولوژی‌ها", type: "list", defaultValue: project.technologies.join("\n") },

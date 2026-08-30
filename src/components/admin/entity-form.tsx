@@ -2,11 +2,12 @@
 
 import Link from "next/link"
 import { useFormStatus } from "react-dom"
+import { ImageField } from "@/components/admin/image-field"
 
 export type FormField = {
 	name: string
 	label: string
-	type?: "text" | "textarea" | "number" | "url" | "password" | "email" | "checkbox" | "select" | "list"
+	type?: "text" | "textarea" | "number" | "url" | "password" | "email" | "checkbox" | "select" | "list" | "image"
 	placeholder?: string
 	required?: boolean
 	help?: string
@@ -35,6 +36,17 @@ function SubmitButton({ label }: { label: string }) {
 
 function Field({ field }: { field: FormField }) {
 	const { type = "text" } = field
+
+	if (type === "image") {
+		return (
+			<ImageField
+				name={field.name}
+				label={field.label}
+				defaultValue={String(field.defaultValue ?? "")}
+				help={field.help}
+			/>
+		)
+	}
 
 	if (type === "checkbox") {
 		return (

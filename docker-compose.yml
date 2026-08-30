@@ -24,6 +24,10 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-virgule}:${POSTGRES_PASSWORD:-virgule}@db:5432/${POSTGRES_DB:-virgule}?schema=public
       JWT_SECRET: ${JWT_SECRET}
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://virgule.studio}
+      UPLOAD_DIR: /app/uploads
+    # تصاویر آپلودشده بیرون از ایمیج می‌مانند، وگرنه هر بیلد پاکشان می‌کند
+    volumes:
+      - uploads:/app/uploads
     expose:
       - "3000"
 
@@ -57,3 +61,4 @@ services:
 
 volumes:
   pgdata:
+  uploads:
