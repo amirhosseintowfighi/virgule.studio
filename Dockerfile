@@ -27,6 +27,10 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
+# اسکریپت‌های نگهداری داخل همین ایمیج باشند تا بشود با
+# `docker compose exec web node scripts/admin.mjs ...` اجراشان کرد.
+# دیتابیس فقط داخل شبکه‌ی داکر شنیده می‌شود، پس از روی هاست قابل دسترس نیست.
+COPY --from=builder /app/scripts ./scripts
 
 USER nextjs
 EXPOSE 3000
