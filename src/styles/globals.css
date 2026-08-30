@@ -1216,3 +1216,55 @@ select.field option { background: var(--bg-2); color: var(--fg); }
 		margin-block: -10px;
 	}
 }
+
+/* ==========================================================================
+   کارت تعهد
+   روی موبایل یک سطح مستقل با لبه‌ی شامپاینی و شماره‌ی درشتِ کم‌رنگ — چون
+   فهرستِ «عنوان + بند» پشت سر هم، روی صفحه‌ی باریک فقط یک ستون متن می‌شود.
+   روی دسکتاپ همان ریتم پلکانی می‌ماند و کارت‌ها سبک‌تر می‌شوند.
+   ========================================================================== */
+.vow {
+	position: relative; isolation: isolate; overflow: hidden;
+	border: 1px solid var(--line);
+	border-radius: var(--radius-lg);
+	background: var(--bg-2);
+	padding: clamp(22px, 5vw, 34px);
+	transition: border-color var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
+}
+.vow::before {
+	content: ""; position: absolute; inset-block-start: 0; inset-inline: 0; height: 1px;
+	background: linear-gradient(90deg, transparent, var(--accent-line), transparent);
+}
+/* تابشِ گوشه — زاویه‌اش با شماره‌ی کارت می‌چرخد، پس دو کارت مثل هم نیست */
+.vow::after {
+	content: ""; position: absolute; z-index: -1; pointer-events: none;
+	inset-inline-end: -30%; top: -60%;
+	width: 70%; aspect-ratio: 1; border-radius: 50%;
+	background: radial-gradient(circle, var(--accent-soft), transparent 68%);
+	filter: blur(30px);
+	transform: rotate(calc(var(--i, 0) * 28deg));
+}
+.vow:hover { border-color: var(--accent-line); }
+
+/* شماره: بزرگ، تُهی، پشتِ عنوان */
+.vow__n {
+	position: absolute; z-index: -1; pointer-events: none; user-select: none;
+	inset-inline-end: clamp(8px, 3vw, 22px); inset-block-start: -.18em;
+	font-family: var(--font-inter), sans-serif; font-weight: 700;
+	font-size: clamp(4.4rem, 17vw, 7rem); line-height: 1;
+	color: transparent; -webkit-text-stroke: 1px rgba(242, 239, 233, .07);
+}
+
+@media (min-width: 768px) {
+	.vow {
+		background: transparent;
+		border-color: transparent;
+		border-block-start-color: var(--line);
+		border-radius: 0;
+		padding-inline: 0;
+		padding-block: clamp(32px, 4vw, 48px);
+	}
+	.vow::before { background: none; }
+	.vow:hover { border-color: transparent; border-block-start-color: var(--accent-line); }
+	.vow__n { inset-inline-end: 0; font-size: clamp(4rem, 6vw, 6.5rem); }
+}

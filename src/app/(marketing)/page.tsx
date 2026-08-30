@@ -168,7 +168,12 @@ export default async function HomePage() {
 						{projects.map((p) => (
 							<article key={p.id} className="rail__i">
 								<Link href={`/portfolio/${p.slug}`} data-cursor="مشاهده" className="group block">
-									<Reveal as="img-rv" className="rail__par">
+									{/* اینجا Reveal نمی‌گذاریم: کارت‌های ریل داخل یک ancestor با
+									    overflow:hidden هستند و IntersectionObserver رخداد تقاطع را
+									    نسبت به همان کادرِ بریده حساب می‌کند — یعنی کارت‌هایی که هنوز
+									    افقی وارد نشده‌اند هیچ‌وقت تقاطع نمی‌کنند و محو باقی می‌مانند.
+									    ورودِ خود بخش و حرکت افقی به‌اندازه‌ی کافی حرکت دارد. */}
+									<div className="rail__par">
 										<div className="relative aspect-[4/3] overflow-hidden bg-[var(--bg-2)]">
 											{p.coverImage ? (
 												// eslint-disable-next-line @next/next/no-img-element
@@ -189,7 +194,7 @@ export default async function HomePage() {
 												/>
 											)}
 										</div>
-									</Reveal>
+									</div>
 
 									{/* دسته و سال روی خودِ جلد آمده‌اند؛ اینجا تکرارشان نمی‌کنیم */}
 									<div className="mt-6 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
@@ -265,25 +270,26 @@ export default async function HomePage() {
 					<RevealLines lines={[c.assurancesLine1, c.assurancesLine2]} />
 				</h2>
 
-				<ul className="grid gap-y-2">
+				<ul className="grid gap-4 md:gap-0">
 					{assurances.map((a, i) => (
 						<li
 							key={a.t}
 							// عرض و تورفتگیِ متفاوت برای هر ردیف — ریتم دستی، نه شبکه‌ی یکنواخت
 							className={i % 2 === 0 ? "md:w-[74%]" : "md:ms-auto md:w-[74%] lg:w-[68%]"}
 						>
-							<Reveal as="rule" />
-							<Reveal
-								as="rv-blur"
-								delay={i * 100}
-								className="grid gap-4 py-10 md:grid-cols-[minmax(0,15rem)_1fr] md:gap-12"
-							>
-								<h3 className="h3">{a.t}</h3>
-								<p className="body-t text-[15px]">{a.d}</p>
+							<Reveal as="rv-blur" delay={i * 100}>
+								<article className="vow" style={{ "--i": i } as React.CSSProperties}>
+									<span className="vow__n num" aria-hidden="true">
+										{String(i + 1).padStart(2, "0")}
+									</span>
+									<div className="grid gap-3 md:grid-cols-[minmax(0,15rem)_1fr] md:gap-12">
+										<h3 className="h3 max-w-[16ch]">{a.t}</h3>
+										<p className="body-t text-[15px]">{a.d}</p>
+									</div>
+								</article>
 							</Reveal>
 						</li>
 					))}
-					<Reveal as="rule" className="md:w-[74%]" />
 				</ul>
 			</section>
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyToken } from "@/lib/auth"
-import { securityHeaders } from "@/lib/security"
+import { buildSecurityHeaders } from "@/lib/security"
 
 const PROTECTED = "/dashboard"
 const AUTH_PAGES = ["/login", "/forgot-password", "/reset-password"]
@@ -25,9 +25,13 @@ export async function middleware(req: NextRequest) {
 		return NextResponse.redirect(url)
 	}
 
-	// اعمال هدرهای امنیتی
+	// اعمال هدرهای امنیتی.
+	// پروتکل را از هدر پراکسی می‌خوانیم؛ پشت nginx، خودِ درخواستِ داخلی http است.
+	const proto = req.headers.get("x-forwarded-proto") ?? req.nextUrl.protocol.replace(":", "")
+	const secure = proto === "https"
+
 	const res = NextResponse.next()
-	for (const [k, v] of Object.entries(securityHeaders)) res.headers.set(k, v)
+	for (const [k, v] of Object.entries(buildSecurityHeaders(secure))) res.headers.set(k, v)
 	return res
 }
 

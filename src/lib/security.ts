@@ -32,7 +32,7 @@ export function getClientIp(headers: Headers): string {
  * (منابع خارجی، frame، form-action، object) بسته‌اند.
  * در توسعه 'unsafe-eval' لازم است، در پروڈاکشن نه.
  */
-function csp(): string {
+function csp(secure: boolean): string {
 	const dev = process.env.NODE_ENV !== "production"
 	return [
 		"default-src 'self'",
@@ -45,20 +45,35 @@ function csp(): string {
 		"base-uri 'self'",
 		"form-action 'self'",
 		"frame-ancestors 'self'",
-		"upgrade-insecure-requests",
+		// فقط وقتی خودِ صفحه روی HTTPS آمده باشد.
+		// روی سایتی که با http سرو می‌شود این دستور همه‌ی درخواست‌های CSS و JS
+		// را به https ارتقا می‌دهد و چون گواهی وجود ندارد، هیچ‌کدام لود نمی‌شوند —
+		// یعنی صفحه سفید یا بی‌استایل می‌ماند (در سافاری دقیقاً همین اتفاق افتاد).
+		...(secure ? ["upgrade-insecure-requests"] : []),
 	].join("; ")
 }
 
-/** هدرهای امنیتی استاندارد (در middleware اعمال می‌شوند). */
-export const securityHeaders: Record<string, string> = {
-	"Content-Security-Policy": csp(),
-	"X-Frame-Options": "SAMEORIGIN",
-	"X-Content-Type-Options": "nosniff",
-	"Referrer-Policy": "strict-origin-when-cross-origin",
-	"Permissions-Policy": "camera=(), microphone=(), geolocation=(), interest-cohort=()",
-	"Cross-Origin-Opener-Policy": "same-origin",
-	"X-DNS-Prefetch-Control": "on",
-	"Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+/**
+ * هدرهای امنیتی استاندارد (در middleware اعمال می‌شوند).
+ *
+ * دو هدر فقط روی HTTPS معنا دارند و اگر روی HTTP فرستاده شوند یا بی‌اثرند
+ * یا — در مورد upgrade-insecure-requests — سایت را کاملاً از کار می‌اندازند.
+ * پس بسته به پروتکلِ خودِ درخواست ساخته می‌شوند.
+ */
+export function buildSecurityHeaders(secure: boolean): Record<string, string> {
+	return {
+		"Content-Security-Policy": csp(secure),
+		"X-Frame-Options": "SAMEORIGIN",
+		"X-Content-Type-Options": "nosniff",
+		"Referrer-Policy": "strict-origin-when-cross-origin",
+		"Permissions-Policy": "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+		"Cross-Origin-Opener-Policy": "same-origin",
+		"X-DNS-Prefetch-Control": "on",
+		// مرورگرها HSTS را روی HTTP نادیده می‌گیرند؛ فرستادنش فقط نویز است.
+		...(secure
+			? { "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload" }
+			: {}),
+	}
 }
 
 /** تشخیص اسپم ساده بر اساس honeypot + طول محتوا + لینک. */
