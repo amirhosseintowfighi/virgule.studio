@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
 	return (
-		<section className="mx-auto max-w-[72ch] px-[var(--pad)] pb-[var(--sec)] pt-[clamp(110px,15vw,180px)]">
+		<section className="stage stage--tl mx-auto max-w-[72ch] px-[var(--pad)] pb-[var(--sec)] pt-[clamp(120px,16vw,200px)]">
 				<h1 className="h1">قوانین و مقررات</h1>
 				<p className="meta-fa mt-5">آخرین به‌روزرسانی: ۱۴۰۴</p>
 				<div className="mt-14 space-y-8">

@@ -1,4 +1,5 @@
-import { getSession, type SessionPayload } from "./auth"
+import { redirect } from "next/navigation"
+import { getLiveSession, type SessionPayload } from "./auth"
 import { FULL_ACCESS_ROLES, SUPER_ADMIN_ROLE } from "./permissions"
 
 export class AuthError extends Error {
@@ -20,9 +21,13 @@ export function isSuperAdmin(session: SessionPayload): boolean {
 	return session.role === SUPER_ADMIN_ROLE
 }
 
-/** کاربر واردشده را برمی‌گرداند یا خطا می‌دهد. */
+/**
+ * کاربر واردشده را برمی‌گرداند یا خطا می‌دهد.
+ * از getLiveSession استفاده می‌کند تا نقش و وضعیت فعال‌بودن از دیتابیس بیاید،
+ * نه از توکنی که ممکن است چند روز پیش صادر شده باشد.
+ */
 export async function requireUser(): Promise<SessionPayload> {
-	const session = await getSession()
+	const session = await getLiveSession()
 	if (!session) throw new AuthError("ابتدا وارد شوید.", 401)
 	return session
 }
@@ -39,4 +44,18 @@ export async function requirePermission(permission: string): Promise<SessionPayl
 
 export function hasPermission(session: SessionPayload, permission: string) {
 	return isFullAccess(session) || session.permissions.includes(permission)
+}
+
+/**
+ * نسخه‌ی مخصوص صفحه‌های پنل.
+ *
+ * requirePermission برای route handlerها خطا پرتاب می‌کند تا به پاسخ ۴۰۱/۴۰۳
+ * تبدیل شود؛ ولی داخل یک صفحه، خطای پرتاب‌شده به صفحه‌ی خطای خام Next می‌رسد.
+ * اینجا به‌جای خطا، کاربر به صفحه‌ی «دسترسی ندارید» هدایت می‌شود.
+ */
+export async function requirePermissionPage(permission: string): Promise<SessionPayload> {
+	const session = await requireUser().catch(() => null)
+	if (!session) redirect("/login?redirect=/dashboard")
+	if (!hasPermission(session, permission)) redirect(`/dashboard/no-access?p=${encodeURIComponent(permission)}`)
+	return session
 }

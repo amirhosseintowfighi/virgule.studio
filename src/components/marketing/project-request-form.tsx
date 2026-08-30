@@ -62,12 +62,12 @@ export function ProjectRequestForm() {
 			</div>
 
 			{state.error && (
-				<p role="alert" className="border-[length:var(--bw-2)] border-[var(--color-error)] p-3 text-sm text-[var(--color-error)]">
+				<p role="alert" className="border border-[var(--color-error)] p-3 text-sm text-[var(--color-error)]">
 					{state.error}
 				</p>
 			)}
 			{state.success && (
-				<p role="status" className="border-[length:var(--bw-2)] border-[var(--color-success)] p-3 text-sm text-[var(--color-success)]">
+				<p role="status" className="border border-[var(--color-success)] p-3 text-sm text-[var(--color-success)]">
 					{state.message}
 				</p>
 			)}

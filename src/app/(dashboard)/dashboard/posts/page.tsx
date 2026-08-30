@@ -1,11 +1,11 @@
 import Link from "next/link"
 import prisma from "@/lib/prisma"
-import { requirePermission } from "@/lib/rbac"
+import { requirePermissionPage } from "@/lib/rbac"
 import { DeletePostButton } from "@/components/admin/delete-post-button"
 import { statusLabel } from "@/lib/labels"
 
 export default async function PostsAdminPage() {
-	await requirePermission("post:read")
+	await requirePermissionPage("post:read")
 	const posts = await prisma.post.findMany({
 		include: { author: true, category: true },
 		orderBy: { updatedAt: "desc" },
@@ -17,13 +17,13 @@ export default async function PostsAdminPage() {
 				<h1 className="text-2xl font-extrabold">مدیریت مقالات</h1>
 				<Link
 					href="/dashboard/posts/new"
-					className="border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-primary-fill)] px-5 py-2.5 text-sm font-bold text-white shadow-[var(--elev-1)] transition-shadow hover:shadow-none"
+					className="border border-[var(--color-border)] bg-[var(--color-primary-fill)] px-5 py-2.5 text-sm font-bold text-[var(--color-on-primary)] rounded-[var(--radius-full)] shadow-[var(--elev-1)] transition-colors hover:bg-[var(--color-primary-hover)]"
 				>
 					+ مقاله‌ی جدید
 				</Link>
 			</div>
 
-			<div className="overflow-hidden border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-surface)]">
+			<div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
 				<table className="w-full text-right text-sm">
 					<thead className="bg-[var(--color-surface-2)] text-[var(--color-muted)]">
 						<tr>

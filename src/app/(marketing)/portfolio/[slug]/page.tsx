@@ -3,14 +3,22 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import prisma from "@/lib/prisma"
 import { Reveal, RevealLines } from "@/components/ui/reveal"
+import { ProjectCover } from "@/components/marketing/project-cover"
+import { buildMetadata, JsonLd, projectJsonLd, breadcrumbJsonLd } from "@/lib/seo"
 
 type Props = { params: Promise<{ slug: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { slug } = await params
 	const project = await prisma.project.findUnique({ where: { slug } })
-	if (!project) return { title: "نمونه‌کار" }
-	return { title: project.title, description: project.summary ?? undefined }
+	if (!project) return { title: "نمونه‌کار پیدا نشد" }
+	return buildMetadata({
+		title: `${project.title} — نمونه‌کار`,
+		description:
+			project.summary ?? `${project.title}؛ پروژه‌ای که استودیو ویرگول طراحی و پیاده‌سازی کرده است.`,
+		path: `/portfolio/${project.slug}`,
+		...(project.coverImage ? { image: project.coverImage } : {}),
+	})
 }
 
 /** شماره‌ی فصل‌ها بر اساس فصل‌هایی که واقعاً داده دارند ساخته می‌شود، نه یک قالب ثابت. */
@@ -52,18 +60,33 @@ export default async function PortfolioDetailPage({ params }: Props) {
 
 	return (
 		<>
-			<header className="px-[var(--pad)] pb-[clamp(40px,6vw,80px)] pt-[clamp(120px,16vw,200px)]">
+			<JsonLd
+				data={[
+					projectJsonLd({
+						title: project.title,
+						description: project.summary,
+						path: `/portfolio/${project.slug}`,
+						image: project.coverImage,
+						year: project.year,
+					}),
+					breadcrumbJsonLd([
+						{ name: "نمونه‌کارها", path: "/portfolio" },
+						{ name: project.title, path: `/portfolio/${project.slug}` },
+					]),
+				]}
+			/>
+			<header className="stage stage--tl px-[var(--pad)] pb-[clamp(40px,6vw,80px)] pt-[clamp(128px,17vw,220px)]">
 				<Reveal className="mb-8">
 					<Link href="/portfolio" className="link-u meta-fa">
 						→ بازگشت به نمونه‌کارها
 					</Link>
 				</Reveal>
 				<h1 className="h1 max-w-[16ch]">
-					<RevealLines lines={[project.title]} />
+					<RevealLines className="sheen" lines={[project.title]} />
 				</h1>
 				{project.summary && (
 					<Reveal delay={220}>
-						<p className="body-t mt-8 max-w-[56ch]">{project.summary}</p>
+						<p className="lead mt-8 max-w-[52ch]">{project.summary}</p>
 					</Reveal>
 				)}
 
@@ -93,7 +116,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
 			</header>
 
 			<div className="px-[var(--pad)]">
-				<Reveal as="img-rv" className="card-b">
+				<Reveal as="img-rv" className="card parallax overflow-hidden">
 					<div className="flex aspect-[16/8] items-center justify-center overflow-hidden bg-[var(--bg-2)]">
 						{project.coverImage ? (
 							// eslint-disable-next-line @next/next/no-img-element
@@ -104,13 +127,19 @@ export default async function PortfolioDetailPage({ params }: Props) {
 								decoding="async"
 							/>
 						) : (
-							<span className="stroke-text display leading-none">{project.title.slice(0, 2)}</span>
+							<ProjectCover
+								title={project.title}
+								client={project.client}
+								category={project.category?.name}
+								year={project.year}
+								wide
+							/>
 						)}
 					</div>
 				</Reveal>
 			</div>
 
-			<div className="px-[var(--pad)] pb-[var(--sec)]">
+			<div className="stage stage--r px-[var(--pad)] pb-[var(--sec)]">
 				{paragraphs.length > 0 && (
 					<Chapter n={++n} title="روایت پروژه">
 						<div className="space-y-6">
@@ -128,7 +157,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
 						<ul className="max-w-[62ch]">
 							{project.features.map((f, i) => (
 								<li key={f}>
-									<Reveal delay={i * 50} className="flex items-baseline gap-5 border-b-[length:var(--bw-2)] border-[var(--fg)] py-5">
+									<Reveal delay={i * 50} className="flex items-baseline gap-5 border-b border-[var(--line)] py-5">
 										<span className="meta font-latin">{String(i + 1).padStart(2, "0")}</span>
 										<span>{f}</span>
 									</Reveal>
@@ -154,7 +183,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
 					<Chapter n={++n} title="تصاویر">
 						<div className="grid gap-6 sm:grid-cols-2">
 							{project.gallery.map((m) => (
-								<Reveal key={m.id} as="img-rv" className="card-b">
+								<Reveal key={m.id} as="img-rv" className="card overflow-hidden">
 									{/* eslint-disable-next-line @next/next/no-img-element */}
 									<img
 										src={m.url}
@@ -172,9 +201,10 @@ export default async function PortfolioDetailPage({ params }: Props) {
 				)}
 			</div>
 
-			<section className="border-t border-[var(--line)] px-[var(--pad)] py-[var(--sec)]">
+			<section className="stage stage--c px-[var(--pad)] py-[var(--sec)]">
+				<Reveal as="rule" className="mb-[var(--sec)]" />
 				<h2 className="h2 max-w-[16ch]">
-					<RevealLines lines={[<>پروژه‌ای مشابه</>, <>در ذهن دارید؟</>]} />
+					<RevealLines className="sheen" lines={["پروژه‌ای مشابه", "در ذهن دارید؟"]} />
 				</h2>
 				<Reveal delay={220} className="mt-10">
 					<Link href="/request-project" className="btn btn--solid">

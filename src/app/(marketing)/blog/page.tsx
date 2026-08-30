@@ -1,15 +1,18 @@
-import type { Metadata } from "next"
 import Link from "next/link"
 import prisma from "@/lib/prisma"
 import { safe } from "@/lib/safe"
 import { PostStatus } from "@prisma/client"
 import { PageHead } from "@/components/ui/container"
 import { Reveal } from "@/components/ui/reveal"
+import { buildMetadata, JsonLd, breadcrumbJsonLd } from "@/lib/seo"
+import { getContent } from "@/lib/content"
 
-export const metadata: Metadata = {
-	title: "یادداشت‌ها",
-	description: "مقالات و آموزش‌های ویرگول درباره‌ی طراحی، توسعه و سئو.",
-}
+export const metadata = buildMetadata({
+	title: "یادداشت‌های طراحی و توسعه‌ی وب",
+	description:
+		"آنچه در پروژه‌های واقعی یاد گرفته‌ایم: طراحی رابط کاربری، سرعت سایت، سئوی فنی و تصمیم‌های مهندسی — بدون کلی‌گویی.",
+	path: "/blog",
+})
 
 type Props = { searchParams: Promise<{ page?: string; q?: string }> }
 
@@ -39,54 +42,68 @@ export default async function BlogPage({ searchParams }: Props) {
 	])
 
 	const pages = Math.ceil(total / PER_PAGE)
+	const c = await getContent("blog")
 
 	return (
 		<>
-			<PageHead label="Journal" lines={[<>یادداشت‌ها</>]}>
-				<Reveal delay={240} className="mt-10 max-w-md">
+			<PageHead
+				lines={[c.headLine1]}
+				lead={c.headLead}
+			>
+				<Reveal delay={320} className="mt-10 max-w-md">
 					<form action="/blog">
 						<label>
 							<span className="label">جستجو</span>
-							<input name="q" defaultValue={q} placeholder="در مقالات جستجو کنید…" className="field" />
+							<input name="q" defaultValue={q} placeholder="در یادداشت‌ها جستجو کنید…" className="field" />
 						</label>
 					</form>
 				</Reveal>
 			</PageHead>
 
-			<div className="px-[var(--pad)] pb-[var(--sec)]">
+			<section className="stage stage--l px-[var(--pad)] pb-[var(--sec)]">
 				{posts.length === 0 ? (
 					<p className="body-t">مقاله‌ای پیدا نشد.</p>
 				) : (
-					<>
-						<Reveal as="rule" />
-						<ul>
-							{posts.map((p, i) => (
-								<li key={p.id}>
-									<Link href={`/blog/${p.slug}`} className="row-i py-9">
-										<div className="relative z-10 grid gap-4 md:grid-cols-[1fr_auto] md:items-baseline md:gap-12">
-											<div>
-												<div className="mb-3 flex items-center gap-5">
-													<span className="meta font-latin">{String(i + 1).padStart(2, "0")}</span>
-													{p.category && <span className="meta-fa">{p.category.name}</span>}
-												</div>
-												<h2 className="row-i__t h3 max-w-[24ch]">{p.title}</h2>
-												{p.excerpt && <p className="body-t mt-3 max-w-[62ch] text-[15px]">{p.excerpt}</p>}
+					/* هر یادداشت یک تخته — همان سطحی که در بقیه‌ی سایت استفاده می‌شود */
+					<ul className="grid gap-6 md:grid-cols-2">
+						{posts.map((p, i) => (
+							<li key={p.id} className={i % 3 === 0 ? "md:col-span-2" : ""}>
+								<Reveal as="rv-blur" delay={(i % 3) * 90} className="h-full">
+									<article className="panel h-full">
+										<span className="panel__edge" aria-hidden="true" />
+										<Link href={`/blog/${p.slug}`} className="group block h-full p-[clamp(22px,3vw,44px)]">
+											<div className="mb-5 flex flex-wrap items-center gap-x-5 gap-y-2">
+												{p.category && <span className="meta-fa">{p.category.name}</span>}
+												{p.readingTime && (
+													<span className="meta font-latin">{p.readingTime} min</span>
+												)}
 											</div>
-											<div className="flex items-center gap-5 md:flex-col md:items-end md:gap-2">
+
+											<h2 className="h3 max-w-[26ch] transition-colors duration-500 group-hover:text-[var(--accent)]">
+												{p.title}
+											</h2>
+											{p.excerpt && <p className="body-t mt-4 max-w-[60ch] text-[15px]">{p.excerpt}</p>}
+
+											<div className="mt-8 flex flex-wrap items-center justify-between gap-4">
 												{p.author && <span className="meta-fa">{p.author.name}</span>}
-												{p.readingTime && <span className="meta font-latin">{p.readingTime} min</span>}
+												<span
+													className="meta-fa accent translate-x-3 opacity-0 transition-[opacity,transform] duration-500 group-hover:translate-x-0 group-hover:opacity-100"
+													style={{ transitionTimingFunction: "var(--ease)" }}
+													aria-hidden="true"
+												>
+													خواندن ←
+												</span>
 											</div>
-										</div>
-									</Link>
-									<Reveal as="rule" />
-								</li>
-							))}
-						</ul>
-					</>
+										</Link>
+									</article>
+								</Reveal>
+							</li>
+						))}
+					</ul>
 				)}
 
 				{pages > 1 && (
-					<nav className="mt-14 flex gap-6" aria-label="صفحه‌بندی">
+					<nav className="mt-16 flex gap-6" aria-label="صفحه‌بندی">
 						{Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
 							<Link
 								key={n}
@@ -99,7 +116,7 @@ export default async function BlogPage({ searchParams }: Props) {
 						))}
 					</nav>
 				)}
-			</div>
+			</section>
 		</>
 	)
 }

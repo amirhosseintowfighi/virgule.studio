@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation"
 import prisma from "@/lib/prisma"
-import { requirePermission } from "@/lib/rbac"
+import { requirePermissionPage } from "@/lib/rbac"
 import { PostEditor } from "@/components/admin/post-editor"
 
 type Props = { params: Promise<{ id: string }> }
 
 export default async function EditPostPage({ params }: Props) {
-	await requirePermission("post:write")
+	await requirePermissionPage("post:write")
 	const { id } = await params
 	const isNew = id === "new"
 

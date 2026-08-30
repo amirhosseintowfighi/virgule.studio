@@ -1,6 +1,6 @@
 import Link from "next/link"
 import prisma from "@/lib/prisma"
-import { requirePermission, hasPermission } from "@/lib/rbac"
+import { requirePermissionPage, hasPermission } from "@/lib/rbac"
 import { DeleteButton } from "@/components/admin/delete-button"
 import { deleteCategory } from "@/server/actions/categories"
 
@@ -10,7 +10,7 @@ const typeLabel: Record<string, string> = {
 }
 
 export default async function CategoriesAdminPage() {
-	const session = await requirePermission("project:read")
+	const session = await requirePermissionPage("project:read")
 	const canWrite = hasPermission(session, "project:write")
 	const categories = await prisma.category.findMany({
 		orderBy: [{ type: "asc" }, { name: "asc" }],
@@ -27,7 +27,7 @@ export default async function CategoriesAdminPage() {
 				{canWrite && (
 					<Link
 						href="/dashboard/categories/new"
-						className="border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-primary-fill)] px-5 py-2.5 text-sm font-bold text-white shadow-[var(--elev-1)] transition-shadow hover:shadow-none"
+						className="border border-[var(--color-border)] bg-[var(--color-primary-fill)] px-5 py-2.5 text-sm font-bold text-[var(--color-on-primary)] rounded-[var(--radius-full)] shadow-[var(--elev-1)] transition-colors hover:bg-[var(--color-primary-hover)]"
 					>
 						+ دسته‌بندی جدید
 					</Link>
@@ -39,7 +39,7 @@ export default async function CategoriesAdminPage() {
 					هنوز دسته‌بندی‌ای ثبت نشده است.
 				</div>
 			) : (
-				<div className="overflow-hidden border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-surface)]">
+				<div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
 					<table className="w-full text-right text-sm">
 						<thead className="bg-[var(--color-surface-2)] text-[var(--color-muted)]">
 							<tr>

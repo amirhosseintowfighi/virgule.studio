@@ -9,7 +9,7 @@ type Props = {
 	/** تاخیر پلکانی (میلی‌ثانیه) */
 	delay?: number
 	/** نوع حرکت: جابه‌جایی ساده، پرده‌ی تصویر، یا خطِ کشیده‌شونده */
-	as?: "rv" | "img-rv" | "rule" | "line-mask"
+	as?: "rv" | "rv-blur" | "img-rv" | "rule" | "line-mask"
 }
 
 /** یک ناظر برای کل صفحه — به‌جای یک IntersectionObserver به ازای هر عنصر. */

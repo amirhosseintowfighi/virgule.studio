@@ -17,10 +17,6 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
 				رفتن به محتوای اصلی
 			</a>
 			<SiteFx />
-			{/* شبکه‌ی صفحه رسم می‌شود، نه حدس زده — لهجه‌ی ادیتوریال/براتالیستی */}
-			<div className="frame" aria-hidden="true">
-				<i /><i /><i /><i /><i /><i />
-			</div>
 			<Navbar />
 			<main id="main" className="relative z-[1]">
 				{children}

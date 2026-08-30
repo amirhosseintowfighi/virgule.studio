@@ -1,10 +1,10 @@
 import Link from "next/link"
-import { requirePermission } from "@/lib/rbac"
+import { requirePermissionPage } from "@/lib/rbac"
 import { EntityForm, type FormField } from "@/components/admin/entity-form"
 import { saveCategory } from "@/server/actions/categories"
 
 export default async function NewCategoryPage() {
-	await requirePermission("project:write")
+	await requirePermissionPage("project:write")
 
 	const fields: FormField[] = [
 		{ name: "name", label: "نام دسته", required: true, placeholder: "خدماتی", full: false },

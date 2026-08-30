@@ -1,12 +1,12 @@
 import Link from "next/link"
 import prisma from "@/lib/prisma"
-import { requirePermission } from "@/lib/rbac"
+import { requirePermissionPage } from "@/lib/rbac"
 import { roleLabel } from "@/lib/permissions"
 import { EntityForm, type FormField } from "@/components/admin/entity-form"
 import { saveUser } from "@/server/actions/users"
 
 export default async function NewUserPage() {
-	await requirePermission("user:write")
+	await requirePermissionPage("user:write")
 	const roles = await prisma.role.findMany({ orderBy: { name: "asc" } })
 
 	const fields: FormField[] = [

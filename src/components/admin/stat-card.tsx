@@ -12,7 +12,7 @@ export function StatCard({
 	hint?: string
 }) {
 	return (
-		<div className="border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--elev-1)]">
+		<div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--elev-1)]">
 			<div className="mb-3 flex items-center justify-between text-[var(--color-muted)]">
 				<span className="text-sm font-bold">{label}</span>
 				{icons[icon]}

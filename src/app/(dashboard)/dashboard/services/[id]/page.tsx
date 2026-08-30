@@ -1,14 +1,14 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import prisma from "@/lib/prisma"
-import { requirePermission } from "@/lib/rbac"
+import { requirePermissionPage } from "@/lib/rbac"
 import { EntityForm, type FormField } from "@/components/admin/entity-form"
 import { saveService } from "@/server/actions/services"
 
 type Props = { params: Promise<{ id: string }> }
 
 export default async function EditServicePage({ params }: Props) {
-	await requirePermission("service:write")
+	await requirePermissionPage("service:write")
 	const { id } = await params
 	const service = await prisma.service.findUnique({ where: { id } })
 	if (!service) notFound()

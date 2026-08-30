@@ -14,7 +14,7 @@ export function FaqAccordion({ items }: { items: Item[] }) {
 			{items.map((item, i) => {
 				const isOpen = open === i
 				return (
-					<div key={i} className="border-b-[length:var(--bw-2)] border-[var(--fg)]">
+					<div key={i} className="border-b border-[var(--line)]">
 						<h3>
 							<button
 								onClick={() => setOpen(isOpen ? null : i)}
@@ -27,7 +27,7 @@ export function FaqAccordion({ items }: { items: Item[] }) {
 								</span>
 								<span
 									className={clsx(
-										"accent grid h-9 w-9 shrink-0 place-items-center border-[length:var(--bw-2)] border-current text-2xl leading-none transition-transform duration-500",
+										"accent grid h-9 w-9 shrink-0 place-items-center border border-current text-2xl leading-none transition-transform duration-500",
 										isOpen && "rotate-45"
 									)}
 									aria-hidden="true"

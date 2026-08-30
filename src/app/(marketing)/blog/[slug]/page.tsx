@@ -2,7 +2,8 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import prisma from "@/lib/prisma"
 import { PostStatus } from "@prisma/client"
-import { Reveal } from "@/components/ui/reveal"
+import { Reveal, RevealLines } from "@/components/ui/reveal"
+import { buildMetadata, JsonLd, articleJsonLd, breadcrumbJsonLd } from "@/lib/seo"
 import Link from "next/link"
 
 type Props = { params: Promise<{ slug: string }> }
@@ -22,7 +23,7 @@ export default async function ArticlePage({ params }: Props) {
 	const { slug } = await params
 	const post = await prisma.post.findUnique({
 		where: { slug },
-		include: { author: true, category: true, tags: true },
+		include: { author: true, category: true, tags: true, seo: true },
 	})
 	if (!post || post.status !== PostStatus.PUBLISHED) notFound()
 
@@ -37,16 +38,26 @@ export default async function ArticlePage({ params }: Props) {
 		take: 3,
 	})
 
-	const jsonLd = {
-		"@context": "https://schema.org",
-		"@type": "BlogPosting",
-		headline: post.title,
-		author: { "@type": "Person", name: post.author?.name },
-		datePublished: post.publishedAt?.toISOString(),
-	}
-	const jsonLdHtml = { __html: JSON.stringify(jsonLd) }
 
 	return (
+		<>
+			<JsonLd
+				data={[
+					articleJsonLd({
+						title: post.seo?.metaTitle ?? post.title,
+						description: post.seo?.metaDesc ?? post.excerpt,
+						path: `/blog/${post.slug}`,
+						published: post.publishedAt,
+						modified: post.updatedAt,
+						author: post.author?.name,
+						image: post.featuredImage,
+					}),
+					breadcrumbJsonLd([
+						{ name: "یادداشت‌ها", path: "/blog" },
+						{ name: post.title, path: `/blog/${post.slug}` },
+					]),
+				]}
+			/>
 			<article>
 			<div className="mx-auto max-w-[70ch] px-[var(--pad)] pb-[var(--sec)] pt-[clamp(110px,15vw,180px)]">
 				<Reveal className="meta-fa mb-8">
@@ -66,28 +77,41 @@ export default async function ArticlePage({ params }: Props) {
 					))}
 				</div>
 
-				<div className="mt-12 flex flex-wrap gap-x-6 gap-y-2">
-					{post.tags.map((t) => (
-						<Link key={t.id} href={`/blog/tag/${t.slug}`} className="meta-fa link-u">
-							#{t.name}
-						</Link>
-					))}
-				</div>
+				{/* مسیر /blog/tag/... وجود ندارد؛ برچسب‌ها به جستجوی همان صفحه وصل می‌شوند */}
+				{post.tags.length > 0 && (
+					<ul className="mt-12 flex flex-wrap gap-2">
+						{post.tags.map((t) => (
+							<li key={t.id}>
+								<Link href={`/blog?q=${encodeURIComponent(t.name)}`} className="tag">
+									#{t.name}
+								</Link>
+							</li>
+						))}
+					</ul>
+				)}
 
 				{related.length > 0 && (
-					<div className="mt-20">
-						<h2 className="meta font-latin mb-6">Related</h2>
+					<div className="mt-24">
+						<Reveal as="rule" className="mb-10" />
+						<h2 className="h3 mb-8">یادداشت‌های مرتبط</h2>
 						<div className="grid gap-4 md:grid-cols-3">
-							{related.map((r) => (
-								<Link key={r.id} href={`/blog/${r.slug}`} className="link-u block border-t border-[var(--line)] pt-4 font-bold">
-									{r.title}
-								</Link>
+							{related.map((r, i) => (
+								<Reveal key={r.id} as="rv-blur" delay={i * 90} className="h-full">
+									<article className="panel h-full">
+										<span className="panel__edge" aria-hidden="true" />
+										<Link href={`/blog/${r.slug}`} className="group block h-full p-6">
+											<h3 className="font-medium leading-relaxed transition-colors duration-500 group-hover:text-[var(--accent)]">
+												{r.title}
+											</h3>
+										</Link>
+									</article>
+								</Reveal>
 							))}
 						</div>
 					</div>
 				)}
 			</div>
-			<script type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml} />
 		</article>
+		</>
 	)
 }

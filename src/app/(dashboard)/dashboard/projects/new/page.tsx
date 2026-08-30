@@ -1,12 +1,12 @@
 import Link from "next/link"
 import prisma from "@/lib/prisma"
 import { CategoryType } from "@prisma/client"
-import { requirePermission } from "@/lib/rbac"
+import { requirePermissionPage } from "@/lib/rbac"
 import { EntityForm, type FormField } from "@/components/admin/entity-form"
 import { saveProject } from "@/server/actions/projects"
 
 export default async function NewProjectPage() {
-	await requirePermission("project:write")
+	await requirePermissionPage("project:write")
 	const categories = await prisma.category.findMany({
 		where: { type: CategoryType.PORTFOLIO },
 		orderBy: { name: "asc" },

@@ -7,21 +7,6 @@ export function Container({ className, children }: { className?: string; childre
 	)
 }
 
-/**
- * برچسب شماره‌دار بخش — قاب ضخیم با سایه‌ی سخت.
- * جای «eyebrow» ساده‌ی قبلی را می‌گیرد تا ساختار نشریه‌ای دیده شود.
- */
-export function Slab({ index, label }: { index?: string; label: string }) {
-	return (
-		<Reveal className="w-fit">
-			<span className="slab font-latin">
-				{index && <b>{index}</b>}
-				{label}
-			</span>
-		</Reveal>
-	)
-}
-
 /** بخش استاندارد پنل مدیریت و صفحات فرعی. */
 export function Section({
 	id,
@@ -57,35 +42,29 @@ export function Section({
  * یک الگو برای همه‌ی مسیرها تا ریتم ورود به هر صفحه یکسان بماند.
  */
 export function PageHead({
-	index,
-	label,
 	lines,
 	lead,
 	children,
 }: {
-	/** شماره‌ی بخش، مثل «01» */
-	index?: string
-	/** برچسب لاتین کوچک بالای عنوان */
-	label?: string
 	/** خطوط عنوان — شکستن سطر عمدی است */
 	lines: React.ReactNode[]
 	lead?: React.ReactNode
 	children?: React.ReactNode
 }) {
 	return (
-		<header className="px-[var(--pad)] pb-[clamp(40px,6vw,80px)] pt-[clamp(112px,15vw,190px)]">
-			{label && <Slab index={index} label={label} />}
-			<h1 className={clsx("h1 max-w-[16ch]", label && "mt-8")}>
-				<RevealLines lines={lines} />
+		<header className="stage stage--tl px-[var(--pad)] pb-[clamp(56px,8vw,120px)] pt-[clamp(128px,17vw,240px)]">
+			<h1 className="h1 max-w-[17ch]">
+				{/* sheen روی همان عنصری می‌نشیند که کلاس `in` می‌گیرد */}
+				<RevealLines lines={lines} className="sheen" />
 			</h1>
 			{lead && (
-				<Reveal delay={240}>
-					<p className="body-t mt-8 max-w-[56ch]">{lead}</p>
+				<Reveal delay={320}>
+					<p className="lead mt-10 max-w-[52ch]">{lead}</p>
 				</Reveal>
 			)}
 			{children}
-			{/* خطِ ضخیمِ پایانِ سربرگ — مرز صریح میان تیتر و محتوا */}
-			<Reveal as="rule" className="mt-[clamp(32px,5vw,64px)]" />
+			{/* خط مویی پایان سربرگ — مرزی که حس می‌شود، نه دیده */}
+			<Reveal as="rule" className="mt-[clamp(48px,7vw,96px)]" />
 		</header>
 	)
 }

@@ -18,7 +18,7 @@ export type FormField = {
 }
 
 const inputCls =
-	"w-full border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 text-sm outline-none transition-shadow focus:border-[var(--color-primary)] focus:shadow-[var(--elev-1)]"
+	"w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 text-base outline-none transition-colors duration-300 focus:border-[var(--color-primary)]"
 
 function SubmitButton({ label }: { label: string }) {
 	const { pending } = useFormStatus()
@@ -26,7 +26,7 @@ function SubmitButton({ label }: { label: string }) {
 		<button
 			type="submit"
 			disabled={pending}
-			className="border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-primary-fill)] px-6 py-2.5 text-sm font-bold text-white shadow-[var(--elev-1)] transition-shadow hover:shadow-none disabled:opacity-50"
+			className="border border-[var(--color-border)] bg-[var(--color-primary-fill)] px-6 py-2.5 text-sm font-bold text-[var(--color-on-primary)] rounded-[var(--radius-full)] shadow-[var(--elev-1)] transition-colors hover:bg-[var(--color-primary-hover)] disabled:opacity-50"
 		>
 			{pending ? "در حال ذخیره..." : label}
 		</button>
@@ -38,7 +38,7 @@ function Field({ field }: { field: FormField }) {
 
 	if (type === "checkbox") {
 		return (
-			<label className="flex items-center gap-3 border-[length:var(--bw-2)] border-[var(--color-border)] p-3 text-sm">
+			<label className="flex items-center gap-3 rounded-[var(--radius-md)] border border-[var(--color-border)] p-3 text-sm">
 				<input
 					type="checkbox"
 					name={field.name}
@@ -110,7 +110,7 @@ export function EntityForm({
 	return (
 		<form
 			action={action}
-			className="border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-surface)] p-6"
+			className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--elev-1)]"
 		>
 			{hidden &&
 				Object.entries(hidden).map(([k, v]) => (
@@ -126,7 +126,7 @@ export function EntityForm({
 				{cancelHref && (
 					<Link
 						href={cancelHref}
-						className="border-[length:var(--bw-2)] border-[var(--color-border)] px-6 py-2.5 text-sm font-bold transition-colors hover:bg-[var(--color-surface-2)]"
+						className="rounded-[var(--radius-full)] border border-[var(--color-border)] px-6 py-2.5 text-sm transition-colors duration-300 hover:bg-[var(--color-surface-2)]"
 					>
 						انصراف
 					</Link>

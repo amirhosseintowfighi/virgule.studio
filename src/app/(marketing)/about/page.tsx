@@ -1,86 +1,111 @@
-import type { Metadata } from "next"
 import Link from "next/link"
-import { PageHead, Slab } from "@/components/ui/container"
+import { PageHead } from "@/components/ui/container"
 import { Reveal, RevealLines } from "@/components/ui/reveal"
+import { Magnetic } from "@/components/fx/magnetic"
+import { MarkBackdrop } from "@/components/fx/mark-backdrop"
+import { buildMetadata, JsonLd, breadcrumbJsonLd } from "@/lib/seo"
+import { getContent, pairs, lines } from "@/lib/content"
 
-export const metadata: Metadata = {
-	title: "درباره ما",
-	description: "داستان ویرگول و ارزش‌های ما.",
-}
+export const metadata = buildMetadata({
+	title: "درباره‌ی استودیو ویرگول",
+	description:
+		"ویرگول یک استودیوی کوچک طراحی و توسعه‌ی وب در تهران است؛ طراحی و مهندسی در یک تیم. اینجا می‌خوانید چطور کار می‌کنیم، به چه چیزی پایبندیم و برای چه پروژه‌هایی گزینه‌ی درستی نیستیم.",
+	path: "/about",
+})
 
-/* ارزش‌ها همان سه ارزشی است که از قبل روی سایت بود — فقط بازنویسی شده، نه اضافه‌شده. */
-const values = [
-	{
-		t: "تمرکز بر نتیجه",
-		d: "هر تصمیم طراحی و فنی با هدف رشد کسب‌وکار شما گرفته می‌شود. زیبایی بدون نتیجه، تزئین است.",
-	},
-	{
-		t: "کیفیت بی‌اما",
-		d: "جزئیات برای ما اهمیت دارد؛ حالت‌های خطا، موبایل، دسترس‌پذیری و سرعت هم بخشی از طراحی‌اند، نه کارِ بعد از تحویل.",
-	},
-	{
-		t: "همکاری شفاف",
-		d: "در تمام مراحل می‌دانید کجای کار هستیم، چه چیزی ساخته شده و قدم بعدی چیست.",
-	},
-]
+export default async function AboutPage() {
+	const c = await getContent("about")
+	const values = pairs(c.values)
+	const notForUs = lines(c.notForUs)
 
-export default function AboutPage() {
 	return (
 		<>
+			<JsonLd data={breadcrumbJsonLd([{ name: "درباره‌ی ما", path: "/about" }])} />
+
 			<PageHead
-				index="04"
-				label="Studio"
-				lines={[<>ویرگول یک استودیوی</>, <>طراحی و توسعه‌ی وب است</>]}
+				lines={[c.headLine1, c.headLine2]}
+				lead={c.headLead}
 			/>
 
-			<section className="px-[var(--pad)] pb-[var(--sec)]">
-				<div className="grid gap-12 md:grid-cols-2 md:gap-20">
-					<Reveal>
-						<p className="body-t lead">
-							اسم ما از همان علامت کوچکی می‌آید که در میان متن، مکث می‌سازد. باور ما این است که همین
-							مکث‌ها — فاصله‌ها، ریتم، چیزهایی که حذف می‌شوند — تفاوت یک وب‌سایت معمولی و یک وب‌سایت
-							ماندگار را می‌سازند.
-						</p>
+			{/* ══════════ داستان ══════════ */}
+			<section className="stage stage--r relative px-[var(--pad)] pb-[var(--sec)]">
+				<MarkBackdrop className="pointer-events-none absolute -top-[10%] left-[-18%] hidden h-[min(64vh,560px)] w-[min(64vh,560px)] opacity-70 md:block" />
+				<div className="relative z-10 grid gap-14 md:grid-cols-2 md:gap-24">
+					<Reveal as="rv-blur">
+						<p className="lead">{c.storyLead}</p>
 					</Reveal>
-					<Reveal delay={120}>
-						<p className="body-t">
-							با تمرکز بر کیفیت، زیبایی و عملکرد، حضور دیجیتال برندها را متمایز می‌کنیم. طراحی و
-							مهندسی را از هم جدا نمی‌کنیم: همان کسی که چیدمان را می‌چیند، کدش را هم می‌نویسد؛ برای
-							همین چیزی که تحویل می‌گیرید دقیقاً همان چیزی است که دیده‌اید.
-						</p>
+					<Reveal delay={200}>
+						<p className="body-t">{c.storyP1}</p>
+						<p className="body-t mt-8">{c.storyP2}</p>
 					</Reveal>
 				</div>
 			</section>
 
-			<section className="px-[var(--pad)] pb-[var(--sec)]">
-				<Slab label="Values" />
-				<div className="h-10" />
-				<Reveal as="rule" />
-				<ul>
+			{/* ══════════ ارزش‌ها — پشته‌ی چسبان، مثل خدمات ══════════ */}
+			<section className="stage stage--tl px-[var(--pad)] pb-[var(--sec)]">
+				<h2 className="h2 mb-16 max-w-[16ch]">
+					<RevealLines lines={[c.valuesLine1, c.valuesLine2]} />
+				</h2>
+
+				<ul className="stack">
 					{values.map((v, i) => (
-						<li key={v.t}>
-							<Reveal delay={i * 70} className="grid gap-4 py-9 md:grid-cols-[minmax(0,20rem)_1fr] md:gap-16">
-								<div className="flex items-baseline gap-5">
-									<span className="num text-xl font-bold text-[var(--fg-3)]">{String(i + 1).padStart(2, "0")}</span>
-									<h2 className="h3">{v.t}</h2>
+						<li key={v.t} className="stack__i" style={{ "--i": i } as React.CSSProperties}>
+							<article className="panel flex min-h-[clamp(280px,42svh,420px)] flex-col p-[clamp(24px,4vw,64px)]">
+								<span className="panel__edge" aria-hidden="true" />
+								<span className="panel__ghost num" aria-hidden="true">
+									{String(i + 1).padStart(2, "0")}
+								</span>
+								<div className="my-auto grid gap-6 md:grid-cols-[minmax(0,18rem)_1fr] md:gap-16">
+									<h3 className="h2 text-[clamp(1.5rem,2.4vw,2.2rem)]">{v.t}</h3>
+									<p className="body-t max-w-[58ch]">{v.d}</p>
 								</div>
-								<p className="body-t max-w-[58ch] text-[15px]">{v.d}</p>
-							</Reveal>
-							<Reveal as="rule" />
+							</article>
 						</li>
 					))}
 				</ul>
 			</section>
 
-			<section className="border-t-[length:var(--bw-2)] border-[var(--fg)] px-[var(--pad)] py-[var(--sec)]">
-				<h2 className="h2 max-w-[16ch]">
-					<RevealLines lines={[<>با هم کار کنیم؟</>]} />
+			{/* ══════════ مرزِ کار — صراحت، بیشتر از هر ادعایی اعتماد می‌سازد ══════════ */}
+			<section className="stage stage--br px-[var(--pad)] pb-[var(--sec)]">
+				<div className="grid gap-12 md:grid-cols-[minmax(0,24rem)_1fr] md:gap-28">
+					<div className="md:sticky md:top-32 md:h-fit">
+						<h2 className="h2 max-w-[14ch]">
+							<RevealLines lines={[c.boundaryLine1, c.boundaryLine2]} />
+						</h2>
+						<Reveal delay={200}>
+							<p className="body-t mt-8 max-w-[36ch]">{c.boundaryLead}</p>
+						</Reveal>
+					</div>
+
+					<ol className="track">
+						{notForUs.map((n, i) => (
+							<li key={n} className="group relative">
+								<span className="track__dot" aria-hidden="true" />
+								<Reveal as="rv-blur" delay={i * 90} className="py-10">
+									<p className="body-t max-w-[54ch] text-[var(--fg)]">{n}</p>
+								</Reveal>
+							</li>
+						))}
+					</ol>
+				</div>
+			</section>
+
+			{/* ══════════ تماس ══════════ */}
+			<section className="stage stage--c px-[var(--pad)] py-[var(--sec)]">
+				<Reveal as="rule" className="mb-[var(--sec)]" />
+				<h2 className="display max-w-[14ch]">
+					<RevealLines className="sheen" step={130} lines={[c.ctaLine1, c.ctaLine2]} />
 				</h2>
-				<Reveal delay={200} className="mt-10 flex flex-wrap items-center gap-x-10 gap-y-6">
-					<Link href="/request-project" className="btn btn--solid">
-						شروع پروژه
-					</Link>
-					<Link href="/portfolio" className="link-u font-bold">
+				<Reveal delay={280} className="mt-10">
+					<p className="body-t max-w-[50ch]">{c.ctaLead}</p>
+				</Reveal>
+				<Reveal delay={420} className="mt-14 flex flex-wrap items-center gap-x-12 gap-y-6">
+					<Magnetic strength={0.22}>
+						<Link href="/request-project" className="btn btn--solid">
+							ثبت درخواست پروژه
+						</Link>
+					</Magnetic>
+					<Link href="/portfolio" className="link-u font-medium">
 						دیدن نمونه‌کارها ←
 					</Link>
 				</Reveal>

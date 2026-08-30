@@ -9,7 +9,6 @@ const links = [
 	{ href: "/services", label: "خدمات", en: "Services" },
 	{ href: "/portfolio", label: "نمونه‌کارها", en: "Work" },
 	{ href: "/about", label: "درباره", en: "About" },
-	{ href: "/pricing", label: "تعرفه", en: "Pricing" },
 	{ href: "/blog", label: "یادداشت‌ها", en: "Journal" },
 	{ href: "/contact", label: "تماس", en: "Contact" },
 ]
@@ -17,6 +16,7 @@ const links = [
 export function Navbar() {
 	const [open, setOpen] = useState(false)
 	const [hidden, setHidden] = useState(false)
+	const [scrolled, setScrolled] = useState(false)
 	const last = useRef(0)
 
 	// پایین که می‌روی کنار می‌رود، بالا که برمی‌گردی پیدا می‌شود.
@@ -24,6 +24,7 @@ export function Navbar() {
 		const onScroll = () => {
 			const y = window.scrollY
 			setHidden(y > 140 && y > last.current)
+			setScrolled(y > 24)
 			last.current = y
 		}
 		window.addEventListener("scroll", onScroll, { passive: true })
@@ -49,37 +50,48 @@ export function Navbar() {
 				)}
 				style={{ transitionTimingFunction: "var(--ease)" }}
 			>
-				<div className="flex items-center justify-between border-b-[length:var(--bw-2)] border-[var(--fg)] bg-[var(--bg)] px-[var(--pad)] py-4">
+				{/* نوار شیشه‌ای: وقتی صفحه پایین می‌رود، پس‌زمینه آرام ظاهر می‌شود */}
+				<div
+					className={clsx(
+						"flex items-center justify-between px-[var(--pad)] py-6 transition-[background-color,backdrop-filter,border-color] duration-700",
+						scrolled
+							? "border-b border-[var(--line)] bg-[var(--bg-glass)] backdrop-blur-xl"
+							: "border-b border-transparent"
+					)}
+					style={{ transitionTimingFunction: "var(--ease)" }}
+				>
 					<Link href="/" aria-label="ویرگول، خانه" className="flex items-center gap-3">
 						<LogoMark className="h-8 w-8 text-[var(--fg)]" />
-						<span className="text-[15px] font-bold">ویرگول</span>
+						<span className="text-[15px] font-medium">ویرگول</span>
 					</Link>
 
-					<nav className="hidden items-center md:flex" aria-label="ناوبری اصلی">
+					<nav className="hidden items-center gap-10 md:flex" aria-label="ناوبری اصلی">
 						{links.map((l) => (
-							<Link
-								key={l.href}
-								href={l.href}
-								className="border-s-[length:var(--bw)] border-[var(--line)] px-5 py-2 text-sm font-bold transition-colors duration-150 hover:bg-[var(--fg)] hover:text-[var(--bg)]"
-							>
-								{l.label}
+							// متن دولایه: با هاور، نسخه‌ی طلایی از پایین بالا می‌آید.
+							// نسخه‌ی دوم از صفحه‌خوان پنهان است تا برچسب دوبار خوانده نشود.
+							<Link key={l.href} href={l.href} className="nav-l text-sm text-[var(--fg-2)]">
+								<span className="nav-l__in">
+									<span>{l.label}</span>
+									<span aria-hidden="true">{l.label}</span>
+								</span>
 							</Link>
 						))}
 					</nav>
 
 					<div className="flex items-center gap-4">
-						<Link
-							href="/request-project"
-							className="hidden border-[length:var(--bw-2)] border-[var(--fg)] bg-[var(--accent-fill)] px-4 py-2.5 text-sm font-bold text-white transition-colors duration-150 hover:bg-[var(--fg)] hover:text-[var(--bg)] md:inline-block"
-						>
-							شروع پروژه
-						</Link>
+						{/* پوشش لازم است: .link-u در globals مقدار display را می‌دهد و
+						    کلاس `hidden` تیلویند را خنثی می‌کند. */}
+						<span className="hidden md:inline-block">
+							<Link href="/request-project" className="link-u accent text-sm font-medium">
+								شروع پروژه
+							</Link>
+						</span>
 						<button
 							onClick={() => setOpen((v) => !v)}
 							aria-expanded={open}
 							aria-controls="fullmenu"
 							aria-label={open ? "بستن منو" : "باز کردن منو"}
-							className="relative z-10 grid h-11 w-11 place-items-center border-[length:var(--bw-2)] border-[var(--fg)] md:hidden"
+							className="relative z-10 grid h-11 w-11 place-items-center rounded-full border border-[var(--line-2)] transition-colors duration-500 hover:border-[var(--accent-line)] md:hidden"
 						>
 							<span className="relative block h-[9px] w-4">
 								<span
@@ -109,14 +121,14 @@ export function Navbar() {
 								key={l.href}
 								href={l.href}
 								onClick={() => setOpen(false)}
-								className="menu-item border-b-[length:var(--bw-2)] border-[var(--fg)] py-5"
+								className="menu-item border-b border-[var(--line)] py-6"
 							>
 								{/* لایه‌ی بیرونی حرکت ماسک را می‌گیرد (display:block از globals)، لایه‌ی درونی چیدمان را */}
 								<span style={{ transitionDelay: `${140 + i * 60}ms` }}>
-									<span className="flex items-baseline justify-between">
+									<span className="flex items-baseline justify-between gap-6">
 										<span className="h3">{l.label}</span>
-										<span className="num text-xl font-bold text-[var(--fg-3)]">
-											{String(i + 1).padStart(2, "0")}
+										<span className="accent text-xl" aria-hidden="true">
+											←
 										</span>
 									</span>
 								</span>

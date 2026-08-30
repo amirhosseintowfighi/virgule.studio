@@ -6,7 +6,7 @@ import { loginAction, type ActionState } from "@/server/actions/auth"
 const initial: ActionState = {}
 
 const inputCls =
-	"w-full border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-sm outline-none transition-shadow focus:border-[var(--color-primary)] focus:shadow-[var(--elev-1)]"
+	"w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-base outline-none transition-colors duration-300 focus:border-[var(--color-primary)]"
 
 export function LoginForm() {
 	const [state, action, pending] = useActionState(loginAction, initial)
@@ -31,7 +31,7 @@ export function LoginForm() {
 			</label>
 
 			{state.error && (
-				<p role="alert" className="border-[length:var(--bw-2)] border-[var(--color-error)] p-3 text-sm text-[var(--color-error)]">
+				<p role="alert" className="border border-[var(--color-error)] p-3 text-sm text-[var(--color-error)]">
 					{state.error}
 				</p>
 			)}
@@ -39,7 +39,7 @@ export function LoginForm() {
 			<button
 				type="submit"
 				disabled={pending}
-				className="w-full border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-primary-fill)] px-6 py-3 text-sm font-bold text-white shadow-[var(--elev-1)] transition-shadow hover:shadow-none disabled:opacity-50"
+				className="w-full border border-[var(--color-border)] bg-[var(--color-primary-fill)] px-6 py-3 text-sm font-bold text-[var(--color-on-primary)] rounded-[var(--radius-full)] shadow-[var(--elev-1)] transition-colors hover:bg-[var(--color-primary-hover)] disabled:opacity-50"
 			>
 				{pending ? "در حال ورود..." : "ورود"}
 			</button>

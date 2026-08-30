@@ -250,9 +250,9 @@ async function main() {
 		create: { name: "شرکتی", slug: "corporate", type: CategoryType.PORTFOLIO },
 	})
 	await prisma.category.upsert({ where: { slug: "service-based" }, update: {}, create: { name: "خدماتی", slug: "service-based", type: CategoryType.PORTFOLIO } })
-	await prisma.category.upsert({ where: { slug: "ecommerce" }, update: {}, create: { name: "فروشگاهی", slug: "ecommerce", type: CategoryType.PORTFOLIO } })
+	const shopCat = await prisma.category.upsert({ where: { slug: "ecommerce" }, update: {}, create: { name: "فروشگاهی", slug: "ecommerce", type: CategoryType.PORTFOLIO } })
 	await prisma.category.upsert({ where: { slug: "landing" }, update: {}, create: { name: "لندینگ / کمپین", slug: "landing", type: CategoryType.PORTFOLIO } })
-	await prisma.category.upsert({ where: { slug: "web-app" }, update: {}, create: { name: "اپلیکیشن وب", slug: "web-app", type: CategoryType.PORTFOLIO } })
+	const appCat = await prisma.category.upsert({ where: { slug: "web-app" }, update: {}, create: { name: "اپلیکیشن وب", slug: "web-app", type: CategoryType.PORTFOLIO } })
 
 	const tagNames = [
 		["Next.js", "nextjs"], ["طراحی UI", "ui-design"],
@@ -319,13 +319,30 @@ async function main() {
 			features: ["سبد خرید", "درگاه پرداخت", "مدیریت محصولات"],
 			summary: "پیاده‌سازی فروشگاه اینترنتی سریع و امن.",
 			content: "فروشگاه مانا با هدف ارائه‌ی تجربه‌ی خرید سریع و امن طراحی شد.\n\nبا اتصال به درگاه پرداخت امن و پنل مدیریت محصولات، مانا توانست فروش آنلاین خود را آغاز کند.",
-			featured: true, categoryId: portfolioCat.id,
+			featured: true, categoryId: shopCat.id,
+		},
+		{
+			title: "سامانه‌ی رزرو کلینیک رها", slug: "raha-clinic", client: "کلینیک رها",
+			year: 2025, technologies: ["Next.js", "Prisma", "Tailwind"],
+			features: ["رزرو آنلاین نوبت", "پنل پزشک و پذیرش", "یادآوری پیامکی"],
+			summary: "اپلیکیشن وبِ رزرو نوبت با پنل جداگانه برای پذیرش و پزشکان.",
+
+			content: "کلینیک رها نوبت‌ها را تلفنی می‌گرفت و روزانه ساعت‌ها وقت پذیرش صرف هماهنگی می‌شد.\n\nیک سامانه‌ی رزرو آنلاین ساختیم که تقویم هر پزشک را جداگانه مدیریت می‌کند و برای بیمار یادآوری می‌فرستد.",
+			featured: false, categoryId: appCat.id,
+		},
+		{
+			title: "هویت دیجیتال استودیو نقش", slug: "naghsh-studio", client: "استودیو نقش",
+			year: 2024, technologies: ["Next.js", "TypeScript", "Motion"],
+			features: ["طراحی هویت بصری", "گالری تعاملی", "سئوی چندزبانه"],
+			summary: "وب‌سایت نمونه‌کار برای یک استودیوی معماری، با گالری تعاملی.",
+			content: "استودیو نقش نیاز داشت کارهایش را طوری نشان دهد که خودِ سایت هم نمونه‌ای از کیفیت کارشان باشد.\n\nگالری تعاملی و ساختار دوزبانه طراحی شد تا پروژه‌ها هم برای مخاطب داخلی و هم خارجی قابل مرور باشند.",
+			featured: false, categoryId: portfolioCat.id,
 		},
 	]
 	for (const [i, pr] of projects.entries()) {
 		await prisma.project.upsert({
 			where: { slug: pr.slug },
-			update: { content: pr.content, summary: pr.summary },
+			update: { ...pr, order: i },
 			create: { ...pr, order: i },
 		})
 	}
@@ -342,9 +359,17 @@ async function main() {
 
 	// ---------------- FAQs ----------------
 	const faqs = [
-		{ question: "طراحی وب‌سایت چقدر طول می‌کشد؟", answer: "بسته به پیچیدگی پروژه، معمولاً بین ۲ تا ۸ هفته.", category: "عمومی", order: 0 },
-		{ question: "آیا پشتیبانی ارائه می‌دهید؟", answer: "بله، همه‌ی پروژه‌ها شامل دوره‌ی پشتیبانی هستند.", category: "پشتیبانی", order: 1 },
-		{ question: "آیا سایت ریسپانسیو است؟", answer: "بله، تمام پروژه‌ها برای همه‌ی دستگاه‌ها بهینه می‌شوند.", category: "فنی", order: 2 },
+		{
+			question: "هزینه‌ی طراحی سایت چقدر است؟",
+			answer:
+				"تعرفه‌ی ثابت اعلام نمی‌کنیم، چون هیچ دو پروژه‌ای مثل هم نیستند. بعد از یک گفتگوی کوتاه و روشن‌شدن دامنه‌ی کار، یک پیشنهاد مکتوب با فهرست دقیق کارها، زمان‌بندی و هزینه‌ی نهایی دریافت می‌کنید — پیش از اینکه چیزی امضا شود.",
+			category: "عمومی",
+			order: 0,
+		},
+		{ question: "طراحی وب‌سایت چقدر طول می‌کشد؟", answer: "بسته به پیچیدگی پروژه، معمولاً بین ۲ تا ۸ هفته.", category: "عمومی", order: 1 },
+		{ question: "آیا پشتیبانی ارائه می‌دهید؟", answer: "بله. پنل مدیریت را به تیم شما آموزش می‌دهیم و تا سه ماه پس از انتشار، رفع اشکال و راهنمایی فنی بدون هزینه‌ی جداگانه است.", category: "پشتیبانی", order: 2 },
+		{ question: "آیا سایت ریسپانسیو است؟", answer: "بله، تمام پروژه‌ها برای همه‌ی دستگاه‌ها بهینه می‌شوند.", category: "فنی", order: 3 },
+		{ question: "کد و داده‌ی پروژه مال کیست؟", answer: "مال شما. پروژه روی دامنه و سرور خودتان اجرا می‌شود و مخزن کد را تحویل می‌گیرید؛ هر توسعه‌دهنده‌ی دیگری می‌تواند کار را ادامه دهد.", category: "عمومی", order: 4 },
 	]
 	await prisma.faq.deleteMany()
 	await prisma.faq.createMany({ data: faqs })

@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import prisma from "@/lib/prisma"
-import { requirePermission } from "@/lib/rbac"
+import { requirePermissionPage } from "@/lib/rbac"
 import { roleLabel } from "@/lib/permissions"
 import { EntityForm, type FormField } from "@/components/admin/entity-form"
 import { saveUser } from "@/server/actions/users"
@@ -9,7 +9,7 @@ import { saveUser } from "@/server/actions/users"
 type Props = { params: Promise<{ id: string }> }
 
 export default async function EditUserPage({ params }: Props) {
-	await requirePermission("user:write")
+	await requirePermissionPage("user:write")
 	const { id } = await params
 	const [user, roles] = await Promise.all([
 		prisma.user.findUnique({ where: { id }, include: { role: true } }),

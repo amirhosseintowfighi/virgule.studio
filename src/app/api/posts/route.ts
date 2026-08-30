@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
 // POST /api/posts — ایجاد مقاله (نیازمند مجوز)
 export async function POST(req: NextRequest) {
 	try {
-		const session = await requirePermission("post.create")
+		const session = await requirePermission("post:write")
 		const data = postSchema.parse(await req.json())
 		const post = await prisma.post.create({
 			data: {

@@ -1,11 +1,11 @@
 import Link from "next/link"
 import prisma from "@/lib/prisma"
-import { requirePermission, hasPermission } from "@/lib/rbac"
+import { requirePermissionPage, hasPermission } from "@/lib/rbac"
 import { DeleteButton } from "@/components/admin/delete-button"
 import { deleteService } from "@/server/actions/services"
 
 export default async function ServicesAdminPage() {
-	const session = await requirePermission("service:read")
+	const session = await requirePermissionPage("service:read")
 	const canWrite = hasPermission(session, "service:write")
 	const canDelete = hasPermission(session, "service:delete")
 	const services = await prisma.service.findMany({ orderBy: { order: "asc" } })
@@ -17,7 +17,7 @@ export default async function ServicesAdminPage() {
 				{canWrite && (
 					<Link
 						href="/dashboard/services/new"
-						className="border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-primary-fill)] px-5 py-2.5 text-sm font-bold text-white shadow-[var(--elev-1)] transition-shadow hover:shadow-none"
+						className="border border-[var(--color-border)] bg-[var(--color-primary-fill)] px-5 py-2.5 text-sm font-bold text-[var(--color-on-primary)] rounded-[var(--radius-full)] shadow-[var(--elev-1)] transition-colors hover:bg-[var(--color-primary-hover)]"
 					>
 						+ خدمت جدید
 					</Link>
@@ -29,7 +29,7 @@ export default async function ServicesAdminPage() {
 					هنوز خدمتی ثبت نشده است.
 				</div>
 			) : (
-				<div className="overflow-hidden border-[length:var(--bw-2)] border-[var(--color-border)] bg-[var(--color-surface)]">
+				<div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
 					<table className="w-full text-right text-sm">
 						<thead className="bg-[var(--color-surface-2)] text-[var(--color-muted)]">
 							<tr>

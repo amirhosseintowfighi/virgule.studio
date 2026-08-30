@@ -1,14 +1,14 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import prisma from "@/lib/prisma"
-import { requirePermission } from "@/lib/rbac"
+import { requirePermissionPage } from "@/lib/rbac"
 import { EntityForm, type FormField } from "@/components/admin/entity-form"
 import { saveCategory } from "@/server/actions/categories"
 
 type Props = { params: Promise<{ id: string }> }
 
 export default async function EditCategoryPage({ params }: Props) {
-	await requirePermission("project:write")
+	await requirePermissionPage("project:write")
 	const { id } = await params
 	const category = await prisma.category.findUnique({ where: { id } })
 	if (!category) notFound()

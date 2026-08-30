@@ -1,5 +1,6 @@
+import Link from "next/link"
 import prisma from "@/lib/prisma"
-import { requirePermission } from "@/lib/rbac"
+import { requirePermissionPage } from "@/lib/rbac"
 import { EntityForm, type FormField } from "@/components/admin/entity-form"
 import { saveSettingGroup } from "@/server/actions/settings"
 
@@ -17,7 +18,7 @@ function groupValue(value: unknown): Dict {
 }
 
 export default async function SettingsAdminPage() {
-	await requirePermission("setting:manage")
+	await requirePermissionPage("setting:manage")
 	const settings = await prisma.setting.findMany()
 	const map = new Map(settings.map((s) => [s.key, groupValue(s.value)]))
 	const general = map.get("general") ?? {}
@@ -57,32 +58,36 @@ export default async function SettingsAdminPage() {
 	return (
 		<div className="space-y-10">
 			<div>
-				<h1 className="text-2xl font-extrabold">تنظیمات و محتوا</h1>
+				<h1 className="text-2xl font-extrabold">تنظیمات سایت</h1>
 				<p className="mt-1 text-sm text-[var(--color-muted)]">
-					اطلاعات برند، راه‌های ارتباطی و تنظیمات سئوی پیش‌فرض سایت را اینجا ویرایش کنید.
+					اطلاعات برند، راه‌های ارتباطی و سئوی پیش‌فرض. برای ویرایش متن‌های داخل صفحه‌ها به بخش
+					«متن صفحات» بروید.
 				</p>
 			</div>
 
 			<section className="space-y-4">
-				<h2 className="text-lg font-bold">⚙️ اطلاعات برند</h2>
+				<h2 className="text-lg font-bold">اطلاعات برند</h2>
 				<EntityForm action={saveSettingGroup} fields={generalFields} hidden={generalHidden} submitLabel="ذخیره‌ی اطلاعات برند" />
 			</section>
 
 			<section className="space-y-4">
-				<h2 className="text-lg font-bold">🔗 شبکه‌های اجتماعی</h2>
+				<h2 className="text-lg font-bold">شبکه‌های اجتماعی</h2>
 				<EntityForm action={saveSettingGroup} fields={socialFields} hidden={socialHidden} submitLabel="ذخیره‌ی شبکه‌ها" />
 			</section>
 
 			<section className="space-y-4">
-				<h2 className="text-lg font-bold">🔍 سئوی پیش‌فرض</h2>
+				<h2 className="text-lg font-bold">سئوی پیش‌فرض</h2>
 				<EntityForm action={saveSettingGroup} fields={seoFields} hidden={seoHidden} submitLabel="ذخیره‌ی تنظیمات سئو" />
 			</section>
 
-			<section className="border border-dashed border-[var(--color-border)] bg-[var(--color-surface-2)] p-6">
-				<h2 className="mb-2 text-lg font-bold">🧩 ویرایشگر بصری صفحات (فاز بعدی)</h2>
+			<section className="rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border)] bg-[var(--color-surface-2)] p-6">
+				<h2 className="mb-2 text-lg font-bold">متن‌های داخل صفحه‌ها کجاست؟</h2>
 				<p className="text-sm leading-7 text-[var(--color-muted)]">
-					محتوای صفحات خدمات و نمونه‌کارها را هم‌اکنون می‌توانید به‌طور کامل از بخش‌های «خدمات» و «نمونه‌کارها» ویرایش کنید (عنوان، خلاصه، متن کامل چند‌پاراگرافی، ویژگی‌ها و...).
-					یک «ویرایشگر بصری کشیدن‌ورهاکردنی» کامل (شبیه المنتور) یک پروژه‌ی بزرگ جداگانه است که در فاز بعدی قابل افزودن است.
+					تیترها، توضیح‌ها، دکمه‌ها و فهرست‌های هر صفحه در بخش{" "}
+					<Link href="/dashboard/content" className="text-[var(--color-primary)] underline underline-offset-4">
+						متن صفحات
+					</Link>{" "}
+					ویرایش می‌شوند. خدمات، نمونه‌کارها، مقالات و پرسش‌های متداول هم بخش مخصوص خودشان را دارند.
 				</p>
 			</section>
 		</div>

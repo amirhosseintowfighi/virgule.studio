@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { getSession } from "@/lib/auth"
+import { getLiveSession } from "@/lib/auth"
 import { Sidebar } from "@/components/admin/sidebar"
 import { Topbar } from "@/components/admin/topbar"
 
@@ -8,7 +8,7 @@ export default async function DashboardLayout({
 }: {
 	children: React.ReactNode
 }) {
-	const session = await getSession()
+	const session = await getLiveSession()
 	if (!session) redirect("/login?redirect=/dashboard")
 
 	return (

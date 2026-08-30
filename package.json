@@ -13,7 +13,9 @@
     "test:e2e": "playwright test",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "prisma db seed",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "db:dev": "node scripts/dev-db.mjs start",
+    "db:setup": "node scripts/dev-db.mjs init && prisma db push --skip-generate && prisma db seed"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -38,6 +40,7 @@
     "@types/react-dom": "^19.0.2",
     "@vitest/coverage-v8": "^2.1.8",
     "autoprefixer": "^10.4.20",
+    "embedded-postgres": "^18.4.0-beta.17",
     "eslint": "^9.17.0",
     "eslint-config-next": "^15.1.0",
     "postcss": "^8.4.49",

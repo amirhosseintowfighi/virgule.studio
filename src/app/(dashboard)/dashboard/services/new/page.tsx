@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { requirePermission } from "@/lib/rbac"
+import { requirePermissionPage } from "@/lib/rbac"
 import { EntityForm, type FormField } from "@/components/admin/entity-form"
 import { saveService } from "@/server/actions/services"
 
@@ -15,7 +15,7 @@ const fields: FormField[] = [
 ]
 
 export default async function NewServicePage() {
-	await requirePermission("service:write")
+	await requirePermissionPage("service:write")
 	return (
 		<div className="space-y-6">
 			<div className="text-sm text-[var(--color-muted)]">
