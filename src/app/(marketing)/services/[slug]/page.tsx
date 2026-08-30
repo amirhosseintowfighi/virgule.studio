@@ -144,7 +144,7 @@ export default async function ServiceDetailPage({ params }: Props) {
 					<Link href="/request-project" className="btn btn--solid">
 						ثبت درخواست پروژه
 					</Link>
-					<a href="mailto:info@virgule.studio" className="link-u h3 font-latin" dir="ltr">
+					<a href="mailto:info@virgule.studio" className="link-u tap h3 font-latin" dir="ltr">
 						info@virgule.studio
 					</a>
 				</Reveal>

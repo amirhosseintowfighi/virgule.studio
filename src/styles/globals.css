@@ -622,6 +622,536 @@ select.field option { background: var(--bg-2); color: var(--fg); }
 .hscroll__bar { display: none; height: 1px; background: var(--line); }
 .hscroll__bar i { display: block; height: 100%; background: var(--accent); transform-origin: right; transform: scaleX(0); }
 
+/* ---------------- حالت قفل‌شده ----------------
+   بخش به بالای صفحه می‌چسبد و اسکرولِ عمودی به حرکت افقی ترجمه می‌شود.
+
+   کلاس is-pinned را WorkRail می‌گذارد و فقط وقتی که کارت‌ها واقعاً از عرض صفحه
+   بیرون بزنند — وگرنه قفل‌کردن فقط اسکرولِ بی‌دلیل اضافه می‌کند.
+
+   منبعِ حرکت دو حالت دارد:
+   ۱) اگر مرورگر scroll-driven animation داشته باشد، view-timeline کار را
+      می‌کند و همه‌چیز روی compositor می‌ماند (کروم، فایرفاکس).
+   ۲) وگرنه WorkRail پیشرفت را در متغیر --p می‌نویسد (سافاری).
+   چیدمان در هر دو یکی است.
+   ------------------------------------------------------------------ */
+.hscroll.is-pinned {
+	/* ارتفاع سرعتِ حرکت را تعیین می‌کند. روی موبایل کارت‌ها نسبت به عرض صفحه
+	   عریض‌ترند، پس مسیر افقی بلندتر است و فضای بیشتری می‌خواهد. */
+	height: calc(100svh + var(--n, 4) * 58vh);
+	margin-inline: calc(var(--pad) * -1);
+}
+@media (min-width: 768px) {
+	.hscroll.is-pinned { height: calc(100svh + var(--n, 4) * 42vh); }
+}
+
+.hscroll.is-pinned .hscroll__pin {
+	position: sticky; top: 0;
+	display: flex; align-items: center;
+	/* 100vw شامل عرض اسکرول‌بار است و صفحه را سرریز افقی می‌کند — 100% درست است */
+	height: 100svh; width: 100%;
+	overflow: hidden;
+}
+
+.hscroll.is-pinned .rail {
+	/* دیگر کاربر اسکرولش نمی‌کند؛ اسکرولِ عمودی جابه‌جایش می‌کند */
+	overflow: visible;
+	scroll-snap-type: none;
+	width: max-content;
+	margin-inline: 0;
+	will-change: transform;
+	/* RTL: محتوا به سمت چپ سرریز می‌کند، پس ریل به راست کشیده می‌شود */
+	transform: translateX(calc(max(0px, 100% - 100vw) * var(--p, 0)));
+}
+
+/* روی موبایل باریک‌ترشان می‌کنیم تا مسیر افقی بی‌اندازه بلند نشود */
+.hscroll.is-pinned .rail__i { flex-basis: clamp(240px, 74vw, 560px); }
+@media (min-width: 768px) {
+	.hscroll.is-pinned .rail__i { flex-basis: clamp(400px, 44vw, 660px); }
+}
+
+.hscroll.is-pinned + .hscroll__bar { display: block; }
+.hscroll.is-pinned + .hscroll__bar i { transform: scaleX(var(--p, 0)); }
+
+/* در حالت قفل‌شده دکمه‌ها معنا ندارند */
+.hscroll.is-pinned ~ .rail-nav-row { display: none; }
+
+/* مسیر بومی: همان چیدمان، ولی پیشرفت را مرورگر می‌دهد نه جاوااسکریپت */
+@supports (animation-timeline: view()) {
+	@media (prefers-reduced-motion: no-preference) {
+		.hscroll.is-pinned { view-timeline: --hs block; }
+		.hscroll.is-pinned .rail {
+			animation: railSlide linear both;
+			animation-timeline: --hs;
+			animation-range: contain 0% contain 100%;
+		}
+		@keyframes railSlide {
+			from { transform: translateX(0); }
+			to   { transform: translateX(max(0px, calc(100% - 100vw))); }
+		}
+		.hscroll.is-pinned + .hscroll__bar i {
+			animation: railBar linear both;
+			animation-timeline: --hs;
+			animation-range: contain 0% contain 100%;
+		}
+		@keyframes railBar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+	}
+}
+
+/* ==========================================================================
+   پشته‌ی خدمات
+   هر خدمت یک تخته‌ی کامل است که به بالا می‌چسبد و بعدی رویش سر می‌خورد.
+   با position: sticky انجام می‌شود — بدون جاوااسکریپت، بدون کتابخانه.
+   هر تخته چند پیکسل پایین‌تر از قبلی می‌ایستد تا لبه‌ی زیرین دیده شود و
+   عمقِ واقعی حس شود، نه یک تعویض ساده.
+   ========================================================================== */
+.stack { --stack-top: 96px; --stack-step: 14px; }
+/* روی موبایل تخته‌ها بلندترند: پله باید کوچک‌تر شود وگرنه آخرین تخته‌ی چسبیده
+   از پایینِ صفحه بیرون می‌زند و انتهایش هیچ‌وقت دیده نمی‌شود. */
+@media (max-width: 767px) {
+	.stack { --stack-top: 84px; --stack-step: 6px; }
+}
+.stack__i {
+	position: sticky;
+	top: calc(var(--stack-top) + var(--i) * var(--stack-step));
+	padding-bottom: var(--stack-step);
+}
+
+.panel {
+	position: relative; isolation: isolate; overflow: hidden;
+	border: 1px solid var(--line);
+	border-radius: var(--radius-xl);
+	background: var(--bg-2);
+	box-shadow: var(--soft-2);
+	transition: border-color var(--dur-2) var(--ease);
+}
+.panel:hover { border-color: var(--accent-line); }
+
+/* تابش گوشه‌ای مخصوص هر تخته — زاویه با شماره‌ی تخته می‌چرخد، پس هیچ دوتایی مثل هم نیست */
+.panel::before {
+	content: ""; position: absolute; z-index: -1; pointer-events: none;
+	inset: -30%;
+	background: radial-gradient(
+		38% 38% at calc(18% + var(--i) * 13%) calc(24% + var(--i) * 9%),
+		rgba(201, 171, 114, .16),
+		transparent 70%
+	);
+	filter: blur(40px);
+}
+
+/* خطی که از لبه‌ی بالای تخته کشیده می‌شود */
+.panel__edge {
+	position: absolute; inset-block-start: 0; inset-inline: 0; height: 1px;
+	background: linear-gradient(90deg, transparent, var(--accent-line), transparent);
+}
+
+/* شماره‌ی محو در پس‌زمینه — بافت، نه اطلاعات. از صفحه‌خوان پنهان است. */
+.panel__ghost {
+	position: absolute; z-index: -1; pointer-events: none; user-select: none;
+	inset-inline-start: clamp(-8px, -1vw, 0px); bottom: -.28em;
+	font-family: var(--font-inter), sans-serif; font-weight: 700;
+	font-size: clamp(9rem, 22vw, 20rem); line-height: .8;
+	color: transparent; -webkit-text-stroke: 1px rgba(242, 239, 233, .045);
+}
+
+/* فهرست ویژگی‌ها — هر مورد با یک خط تیره‌ی شامپاینی */
+.feat { display: flex; align-items: baseline; gap: 14px; }
+.feat::before {
+	content: ""; flex: none; width: 14px; height: 1px; background: var(--accent);
+	opacity: .7; translate: 0 -.35em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.stack__i { position: static; }
+}
+
+/* ==========================================================================
+   ریلِ افقی نمونه‌کارها
+
+   دو حالت دارد:
+   ۱) پایه — اسکرول افقی بومی با snap. همه‌جا کار می‌کند، روی موبایل با انگشت.
+   ۲) قفل‌شده — روی دسکتاپ و مرورگرهایی که scroll-driven animation دارند:
+      بخش به بالا می‌چسبد و اسکرولِ عمودی به حرکتِ افقی ترجمه می‌شود.
+
+   حالت دوم با view-timeline بومی انجام می‌شود، نه با listener اسکرول: مرورگر
+   خودش حرکت را روی compositor می‌برد، پس هیچ فریمی از دست نمی‌رود.
+   ========================================================================== */
+.rail {
+	display: flex;
+	gap: clamp(16px, 2.2vw, 36px);
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	overscroll-behavior-x: contain;
+	/* لبه‌ها هم‌تراز با حاشیه‌ی صفحه بمانند ولی کارت‌ها بتوانند تا لبه بروند */
+	margin-inline: calc(var(--pad) * -1);
+	padding-inline: var(--pad);
+	scroll-padding-inline-start: var(--pad);
+	padding-bottom: 8px;
+	scrollbar-width: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+
+.rail__i {
+	flex: 0 0 clamp(260px, 82vw, 560px);
+	scroll-snap-align: start;
+}
+@media (min-width: 768px) {
+	.rail__i { flex-basis: clamp(400px, 44vw, 660px); }
+}
+
+/* پارالاکسِ افقی: جلد داخل قابش برخلاف جهت حرکت می‌لغزد.
+   scale لازم است وگرنه هنگام لغزش لبه‌ی خالی پیدا می‌شود. */
+.rail__par { overflow: hidden; border-radius: var(--radius-lg); }
+.rail__par > * { will-change: transform; }
+@supports (animation-timeline: view(inline)) {
+	@media (prefers-reduced-motion: no-preference) {
+		.rail__par > * {
+			animation: railPar linear both;
+			animation-timeline: view(inline);
+			animation-range: entry 0% exit 100%;
+		}
+		@keyframes railPar {
+			from { transform: translateX(7%) scale(1.16); }
+			to   { transform: translateX(-7%) scale(1.16); }
+		}
+	}
+}
+
+/* دکمه‌های حرکت ریل — فقط در حالت پایه لازم‌اند */
+.rail-nav {
+	display: inline-grid; place-items: center;
+	width: 48px; height: 48px; border-radius: 999px;
+	border: 1px solid var(--line-2); color: var(--fg);
+	transition: border-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease),
+		background-color var(--dur-2) var(--ease);
+}
+.rail-nav:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.rail-nav:disabled { opacity: .3; cursor: not-allowed; }
+
+/* نوار پیشرفتِ افقی — در حالت قفل‌شده نشان می‌دهد چقدر از کارها را دیده‌اید */
+.hscroll__bar { display: none; height: 1px; background: var(--line); }
+.hscroll__bar i { display: block; height: 100%; background: var(--accent); transform-origin: right; transform: scaleX(0); }
+
+/* ---------------- حالت قفل‌شده ----------------
+   بخش به بالای صفحه می‌چسبد و اسکرولِ عمودی به حرکت افقی ترجمه می‌شود.
+
+   پیشرفت را جاوااسکریپت در متغیر --p می‌نویسد (WorkRail)، نه view-timeline.
+   دلیلش دو چیز است: سافاری هنوز scroll-driven animation ندارد، و یک مسیرِ
+   واحد که همه‌جا یکسان رفتار کند از دو مسیرِ نصفه بهتر است. هزینه‌اش یک
+   نوشتنِ سبک در هر فریم است؛ خودِ جابه‌جایی همچنان transform است، پس روی
+   compositor می‌ماند.
+
+   کلاس is-pinned فقط وقتی اضافه می‌شود که چیدمان واقعاً جا داشته باشد؛
+   در غیر این صورت همان ریلِ اسکرولیِ ساده با دکمه‌های کناری باقی می‌ماند.
+   ------------------------------------------------------------------ */
+.hscroll.is-pinned {
+	/* ارتفاع سرعتِ حرکت را تعیین می‌کند. روی موبایل کارت‌ها نسبت به عرض صفحه
+	   عریض‌ترند، پس مسیر افقی بلندتر است و فضای بیشتری می‌خواهد. */
+	height: calc(100svh + var(--n, 4) * 58vh);
+	margin-inline: calc(var(--pad) * -1);
+}
+@media (min-width: 768px) {
+	.hscroll.is-pinned { height: calc(100svh + var(--n, 4) * 42vh); }
+}
+
+.hscroll.is-pinned .hscroll__pin {
+	position: sticky; top: 0;
+	display: flex; align-items: center;
+	/* 100vw شامل عرض اسکرول‌بار است و صفحه را سرریز افقی می‌کند — 100% درست است */
+	height: 100svh; width: 100%;
+	overflow: hidden;
+}
+
+.hscroll.is-pinned .rail {
+	/* دیگر کاربر اسکرولش نمی‌کند؛ اسکرولِ عمودی جابه‌جایش می‌کند */
+	overflow: visible;
+	scroll-snap-type: none;
+	width: max-content;
+	margin-inline: 0;
+	/* RTL: محتوا به سمت چپ سرریز می‌کند، پس ریل به راست کشیده می‌شود */
+	transform: translateX(calc(max(0px, 100% - 100vw) * var(--p, 0)));
+	will-change: transform;
+}
+
+/* روی موبایل باریک‌ترشان می‌کنیم تا مسیر افقی بی‌اندازه بلند نشود */
+.hscroll.is-pinned .rail__i { flex-basis: clamp(240px, 74vw, 560px); }
+@media (min-width: 768px) {
+	.hscroll.is-pinned .rail__i { flex-basis: clamp(400px, 44vw, 660px); }
+}
+
+.hscroll.is-pinned + .hscroll__bar { display: block; }
+.hscroll.is-pinned + .hscroll__bar i { transform: scaleX(var(--p, 0)); }
+
+/* در حالت قفل‌شده دکمه‌ها معنا ندارند */
+.hscroll.is-pinned ~ .rail-nav-row { display: none; }
+
+/* ==========================================================================
+   پشته‌ی خدمات
+   هر خدمت یک تخته‌ی کامل است که به بالا می‌چسبد و بعدی رویش سر می‌خورد.
+   با position: sticky انجام می‌شود — بدون جاوااسکریپت، بدون کتابخانه.
+   هر تخته چند پیکسل پایین‌تر از قبلی می‌ایستد تا لبه‌ی زیرین دیده شود و
+   عمقِ واقعی حس شود، نه یک تعویض ساده.
+   ========================================================================== */
+.stack { --stack-top: 96px; --stack-step: 14px; }
+/* روی موبایل تخته‌ها بلندترند: پله باید کوچک‌تر شود وگرنه آخرین تخته‌ی چسبیده
+   از پایینِ صفحه بیرون می‌زند و انتهایش هیچ‌وقت دیده نمی‌شود. */
+@media (max-width: 767px) {
+	.stack { --stack-top: 84px; --stack-step: 6px; }
+}
+.stack__i {
+	position: sticky;
+	top: calc(var(--stack-top) + var(--i) * var(--stack-step));
+	padding-bottom: var(--stack-step);
+}
+
+.panel {
+	position: relative; isolation: isolate; overflow: hidden;
+	border: 1px solid var(--line);
+	border-radius: var(--radius-xl);
+	background: var(--bg-2);
+	box-shadow: var(--soft-2);
+	transition: border-color var(--dur-2) var(--ease);
+}
+.panel:hover { border-color: var(--accent-line); }
+
+/* تابش گوشه‌ای مخصوص هر تخته — زاویه با شماره‌ی تخته می‌چرخد، پس هیچ دوتایی مثل هم نیست */
+.panel::before {
+	content: ""; position: absolute; z-index: -1; pointer-events: none;
+	inset: -30%;
+	background: radial-gradient(
+		38% 38% at calc(18% + var(--i) * 13%) calc(24% + var(--i) * 9%),
+		rgba(201, 171, 114, .16),
+		transparent 70%
+	);
+	filter: blur(40px);
+}
+
+/* خطی که از لبه‌ی بالای تخته کشیده می‌شود */
+.panel__edge {
+	position: absolute; inset-block-start: 0; inset-inline: 0; height: 1px;
+	background: linear-gradient(90deg, transparent, var(--accent-line), transparent);
+}
+
+/* شماره‌ی محو در پس‌زمینه — بافت، نه اطلاعات. از صفحه‌خوان پنهان است. */
+.panel__ghost {
+	position: absolute; z-index: -1; pointer-events: none; user-select: none;
+	inset-inline-start: clamp(-8px, -1vw, 0px); bottom: -.28em;
+	font-family: var(--font-inter), sans-serif; font-weight: 700;
+	font-size: clamp(9rem, 22vw, 20rem); line-height: .8;
+	color: transparent; -webkit-text-stroke: 1px rgba(242, 239, 233, .045);
+}
+
+/* فهرست ویژگی‌ها — هر مورد با یک خط تیره‌ی شامپاینی */
+.feat { display: flex; align-items: baseline; gap: 14px; }
+.feat::before {
+	content: ""; flex: none; width: 14px; height: 1px; background: var(--accent);
+	opacity: .7; translate: 0 -.35em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.stack__i { position: static; }
+}
+
+/* ==========================================================================
+   ریلِ افقی نمونه‌کارها
+
+   دو حالت دارد:
+   ۱) پایه — اسکرول افقی بومی با snap. همه‌جا کار می‌کند، روی موبایل با انگشت.
+   ۲) قفل‌شده — روی دسکتاپ و مرورگرهایی که scroll-driven animation دارند:
+      بخش به بالا می‌چسبد و اسکرولِ عمودی به حرکتِ افقی ترجمه می‌شود.
+
+   حالت دوم با view-timeline بومی انجام می‌شود، نه با listener اسکرول: مرورگر
+   خودش حرکت را روی compositor می‌برد، پس هیچ فریمی از دست نمی‌رود.
+   ========================================================================== */
+.rail {
+	display: flex;
+	gap: clamp(16px, 2.2vw, 36px);
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	overscroll-behavior-x: contain;
+	/* لبه‌ها هم‌تراز با حاشیه‌ی صفحه بمانند ولی کارت‌ها بتوانند تا لبه بروند */
+	margin-inline: calc(var(--pad) * -1);
+	padding-inline: var(--pad);
+	scroll-padding-inline-start: var(--pad);
+	padding-bottom: 8px;
+	scrollbar-width: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+
+.rail__i {
+	flex: 0 0 clamp(260px, 82vw, 560px);
+	scroll-snap-align: start;
+}
+@media (min-width: 768px) {
+	.rail__i { flex-basis: clamp(400px, 44vw, 660px); }
+}
+
+/* پارالاکسِ افقی: جلد داخل قابش برخلاف جهت حرکت می‌لغزد.
+   scale لازم است وگرنه هنگام لغزش لبه‌ی خالی پیدا می‌شود. */
+.rail__par { overflow: hidden; border-radius: var(--radius-lg); }
+.rail__par > * { will-change: transform; }
+@supports (animation-timeline: view(inline)) {
+	@media (prefers-reduced-motion: no-preference) {
+		.rail__par > * {
+			animation: railPar linear both;
+			animation-timeline: view(inline);
+			animation-range: entry 0% exit 100%;
+		}
+		@keyframes railPar {
+			from { transform: translateX(7%) scale(1.16); }
+			to   { transform: translateX(-7%) scale(1.16); }
+		}
+	}
+}
+
+/* دکمه‌های حرکت ریل — فقط در حالت پایه لازم‌اند */
+.rail-nav {
+	display: inline-grid; place-items: center;
+	width: 48px; height: 48px; border-radius: 999px;
+	border: 1px solid var(--line-2); color: var(--fg);
+	transition: border-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease),
+		background-color var(--dur-2) var(--ease);
+}
+.rail-nav:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.rail-nav:disabled { opacity: .3; cursor: not-allowed; }
+
+/* نوار پیشرفتِ افقی — در حالت قفل‌شده نشان می‌دهد چقدر از کارها را دیده‌اید */
+.hscroll__bar { display: none; height: 1px; background: var(--line); }
+.hscroll__bar i { display: block; height: 100%; background: var(--accent); transform-origin: right; transform: scaleX(0); }
+
+/* ==========================================================================
+   پشته‌ی خدمات
+   هر خدمت یک تخته‌ی کامل است که به بالا می‌چسبد و بعدی رویش سر می‌خورد.
+   با position: sticky انجام می‌شود — بدون جاوااسکریپت، بدون کتابخانه.
+   هر تخته چند پیکسل پایین‌تر از قبلی می‌ایستد تا لبه‌ی زیرین دیده شود و
+   عمقِ واقعی حس شود، نه یک تعویض ساده.
+   ========================================================================== */
+.stack { --stack-top: 96px; --stack-step: 14px; }
+/* روی موبایل تخته‌ها بلندترند: پله باید کوچک‌تر شود وگرنه آخرین تخته‌ی چسبیده
+   از پایینِ صفحه بیرون می‌زند و انتهایش هیچ‌وقت دیده نمی‌شود. */
+@media (max-width: 767px) {
+	.stack { --stack-top: 84px; --stack-step: 6px; }
+}
+.stack__i {
+	position: sticky;
+	top: calc(var(--stack-top) + var(--i) * var(--stack-step));
+	padding-bottom: var(--stack-step);
+}
+
+.panel {
+	position: relative; isolation: isolate; overflow: hidden;
+	border: 1px solid var(--line);
+	border-radius: var(--radius-xl);
+	background: var(--bg-2);
+	box-shadow: var(--soft-2);
+	transition: border-color var(--dur-2) var(--ease);
+}
+.panel:hover { border-color: var(--accent-line); }
+
+/* تابش گوشه‌ای مخصوص هر تخته — زاویه با شماره‌ی تخته می‌چرخد، پس هیچ دوتایی مثل هم نیست */
+.panel::before {
+	content: ""; position: absolute; z-index: -1; pointer-events: none;
+	inset: -30%;
+	background: radial-gradient(
+		38% 38% at calc(18% + var(--i) * 13%) calc(24% + var(--i) * 9%),
+		rgba(201, 171, 114, .16),
+		transparent 70%
+	);
+	filter: blur(40px);
+}
+
+/* خطی که از لبه‌ی بالای تخته کشیده می‌شود */
+.panel__edge {
+	position: absolute; inset-block-start: 0; inset-inline: 0; height: 1px;
+	background: linear-gradient(90deg, transparent, var(--accent-line), transparent);
+}
+
+/* شماره‌ی محو در پس‌زمینه — بافت، نه اطلاعات. از صفحه‌خوان پنهان است. */
+.panel__ghost {
+	position: absolute; z-index: -1; pointer-events: none; user-select: none;
+	inset-inline-start: clamp(-8px, -1vw, 0px); bottom: -.28em;
+	font-family: var(--font-inter), sans-serif; font-weight: 700;
+	font-size: clamp(9rem, 22vw, 20rem); line-height: .8;
+	color: transparent; -webkit-text-stroke: 1px rgba(242, 239, 233, .045);
+}
+
+/* فهرست ویژگی‌ها — هر مورد با یک خط تیره‌ی شامپاینی */
+.feat { display: flex; align-items: baseline; gap: 14px; }
+.feat::before {
+	content: ""; flex: none; width: 14px; height: 1px; background: var(--accent);
+	opacity: .7; translate: 0 -.35em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.stack__i { position: static; }
+}
+
+/* ==========================================================================
+   ریلِ افقی نمونه‌کارها
+
+   دو حالت دارد:
+   ۱) پایه — اسکرول افقی بومی با snap. همه‌جا کار می‌کند، روی موبایل با انگشت.
+   ۲) قفل‌شده — روی دسکتاپ و مرورگرهایی که scroll-driven animation دارند:
+      بخش به بالا می‌چسبد و اسکرولِ عمودی به حرکتِ افقی ترجمه می‌شود.
+
+   حالت دوم با view-timeline بومی انجام می‌شود، نه با listener اسکرول: مرورگر
+   خودش حرکت را روی compositor می‌برد، پس هیچ فریمی از دست نمی‌رود.
+   ========================================================================== */
+.rail {
+	display: flex;
+	gap: clamp(16px, 2.2vw, 36px);
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	overscroll-behavior-x: contain;
+	/* لبه‌ها هم‌تراز با حاشیه‌ی صفحه بمانند ولی کارت‌ها بتوانند تا لبه بروند */
+	margin-inline: calc(var(--pad) * -1);
+	padding-inline: var(--pad);
+	scroll-padding-inline-start: var(--pad);
+	padding-bottom: 8px;
+	scrollbar-width: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+
+.rail__i {
+	flex: 0 0 clamp(260px, 82vw, 560px);
+	scroll-snap-align: start;
+}
+@media (min-width: 768px) {
+	.rail__i { flex-basis: clamp(400px, 44vw, 660px); }
+}
+
+/* پارالاکسِ افقی: جلد داخل قابش برخلاف جهت حرکت می‌لغزد.
+   scale لازم است وگرنه هنگام لغزش لبه‌ی خالی پیدا می‌شود. */
+.rail__par { overflow: hidden; border-radius: var(--radius-lg); }
+.rail__par > * { will-change: transform; }
+@supports (animation-timeline: view(inline)) {
+	@media (prefers-reduced-motion: no-preference) {
+		.rail__par > * {
+			animation: railPar linear both;
+			animation-timeline: view(inline);
+			animation-range: entry 0% exit 100%;
+		}
+		@keyframes railPar {
+			from { transform: translateX(7%) scale(1.16); }
+			to   { transform: translateX(-7%) scale(1.16); }
+		}
+	}
+}
+
+/* دکمه‌های حرکت ریل — فقط در حالت پایه لازم‌اند */
+.rail-nav {
+	display: inline-grid; place-items: center;
+	width: 48px; height: 48px; border-radius: 999px;
+	border: 1px solid var(--line-2); color: var(--fg);
+	transition: border-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease),
+		background-color var(--dur-2) var(--ease);
+}
+.rail-nav:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.rail-nav:disabled { opacity: .3; cursor: not-allowed; }
+
+/* نوار پیشرفتِ افقی — در حالت قفل‌شده نشان می‌دهد چقدر از کارها را دیده‌اید */
+.hscroll__bar { display: none; height: 1px; background: var(--line); }
+.hscroll__bar i { display: block; height: 100%; background: var(--accent); transform-origin: right; transform: scaleX(0); }
+
 /* ---------------- حالت قفل‌شده ---------------- */
 @supports (animation-timeline: view()) {
 	@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
@@ -651,7 +1181,7 @@ select.field option { background: var(--bg-2); color: var(--fg); }
 		/* RTL: محتوا به سمت چپ سرریز می‌کند، پس ریل به راست کشیده می‌شود */
 		@keyframes railSlide {
 			from { transform: translateX(0); }
-			to   { transform: translateX(calc(100% - 100vw)); }
+			to   { transform: translateX(max(0px, calc(100% - 100vw))); }
 		}
 
 		.hscroll__bar { display: block; }
@@ -664,5 +1194,25 @@ select.field option { background: var(--bg-2); color: var(--fg); }
 
 		/* در این حالت دکمه‌ها معنا ندارند */
 		.rail-nav-row { display: none; }
+	}
+}
+
+/* ==========================================================================
+   هدف لمسی
+   پیوندهای متنی از نظر بصری کوچک‌اند (۲۰ تا ۳۰ پیکسل ارتفاع) ولی روی صفحه‌ی
+   لمسی باید دست‌کم ۴۴ پیکسل جای زدن داشته باشند. با padding عمودی و margin
+   منفیِ هم‌اندازه، محدوده‌ی لمس بزرگ می‌شود بدون اینکه چیدمان جابه‌جا شود.
+   فقط روی نشانگر درشت (انگشت) اعمال می‌شود، نه روی ماوس.
+   ========================================================================== */
+@media (pointer: coarse) {
+	.tap {
+		padding-block: 12px;
+		margin-block: -12px;
+	}
+	/* پیوندهای درون بند، جایی که padding عمودی خطوط را جابه‌جا می‌کند */
+	.tap-inline {
+		display: inline-block;
+		padding-block: 10px;
+		margin-block: -10px;
 	}
 }

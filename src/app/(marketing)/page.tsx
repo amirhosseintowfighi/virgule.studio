@@ -306,7 +306,7 @@ export default async function HomePage() {
 							<p className="body-t mt-8">{c.aboutP2}</p>
 						</Reveal>
 						<Reveal delay={380} className="mt-12">
-							<Link href="/about" className="link-u font-medium">
+							<Link href="/about" className="link-u tap font-medium">
 								بیشتر درباره‌ی ما ←
 							</Link>
 						</Reveal>
@@ -329,7 +329,7 @@ export default async function HomePage() {
 						<div>
 							<FaqAccordion items={faqItems} />
 							<Reveal delay={160} className="mt-12">
-								<Link href="/faq" className="link-u font-medium">
+								<Link href="/faq" className="link-u tap font-medium">
 									همه‌ی پرسش‌ها ←
 								</Link>
 							</Reveal>
@@ -357,10 +357,10 @@ export default async function HomePage() {
 								{c.contactCta}
 							</Link>
 						</Magnetic>
-						<a href="mailto:info@virgule.studio" className="link-u h3 font-latin" dir="ltr">
+						<a href="mailto:info@virgule.studio" className="link-u tap h3 font-latin" dir="ltr">
 							info@virgule.studio
 						</a>
-						<a href="tel:+989999571001" className="link-u num h3" dir="ltr">
+						<a href="tel:+989999571001" className="link-u tap num h3" dir="ltr">
 							0999 957 1001
 						</a>
 					</Reveal>

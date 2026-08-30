@@ -40,10 +40,10 @@ export async function Footer() {
 						{`${STUDIO.tagline}؛ استودیوی طراحی و توسعه‌ی وب در ${STUDIO.city}.`}
 					</p>
 					<div className="mt-8 flex flex-col gap-2">
-						<a href={`mailto:${STUDIO.email}`} className="link-u font-latin w-fit text-sm" dir="ltr">
+						<a href={`mailto:${STUDIO.email}`} className="link-u tap font-latin w-fit text-sm" dir="ltr">
 							{STUDIO.email}
 						</a>
-						<a href={`tel:${STUDIO.phone}`} className="link-u num w-fit text-sm" dir="ltr">
+						<a href={`tel:${STUDIO.phone}`} className="link-u tap num w-fit text-sm" dir="ltr">
 							{STUDIO.phoneDisplay}
 						</a>
 					</div>
@@ -55,7 +55,7 @@ export async function Footer() {
 						<ul className="flex flex-col gap-3">
 							{services.map((s) => (
 								<li key={s.slug}>
-									<Link href={`/services/${s.slug}`} className="link-u text-sm">
+									<Link href={`/services/${s.slug}`} className="link-u tap text-sm">
 										{s.title}
 									</Link>
 								</li>
@@ -69,7 +69,7 @@ export async function Footer() {
 					<ul className="flex flex-col gap-3">
 						{studioLinks.map((l) => (
 							<li key={l.href}>
-								<Link href={l.href} className="link-u text-sm">
+								<Link href={l.href} className="link-u tap text-sm">
 									{l.label}
 								</Link>
 							</li>
@@ -82,7 +82,7 @@ export async function Footer() {
 					<ul className="flex flex-col gap-3">
 						{legalLinks.map((l) => (
 							<li key={l.href}>
-								<Link href={l.href} className="link-u text-sm">
+								<Link href={l.href} className="link-u tap text-sm">
 									{l.label}
 								</Link>
 							</li>

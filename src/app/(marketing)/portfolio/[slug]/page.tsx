@@ -77,7 +77,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
 			/>
 			<header className="stage stage--tl px-[var(--pad)] pb-[clamp(40px,6vw,80px)] pt-[clamp(128px,17vw,220px)]">
 				<Reveal className="mb-8">
-					<Link href="/portfolio" className="link-u meta-fa">
+					<Link href="/portfolio" className="link-u tap meta-fa">
 						→ بازگشت به نمونه‌کارها
 					</Link>
 				</Reveal>
@@ -105,7 +105,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
 									href={project.url}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="link-u accent font-bold"
+									className="link-u tap accent font-bold"
 								>
 									مشاهده‌ی سایت
 								</a>

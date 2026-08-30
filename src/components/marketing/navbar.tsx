@@ -60,7 +60,7 @@ export function Navbar() {
 					)}
 					style={{ transitionTimingFunction: "var(--ease)" }}
 				>
-					<Link href="/" aria-label="ویرگول، خانه" className="flex items-center gap-3">
+					<Link href="/" aria-label="ویرگول، خانه" className="tap flex items-center gap-3">
 						<LogoMark className="h-8 w-8 text-[var(--fg)]" />
 						<span className="text-[15px] font-medium">ویرگول</span>
 					</Link>
@@ -82,7 +82,7 @@ export function Navbar() {
 						{/* پوشش لازم است: .link-u در globals مقدار display را می‌دهد و
 						    کلاس `hidden` تیلویند را خنثی می‌کند. */}
 						<span className="hidden md:inline-block">
-							<Link href="/request-project" className="link-u accent text-sm font-medium">
+							<Link href="/request-project" className="link-u tap accent text-sm font-medium">
 								شروع پروژه
 							</Link>
 						</span>

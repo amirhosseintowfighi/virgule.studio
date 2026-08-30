@@ -61,7 +61,7 @@ export default async function ArticlePage({ params }: Props) {
 			<article>
 			<div className="mx-auto max-w-[70ch] px-[var(--pad)] pb-[var(--sec)] pt-[clamp(110px,15vw,180px)]">
 				<Reveal className="meta-fa mb-8">
-					<Link href="/blog" className="link-u">→ همه‌ی یادداشت‌ها</Link>
+					<Link href="/blog" className="link-u tap">→ همه‌ی یادداشت‌ها</Link>
 				</Reveal>
 
 				{post.category && <div className="meta-fa mb-4">{post.category.name}</div>}

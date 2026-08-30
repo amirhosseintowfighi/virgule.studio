@@ -47,7 +47,7 @@ export default async function ContactPage() {
 										{ch.href ? (
 											<a
 												href={ch.href}
-												className={`link-u h3 ${ch.latin ? "font-latin" : ""}`}
+												className={`link-u tap h3 ${ch.latin ? "font-latin" : ""}`}
 												dir={ch.latin ? "ltr" : undefined}
 											>
 												{ch.value}
@@ -64,7 +64,7 @@ export default async function ContactPage() {
 						<Reveal delay={320} className="mt-10">
 							<p className="body-t max-w-[34ch] text-[15px]">
 								اگر درخواست‌تان مفصل است، بهتر است{" "}
-								<Link href="/request-project" className="link-u accent">
+								<Link href="/request-project" className="link-u tap-inline accent">
 									فرم ثبت پروژه
 								</Link>{" "}
 								را پر کنید تا از همان ابتدا تصویر کامل‌تری داشته باشیم.

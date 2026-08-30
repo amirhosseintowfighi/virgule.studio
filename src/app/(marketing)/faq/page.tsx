@@ -40,7 +40,7 @@ export default async function FaqPage() {
 							<p className="body-t max-w-[32ch]">{c.sideNote}</p>
 						</Reveal>
 						<Reveal delay={160} className="mt-8">
-							<Link href="/contact" className="link-u accent font-medium">
+							<Link href="/contact" className="link-u tap accent font-medium">
 								پرسیدن سوال ←
 							</Link>
 						</Reveal>

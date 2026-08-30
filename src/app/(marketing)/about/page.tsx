@@ -105,7 +105,7 @@ export default async function AboutPage() {
 							ثبت درخواست پروژه
 						</Link>
 					</Magnetic>
-					<Link href="/portfolio" className="link-u font-medium">
+					<Link href="/portfolio" className="link-u tap font-medium">
 						دیدن نمونه‌کارها ←
 					</Link>
 				</Reveal>
