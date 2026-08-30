@@ -15,7 +15,8 @@
     "prisma:seed": "prisma db seed",
     "prisma:studio": "prisma studio",
     "db:dev": "node scripts/dev-db.mjs start",
-    "db:setup": "node scripts/dev-db.mjs init && prisma db push --skip-generate && prisma db seed"
+    "db:setup": "node scripts/dev-db.mjs init && prisma db push --skip-generate && prisma db seed",
+    "admin": "node scripts/admin.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
