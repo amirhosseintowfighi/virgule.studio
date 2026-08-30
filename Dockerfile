@@ -32,6 +32,11 @@ COPY --from=builder /app/prisma ./prisma
 # دیتابیس فقط داخل شبکه‌ی داکر شنیده می‌شود، پس از روی هاست قابل دسترس نیست.
 COPY --from=builder /app/scripts ./scripts
 
+# bcryptjs را Next داخل چانک‌های سرور bundle می‌کند، پس در خروجی standalone
+# به‌صورت یک پکیجِ قابل import باقی نمی‌ماند و اسکریپت نمی‌تواند صدایش بزند.
+# (پکیج بدون وابستگی است، پس همین یک پوشه کافی است.)
+COPY --from=deps /app/node_modules/bcryptjs ./node_modules/bcryptjs
+
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
