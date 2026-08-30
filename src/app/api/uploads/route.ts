@@ -31,8 +31,23 @@ export async function POST(req: NextRequest) {
 		return Response.json({ error: "فایلی انتخاب نشده است." }, { status: 400 })
 	}
 
-	const res = await saveUpload(file)
-	return res.ok
-		? Response.json({ url: res.url })
-		: Response.json({ error: res.error }, { status: 400 })
+	// نوشتن روی دیسک می‌تواند شکست بخورد (مجوز، فضای پر). بدون این try، خطا
+	// به صفحه‌ی خطای HTML تبدیل می‌شد و کلاینت هنگام res.json() فقط
+	// «Unexpected end of JSON input» می‌دید — که هیچ چیزی درباره‌ی علت نمی‌گوید.
+	try {
+		const res = await saveUpload(file)
+		return res.ok
+			? Response.json({ url: res.url })
+			: Response.json({ error: res.error }, { status: 400 })
+	} catch (e) {
+		console.error("[upload] failed:", e)
+		const code = (e as NodeJS.ErrnoException)?.code
+		const hint =
+			code === "EACCES" || code === "EPERM"
+				? "سرور اجازه‌ی نوشتن در پوشه‌ی آپلود را ندارد."
+				: code === "ENOSPC"
+					? "فضای دیسک سرور پر است."
+					: "ذخیره‌ی فایل روی سرور شکست خورد."
+		return Response.json({ error: hint }, { status: 500 })
+	}
 }

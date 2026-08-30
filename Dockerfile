@@ -37,6 +37,12 @@ COPY --from=builder /app/scripts ./scripts
 # (پکیج بدون وابستگی است، پس همین یک پوشه کافی است.)
 COPY --from=deps /app/node_modules/bcryptjs ./node_modules/bcryptjs
 
+# پوشه‌ی آپلود باید همین‌جا و با مالکیت nextjs ساخته شود.
+# داکر هنگام ساختِ volume نام‌دار، محتوا و مالکیتِ همین مسیر در ایمیج را کپی
+# می‌کند؛ بدون این خط، volume با مالکیت root ساخته می‌شود و پروسه‌ای که با
+# کاربر nextjs اجرا می‌شود اجازه‌ی نوشتن ندارد (EACCES).
+RUN mkdir -p /app/uploads && chown -R nextjs:nodejs /app/uploads
+
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000

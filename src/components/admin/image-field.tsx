@@ -34,7 +34,22 @@ export function ImageField({
 			const fd = new FormData()
 			fd.append("file", file)
 			const res = await fetch("/api/uploads", { method: "POST", body: fd })
-			const json = (await res.json()) as { url?: string; error?: string }
+
+			// اگر پاسخ JSON نباشد (مثلاً ۴۱۳ از سمت nginx یا صفحه‌ی خطای پراکسی)،
+			// res.json() فقط «Unexpected end of JSON input» می‌دهد که چیزی
+			// نمی‌گوید. متن خام را می‌خوانیم و پیام مفید می‌سازیم.
+			const raw = await res.text()
+			let json: { url?: string; error?: string } = {}
+			try {
+				json = raw ? JSON.parse(raw) : {}
+			} catch {
+				throw new Error(
+					res.status === 413
+						? "حجم فایل بیشتر از حدی است که سرور می‌پذیرد."
+						: `پاسخ نامعتبر از سرور (کد ${res.status}).`
+				)
+			}
+
 			if (!res.ok || !json.url) throw new Error(json.error ?? "آپلود ناموفق بود.")
 			setUrl(json.url)
 		} catch (e) {
