@@ -26,7 +26,7 @@
 ### تایپوگرافی
 - **تیترها:** Markazi Text (نسخ، متغیر ۴۰۰–۷۰۰، OFL) — self-hosted در `public/fonts`
 - **متن و رابط:** IRANYekan
-- **لاتینِ ریز:** Inter
+- **لاتینِ ریز:** Inter (self-hosted، OFL)
 - رقم‌ها فارسی نمایش داده می‌شوند (`src/lib/fa.ts`: `faNum`، `faIndex`، `faDate`).
 
 ### حرکت
@@ -51,7 +51,7 @@ src/
 ├─ components/
 │  ├─ ui/
 │  │  ├─ art.tsx              # تصویرهای برداری
-│  │  ├─ marks.tsx            # نشان و پیکان
+│  │  ├─ marks.tsx            # نشان (ویرگول + مربعِ شنگرفی) و پیکان
 │  │  ├─ section.tsx          # Folio, PageHead
 │  │  ├─ cta.tsx              # Cta (دکمه), More (پیوند)
 │  │  └─ reveal.tsx           # Reveal, RevealLines

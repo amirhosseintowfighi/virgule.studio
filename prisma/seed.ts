@@ -264,15 +264,8 @@ async function main() {
 		)
 	)
 
-	// ---------------- Posts (3) ----------------
+	// ---------------- Posts (2) ----------------
 	const posts = [
-		{
-			title: "چرا Material Design 3 آینده‌ی طراحی وب است؟",
-			slug: "why-material-design-3",
-			excerpt: "نگاهی به اصول Material You، Dynamic Color و دلایل محبوبیت این زبان طراحی.",
-			content: "# Material Design 3\n\nمتریال دیزاین ۳ با معرفی Dynamic Color و Material You تحولی در تجربه‌ی کاربری ایجاد کرده است. در این مقاله به اصول پایه می‌پردازیم.\n\n## Elevation و Surface\n\nسطوح و سایه‌ها عمق را به رابط اضافه می‌کنند.",
-			categoryId: blogCat.id,
-		},
 		{
 			title: "۷ اصل طلایی سئوی فنی در ۲۰۲۵",
 			slug: "technical-seo-2025",

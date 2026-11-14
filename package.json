@@ -2,7 +2,7 @@
   "name": "virgule-studio",
   "version": "1.0.0",
   "private": true,
-  "description": "وب‌سایت شرکتی استودیوی ویرگول — Next.js 15 + Material Design 3",
+  "description": "وب‌سایت استودیوی طراحی و توسعه‌ی وب ویرگول — Next.js 15",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
