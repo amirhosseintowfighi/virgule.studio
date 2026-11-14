@@ -1,5 +1,4 @@
 import localFont from "next/font/local"
-import { Inter } from "next/font/google"
 
 /** IRANYekan — متن و رابط. self-hosted از public/fonts. */
 export const iranYekan = localFont({
@@ -40,8 +39,14 @@ export const markaziLatin = localFont({
 	adjustFontFallback: false,
 })
 
-export const inter = Inter({
-	subsets: ["latin"],
+/**
+ * Inter — لاتینِ ریز (نام تکنولوژی‌ها، ایمیل). متغیر، self-hosted، مجوز OFL.
+ * از Google Fonts نمی‌آید تا بیلد به شبکه‌ی بیرونی وابسته نباشد.
+ */
+export const inter = localFont({
+	src: "../../public/fonts/inter-latin.woff2",
+	weight: "100 900",
 	variable: "--font-inter",
 	display: "swap",
+	preload: false,
 })

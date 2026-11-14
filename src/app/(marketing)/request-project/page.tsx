@@ -2,7 +2,7 @@ import { PageHead, Folio } from "@/components/ui/section"
 import { Reveal } from "@/components/ui/reveal"
 import { ProjectRequestForm } from "@/components/marketing/project-request-form"
 import { buildMetadata, JsonLd, breadcrumbJsonLd } from "@/lib/seo"
-import { getContent, pairs } from "@/lib/content"
+import { getContent, pairs, lines } from "@/lib/content"
 
 export const metadata = buildMetadata({
 	title: "ثبت درخواست پروژه",
@@ -27,7 +27,7 @@ export default async function RequestProjectPage() {
 					<div className="md:col-span-7">
 						<Folio label={c.formTitle} />
 						<div className="mt-10">
-							<ProjectRequestForm />
+							<ProjectRequestForm budgets={lines(c.budgets)} />
 						</div>
 					</div>
 

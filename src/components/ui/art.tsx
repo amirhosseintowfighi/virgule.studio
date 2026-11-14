@@ -1,10 +1,11 @@
+import { useId } from "react"
 import { clsx } from "clsx"
 
 /**
  * تصویرهای برداریِ سایت.
  *
  * همه از یک الفبای کوچک ساخته می‌شوند تا مثل یک خانواده دیده شوند:
- * - اجزای نشانِ ویرگول: دایره، خطِ اُریبِ قلم، و خودِ ویرگول؛
+ * - هندسه‌ی پایه: دایره، ربع‌دایره، خطِ اُریبِ قلم، و خودِ ویرگول؛
  * - زبانِ ابزارِ قلم در نرم‌افزارِ طراحی: منحنی، گره و دستگیره.
  * سه رنگِ تصویر (شنگرف، آبی، اُخرا) به‌اضافه‌ی مرکب، از توکن‌ها می‌آیند؛ پس روی
  * نوارِ مرکبی خودبه‌خود وارونه می‌شوند.
@@ -39,15 +40,19 @@ function Handle({ ax, ay, hx, hy }: { ax: number; ay: number; hx: number; hy: nu
 
 /** ترکیبِ بخش معرفی: نشانِ ویرگول، بازشده به اجزایش. */
 export function HeroArt({ className }: { className?: string }) {
+	// شناسه‌ی الگو باید در کلِ سند یکتا باشد؛ دو HeroArt در یک صفحه نباید به الگوی هم ارجاع بدهند.
+	// نویسه‌های غیرمجازِ useId حذف می‌شوند تا در url(#…) بی‌دردسر باشد.
+	const dots = `art-dots-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`
+
 	return (
 		<svg viewBox="0 0 600 640" fill="none" className={clsx("art", className)} aria-hidden="true">
 			<defs>
-				<pattern id="art-dots" width="22" height="22" patternUnits="userSpaceOnUse">
+				<pattern id={dots} width="22" height="22" patternUnits="userSpaceOnUse">
 					<circle cx="2" cy="2" r="1.3" fill={INK} opacity=".4" />
 				</pattern>
 			</defs>
 
-			<rect className="art__fade" style={d(0)} x="14" y="36" width="264" height="264" fill="url(#art-dots)" />
+			<rect className="art__fade" style={d(0)} x="14" y="36" width="264" height="264" fill={`url(#${dots})`} />
 			<rect className="art__fade" style={d(1)} x="318" y="20" width="250" height="250" fill={SAND} />
 			<circle className="art__fade" style={d(2)} cx="322" cy="356" r="206" fill={BLUE} />
 			{/* ربعِ پایین-چپِ همان دایره */}

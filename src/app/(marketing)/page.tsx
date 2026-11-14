@@ -10,7 +10,7 @@ import { FaqAccordion } from "@/components/marketing/faq-accordion"
 import { WorkCard } from "@/components/marketing/work-card"
 import { Closing } from "@/components/marketing/closing"
 import { buildMetadata, JsonLd, faqJsonLd, STUDIO } from "@/lib/seo"
-import { getContent, pairs } from "@/lib/content"
+import { getContent, pairs, lines } from "@/lib/content"
 import { faIndex, faNum } from "@/lib/fa"
 
 export const metadata = buildMetadata({
@@ -52,6 +52,7 @@ export default async function HomePage() {
 	const faqItems = faqs.map((f) => ({ q: f.question, a: f.answer }))
 	const process = pairs(c.process)
 	const assurances = pairs(c.assurances)
+	const promises = lines(c.heroPromises)
 
 	// بخش‌های بی‌داده حذف می‌شوند، پس شماره‌ها از روی بخش‌های واقعاً رندرشده می‌آیند
 	let n = 0
@@ -92,17 +93,19 @@ export default async function HomePage() {
 							<HeroArt className="mx-auto max-w-[min(100%,58svh)]" />
 						</Reveal>
 
-						{/* سه قولِ کوتاه — همان‌هایی که پایین‌تر مفصل آمده‌اند */}
-						<Reveal delay={700} className="absolute bottom-[4%] start-0 w-[min(78%,300px)] md:-start-[8%]">
-							<ul className="glass divide-y divide-[var(--line)] px-5 py-1 text-[.9rem] font-medium">
-								{["جلسه‌ی اول رایگان است", "پاسخ در همان روز کاری", "سه ماه پشتیبانی پس از انتشار"].map((t) => (
-									<li key={t} className="flex items-center gap-3 py-3">
-										<span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" aria-hidden="true" />
-										{t}
-									</li>
-								))}
-							</ul>
-						</Reveal>
+						{/* قول‌های کوتاه — همان‌هایی که پایین‌تر مفصل آمده‌اند */}
+						{promises.length > 0 && (
+							<Reveal delay={700} className="absolute bottom-[4%] start-0 w-[min(78%,300px)] md:-start-[8%]">
+								<ul className="glass divide-y divide-[var(--line)] px-5 py-1 text-[.9rem] font-medium">
+									{promises.map((t) => (
+										<li key={t} className="flex items-center gap-3 py-3">
+											<span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" aria-hidden="true" />
+											{t}
+										</li>
+									))}
+								</ul>
+							</Reveal>
+						)}
 					</div>
 				</div>
 			</section>

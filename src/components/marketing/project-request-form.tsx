@@ -6,7 +6,6 @@ import { FormDone, FormError, SubmitButton } from "@/components/marketing/form-p
 
 const initial: FormState = {}
 
-const budgets = ["تا ۱۰ میلیون تومان", "۱۰ تا ۳۰ میلیون تومان", "۳۰ تا ۸۰ میلیون تومان", "بیش از ۸۰ میلیون تومان"]
 const timelines = ["فوری (کمتر از ۱ ماه)", "۱ تا ۳ ماه", "۳ تا ۶ ماه", "انعطاف‌پذیر"]
 
 /** گروهِ فیلدها با عنوانِ شماره‌دار — فرمِ بلند را به سه قدمِ کوتاه می‌شکند. */
@@ -22,7 +21,8 @@ function Group({ n, title, children }: { n: string; title: string; children: Rea
 	)
 }
 
-export function ProjectRequestForm() {
+/** بازه‌های بودجه از متن‌های قابل‌ویرایشِ صفحه می‌آیند (content.ts ← گروه request). */
+export function ProjectRequestForm({ budgets }: { budgets: string[] }) {
 	const [state, action, pending] = useActionState(submitProjectRequest, initial)
 
 	const v = state.values ?? {}
