@@ -2,9 +2,13 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import prisma from "@/lib/prisma"
-import { PageHead } from "@/components/ui/container"
-import { Reveal, RevealLines } from "@/components/ui/reveal"
+import { PageHead, Folio } from "@/components/ui/section"
+import { Reveal } from "@/components/ui/reveal"
+import { Cta, More } from "@/components/ui/cta"
+import { Arrow } from "@/components/ui/marks"
+import { Closing } from "@/components/marketing/closing"
 import { buildMetadata, JsonLd, serviceJsonLd, breadcrumbJsonLd } from "@/lib/seo"
+import { faIndex } from "@/lib/fa"
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -35,6 +39,8 @@ export default async function ServiceDetailPage({ params }: Props) {
 		take: 3,
 	})
 
+	let n = 0
+
 	return (
 		<>
 			<JsonLd
@@ -50,105 +56,78 @@ export default async function ServiceDetailPage({ params }: Props) {
 					]),
 				]}
 			/>
-			<PageHead lines={[service.title]} lead={service.summary ?? undefined}>
-				<Reveal delay={320} className="mt-10 flex flex-wrap gap-4">
-					<Link href="/request-project" className="btn btn--solid">
+
+			<PageHead label="خدمات" lines={[service.title]} lead={service.summary ?? undefined}>
+				<div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-5">
+					<Cta href="/request-project" solid>
 						درخواست این خدمت
-					</Link>
-					<Link href="/contact" className="btn">
-						مشاوره‌ی رایگان
-					</Link>
-				</Reveal>
+					</Cta>
+					<More href="/services">همه‌ی خدمات</More>
+				</div>
 			</PageHead>
 
-			<div className="stage stage--r px-[var(--pad)] pb-[var(--sec)]">
-				{paragraphs.length > 0 && (
-					<section className="py-[clamp(40px,6vw,80px)]">
-						<Reveal as="rule" className="mb-14" />
-						<div className="grid gap-10 md:grid-cols-[minmax(0,18rem)_1fr] md:gap-20">
-							<Reveal className="md:sticky md:top-32 md:h-fit">
-								<h2 className="h3">این خدمت چیست</h2>
-							</Reveal>
-							<div className="space-y-7">
-								{paragraphs.map((t, i) => (
-									<Reveal key={i} as="rv-blur" delay={i * 80}>
-										<p className={i === 0 ? "lead max-w-[54ch]" : "body-t max-w-[62ch]"}>{t}</p>
+			{paragraphs.length > 0 && (
+				<section className="wrap pb-[var(--sec)]">
+					<Folio n={++n} label="این خدمت چیست" />
+					<div className="g12 mt-[clamp(40px,6vw,88px)]">
+						<Reveal className="md:col-span-9 md:col-start-4">
+							<p className="statement">{paragraphs[0]}</p>
+						</Reveal>
+						{paragraphs.length > 1 && (
+							<div className="prose-v mt-[clamp(32px,4vw,64px)] md:col-span-6 md:col-start-4">
+								{paragraphs.slice(1).map((t, i) => (
+									<Reveal key={i} delay={i * 80}>
+										<p>{t}</p>
 									</Reveal>
 								))}
 							</div>
-						</div>
-					</section>
-				)}
+						)}
+					</div>
+				</section>
+			)}
 
-				{service.features.length > 0 && (
-					<section className="py-[clamp(40px,6vw,80px)]">
-						<Reveal as="rule" className="mb-14" />
-						<div className="grid gap-10 md:grid-cols-[minmax(0,18rem)_1fr] md:gap-20">
-							<Reveal className="md:sticky md:top-32 md:h-fit">
-								<h2 className="h3">چه چیزی شامل می‌شود</h2>
-							</Reveal>
-							{/* هر ویژگی یک گره روی خط — همان الگوی روش کار */}
-							<ol className="track">
-								{service.features.map((f, i) => (
-									<li key={f} className="group relative">
-										<span className="track__dot" aria-hidden="true" />
-										<Reveal delay={i * 70} className="py-6">
-											<p className="max-w-[54ch] transition-colors duration-500 group-hover:text-[var(--accent)]">
-												{f}
-											</p>
-										</Reveal>
-									</li>
-								))}
-							</ol>
-						</div>
-					</section>
-				)}
+			{service.features.length > 0 && (
+				<section className="wrap pb-[var(--sec)]">
+					<Folio n={++n} label="چه چیزی شامل می‌شود" />
+					<ul className="mt-[clamp(32px,4vw,56px)] grid gap-x-[var(--gap)] border-t border-[var(--line-2)] md:grid-cols-2">
+						{service.features.map((f, i) => (
+							<li key={f} className="border-b border-[var(--line)]">
+								<Reveal delay={(i % 2) * 90} className="flex items-baseline gap-6 py-6">
+									<span className="idx__n" aria-hidden="true">
+										{faIndex(i + 1)}
+									</span>
+									<span className="h3">{f}</span>
+								</Reveal>
+							</li>
+						))}
+					</ul>
+				</section>
+			)}
 
-				{related.length > 0 && (
-					<section className="py-[clamp(40px,6vw,80px)]">
-						<Reveal as="rule" className="mb-14" />
-						<h2 className="h3 mb-10">خدمات دیگر</h2>
-						<ul className="grid gap-6 md:grid-cols-3">
-							{related.map((r, i) => (
-								<li key={r.id}>
-									<Reveal as="rv-blur" delay={i * 90} className="h-full">
-										<article className="panel h-full">
-											<span className="panel__edge" aria-hidden="true" />
-											<Link href={`/services/${r.slug}`} className="group block h-full p-8">
-												<h3 className="h3 transition-colors duration-500 group-hover:text-[var(--accent)]">
-													{r.title}
-												</h3>
-												{r.summary && <p className="body-t mt-3 text-[15px]">{r.summary}</p>}
-											</Link>
-										</article>
-									</Reveal>
-								</li>
-							))}
-						</ul>
-					</section>
-				)}
-			</div>
+			{related.length > 0 && (
+				<section className="wrap pb-[var(--sec)]">
+					<Folio n={++n} label="خدمات دیگر" />
+					<ul className="idx mt-[clamp(32px,4vw,56px)]">
+						{related.map((r, i) => (
+							<li key={r.id}>
+								<Link href={`/services/${r.slug}`} className="idx__row">
+									<span className="idx__n" aria-hidden="true">
+										{faIndex(i + 1)}
+									</span>
+									<h3 className="h3 idx__t">{r.title}</h3>
+									{r.summary ? <p className="body-t text-[.94rem]">{r.summary}</p> : <span />}
+									<Arrow className="idx__go text-2xl" />
+								</Link>
+							</li>
+						))}
+					</ul>
+				</section>
+			)}
 
-			<section className="stage stage--c px-[var(--pad)] py-[var(--sec)]">
-				<Reveal as="rule" className="mb-[var(--sec)]" />
-				<h2 className="display max-w-[14ch]">
-					<RevealLines className="sheen" step={130} lines={["شروع", "کنیم؟"]} />
-				</h2>
-				<Reveal delay={280} className="mt-10">
-					<p className="body-t max-w-[52ch]">
-						هزینه‌ی هر پروژه به دامنه‌ی کار بستگی دارد. بعد از یک گفتگوی کوتاه، پیشنهاد مکتوب با
-						زمان‌بندی و قیمت نهایی دریافت می‌کنید.
-					</p>
-				</Reveal>
-				<Reveal delay={420} className="mt-14 flex flex-wrap items-center gap-x-12 gap-y-6">
-					<Link href="/request-project" className="btn btn--solid">
-						ثبت درخواست پروژه
-					</Link>
-					<a href="mailto:info@virgule.studio" className="link-u tap h3 font-latin" dir="ltr">
-						info@virgule.studio
-					</a>
-				</Reveal>
-			</section>
+			<Closing
+				lines={["شروع", "کنیم؟"]}
+				lead="هزینه‌ی هر پروژه به دامنه‌ی کار بستگی دارد. بعد از یک گفتگوی کوتاه، پیشنهاد مکتوب با زمان‌بندی و قیمت نهایی دریافت می‌کنید."
+			/>
 		</>
 	)
 }

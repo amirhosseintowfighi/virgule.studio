@@ -14,6 +14,8 @@ export const STUDIO = {
 	city: "تهران",
 	country: "IR",
 	founded: "2021",
+	/** همان سال، به تقویم شمسی — برای نمایش */
+	foundedFa: "۱۴۰۰",
 	language: "fa-IR",
 } as const
 

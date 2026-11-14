@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test"
 // تست‌های E2E صفحات عمومی
 test("صفحه‌ی خانه بارگذاری می‌شود و شعار را نشان می‌دهد", async ({ page }) => {
 	await page.goto("/")
-	await expect(page.getByRole("heading", { level: 1 })).toContainText("ویرگول")
+	await expect(page.getByRole("heading", { level: 1 })).toContainText("مکثی که")
 })
 
 test("ناوبری به صفحه‌ی تماس کار می‌کند", async ({ page }) => {

@@ -2,10 +2,11 @@ import Link from "next/link"
 import prisma from "@/lib/prisma"
 import { safe } from "@/lib/safe"
 import { PostStatus } from "@prisma/client"
-import { PageHead } from "@/components/ui/container"
-import { Reveal } from "@/components/ui/reveal"
+import { PageHead, Folio } from "@/components/ui/section"
+import { Arrow } from "@/components/ui/marks"
 import { buildMetadata, JsonLd, breadcrumbJsonLd } from "@/lib/seo"
 import { getContent } from "@/lib/content"
+import { faDate, faIndex, faNum } from "@/lib/fa"
 
 export const metadata = buildMetadata({
 	title: "یادداشت‌های طراحی و توسعه‌ی وب",
@@ -27,11 +28,11 @@ export default async function BlogPage({ searchParams }: Props) {
 		...(q ? { title: { contains: q, mode: "insensitive" as const } } : {}),
 	}
 
-	const [posts, total] = await Promise.all([
+	const [posts, total, c] = await Promise.all([
 		safe(
 			prisma.post.findMany({
 				where,
-				include: { author: true, category: true },
+				include: { category: true },
 				orderBy: { publishedAt: "desc" },
 				skip: (current - 1) * PER_PAGE,
 				take: PER_PAGE,
@@ -39,79 +40,86 @@ export default async function BlogPage({ searchParams }: Props) {
 			[]
 		),
 		safe(prisma.post.count({ where }), 0),
+		getContent("blog"),
 	])
 
 	const pages = Math.ceil(total / PER_PAGE)
-	const c = await getContent("blog")
+	const pageHref = (n: number) => `/blog?page=${n}${q ? `&q=${encodeURIComponent(q)}` : ""}`
 
 	return (
 		<>
-			<PageHead
-				lines={[c.headLine1]}
-				lead={c.headLead}
-			>
-				<Reveal delay={320} className="mt-10 max-w-md">
-					<form action="/blog">
-						<label>
-							<span className="label">جستجو</span>
-							<input name="q" defaultValue={q} placeholder="در یادداشت‌ها جستجو کنید…" className="field" />
-						</label>
-					</form>
-				</Reveal>
+			<JsonLd data={breadcrumbJsonLd([{ name: "یادداشت‌ها", path: "/blog" }])} />
+
+			<PageHead label="یادداشت‌ها" art={3} lines={[c.headLine1]} lead={c.headLead}>
+				<form action="/blog" role="search" className="mt-8 flex items-end gap-4">
+					<label className="block flex-1">
+						<span className="label">جستجو در یادداشت‌ها</span>
+						<input name="q" type="search" defaultValue={q} className="field" />
+					</label>
+					<button type="submit" className="btn min-h-[52px] px-5" aria-label="جستجو">
+						<Arrow />
+					</button>
+				</form>
 			</PageHead>
 
-			<section className="stage stage--l px-[var(--pad)] pb-[var(--sec)]">
+			<section className="wrap pb-[var(--sec)]">
+				<Folio
+					label={q ? `نتیجه‌ی جستجو برای «${q}»` : "همه‌ی یادداشت‌ها"}
+					aside={total > 0 ? `${faNum(total)} یادداشت` : undefined}
+				/>
+
 				{posts.length === 0 ? (
-					<p className="body-t">مقاله‌ای پیدا نشد.</p>
+					<div className="mt-10">
+						<p className="h3">یادداشتی پیدا نشد.</p>
+						{q && (
+							<Link href="/blog" className="link-a tap mt-6">
+								نمایش همه‌ی یادداشت‌ها
+								<Arrow />
+							</Link>
+						)}
+					</div>
 				) : (
-					/* هر یادداشت یک تخته — همان سطحی که در بقیه‌ی سایت استفاده می‌شود */
-					<ul className="grid gap-6 md:grid-cols-2">
-						{posts.map((p, i) => (
-							<li key={p.id} className={i % 3 === 0 ? "md:col-span-2" : ""}>
-								<Reveal as="rv-blur" delay={(i % 3) * 90} className="h-full">
-									<article className="panel h-full">
-										<span className="panel__edge" aria-hidden="true" />
-										<Link href={`/blog/${p.slug}`} className="group block h-full p-[clamp(22px,3vw,44px)]">
-											<div className="mb-5 flex flex-wrap items-center gap-x-5 gap-y-2">
-												{p.category && <span className="meta-fa">{p.category.name}</span>}
-												{p.readingTime && (
-													<span className="meta font-latin">{p.readingTime} min</span>
-												)}
-											</div>
-
-											<h2 className="h3 max-w-[26ch] transition-colors duration-500 group-hover:text-[var(--accent)]">
-												{p.title}
-											</h2>
-											{p.excerpt && <p className="body-t mt-4 max-w-[60ch] text-[15px]">{p.excerpt}</p>}
-
-											<div className="mt-8 flex flex-wrap items-center justify-between gap-4">
-												{p.author && <span className="meta-fa">{p.author.name}</span>}
-												<span
-													className="meta-fa accent translate-x-3 opacity-0 transition-[opacity,transform] duration-500 group-hover:translate-x-0 group-hover:opacity-100"
-													style={{ transitionTimingFunction: "var(--ease)" }}
-													aria-hidden="true"
-												>
-													خواندن ←
-												</span>
-											</div>
-										</Link>
-									</article>
-								</Reveal>
-							</li>
-						))}
+					<ul className="idx mt-[clamp(32px,4vw,56px)]">
+						{posts.map((p, i) => {
+							const meta = [
+								p.category?.name,
+								faDate(p.publishedAt),
+								p.readingTime ? `${faNum(p.readingTime)} دقیقه مطالعه` : null,
+							].filter(Boolean)
+							return (
+								<li key={p.id}>
+									<Link href={`/blog/${p.slug}`} className="idx__row !items-start">
+										<span className="idx__n" aria-hidden="true">
+											{faIndex((current - 1) * PER_PAGE + i + 1)}
+										</span>
+										<div>
+											<h2 className="h2 idx__t max-w-[20ch] text-[clamp(1.9rem,3vw,2.9rem)]">{p.title}</h2>
+											{meta.length > 0 && <p className="meta-fa mt-4">{meta.join(" · ")}</p>}
+										</div>
+										{p.excerpt ? <p className="body-t md:pt-2">{p.excerpt}</p> : <span />}
+										<Arrow className="idx__go mt-3 !self-start text-2xl" />
+									</Link>
+								</li>
+							)
+						})}
 					</ul>
 				)}
 
 				{pages > 1 && (
-					<nav className="mt-16 flex gap-6" aria-label="صفحه‌بندی">
+					<nav className="mt-14 flex items-baseline gap-7" aria-label="صفحه‌بندی">
+						<span className="meta-fa">صفحه</span>
 						{Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
 							<Link
 								key={n}
-								href={`/blog?page=${n}${q ? `&q=${q}` : ""}`}
+								href={pageHref(n)}
 								aria-current={n === current ? "page" : undefined}
-								className={n === current ? "num accent font-bold" : "num link-u text-[var(--fg-3)]"}
+								className={
+									n === current
+										? "numeral tap text-[1.6rem]"
+										: "serif link-u tap text-[1.6rem] leading-none text-[var(--fg-3)]"
+								}
 							>
-								{String(n).padStart(2, "0")}
+								{faNum(n)}
 							</Link>
 						))}
 					</nav>

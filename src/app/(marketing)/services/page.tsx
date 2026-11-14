@@ -1,11 +1,13 @@
 import Link from "next/link"
 import prisma from "@/lib/prisma"
 import { safe } from "@/lib/safe"
-import { PageHead } from "@/components/ui/container"
-import { Reveal, RevealLines } from "@/components/ui/reveal"
-import { Magnetic } from "@/components/fx/magnetic"
+import { PageHead, Folio } from "@/components/ui/section"
+import { Arrow } from "@/components/ui/marks"
+import { Closing } from "@/components/marketing/closing"
 import { buildMetadata, JsonLd, breadcrumbJsonLd } from "@/lib/seo"
 import { getContent } from "@/lib/content"
+import { Glyph } from "@/components/ui/art"
+import { faNum } from "@/lib/fa"
 
 export const metadata = buildMetadata({
 	title: "خدمات طراحی و توسعه‌ی وب",
@@ -24,71 +26,43 @@ export default async function ServicesPage() {
 		<>
 			<JsonLd data={breadcrumbJsonLd([{ name: "خدمات", path: "/services" }])} />
 
-			<PageHead
-				lines={[c.headLine1, c.headLine2]}
-				lead={c.headLead}
-			/>
+			<PageHead label="خدمات" art={2} lines={[c.headLine1, c.headLine2]} lead={c.headLead} />
 
-			<section className="stage stage--r px-[var(--pad)] pb-[var(--sec)]">
+			<section className="wrap pb-[var(--sec)]">
+				<Folio label="فهرست" aside={services.length > 0 ? `${faNum(services.length)} خدمت` : undefined} />
 				{services.length === 0 ? (
-					<p className="body-t">فهرست خدمات در دسترس نیست.</p>
+					<p className="body-t mt-10">فهرست خدمات در دسترس نیست.</p>
 				) : (
-					// همان پشته‌ی چسبان صفحه‌ی اصلی — یک زبان، در همه‌ی صفحه‌ها
-					<ul className="stack">
+					// همان فهرستِ صفحه‌ی اصلی، با جزئیاتِ بیشتر: ستونِ سوم ویژگی‌های هر خدمت است
+					<ul className="idx mt-[clamp(32px,4vw,56px)]">
 						{services.map((s, i) => (
-							<li key={s.id} className="stack__i" style={{ "--i": i } as React.CSSProperties}>
-								<article className="panel flex min-h-[clamp(320px,50svh,480px)] flex-col p-[clamp(24px,4vw,64px)]">
-									<span className="panel__edge" aria-hidden="true" />
-									<span className="panel__ghost num" aria-hidden="true">
-										{String(i + 1).padStart(2, "0")}
-									</span>
-
-									<div className="my-auto grid gap-10 md:grid-cols-[1fr_minmax(0,22rem)] md:gap-16">
-										<div>
-											<h2 className="h2 text-[clamp(1.6rem,2.6vw,2.4rem)]">{s.title}</h2>
-											{s.summary && <p className="body-t mt-5 max-w-[48ch]">{s.summary}</p>}
-											<div className="mt-10">
-												<Magnetic strength={0.18}>
-													<Link href={`/services/${s.slug}`} className="btn">
-														جزئیات این خدمت
-													</Link>
-												</Magnetic>
-											</div>
-										</div>
-
-										{s.features.length > 0 && (
-											<ul className="flex flex-col gap-4 md:border-s md:border-[var(--line)] md:ps-12">
-												{s.features.map((f) => (
-													<li key={f} className="feat body-t text-[15px] leading-relaxed">
-														{f}
-													</li>
-												))}
-											</ul>
-										)}
+							<li key={s.id}>
+								<Link href={`/services/${s.slug}`} className="idx__row !items-start">
+									<Glyph i={i} className="idx__n mt-1" />
+									<div>
+										<h2 className="h2 idx__t text-[clamp(1.9rem,3vw,2.8rem)]">{s.title}</h2>
+										{s.summary && <p className="body-t mt-4 max-w-[44ch]">{s.summary}</p>}
 									</div>
-								</article>
+									{s.features.length > 0 ? (
+										<ul className="flex flex-col gap-2.5 md:pt-3">
+											{s.features.map((f) => (
+												<li key={f} className="feat body-t text-[.94rem] leading-relaxed">
+													{f}
+												</li>
+											))}
+										</ul>
+									) : (
+										<span />
+									)}
+									<Arrow className="idx__go mt-4 !self-start text-2xl" />
+								</Link>
 							</li>
 						))}
 					</ul>
 				)}
 			</section>
 
-			<section className="stage stage--c px-[var(--pad)] py-[var(--sec)]">
-				<Reveal as="rule" className="mb-[var(--sec)]" />
-				<h2 className="h2 max-w-[18ch]">
-					<RevealLines className="sheen" lines={[c.ctaLine1, c.ctaLine2]} />
-				</h2>
-				<Reveal delay={240} className="mt-10">
-					<p className="body-t max-w-[54ch]">{c.ctaLead}</p>
-				</Reveal>
-				<Reveal delay={380} className="mt-12">
-					<Magnetic strength={0.22}>
-						<Link href="/request-project" className="btn btn--solid">
-							دریافت مشاوره‌ی رایگان
-						</Link>
-					</Magnetic>
-				</Reveal>
-			</section>
+			<Closing lines={[c.ctaLine1, c.ctaLine2]} lead={c.ctaLead} cta="دریافت مشاوره‌ی رایگان" />
 		</>
 	)
 }

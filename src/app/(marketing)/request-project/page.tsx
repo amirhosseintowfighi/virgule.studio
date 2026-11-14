@@ -1,6 +1,5 @@
-import { PageHead } from "@/components/ui/container"
+import { PageHead, Folio } from "@/components/ui/section"
 import { Reveal } from "@/components/ui/reveal"
-import { MarkBackdrop } from "@/components/fx/mark-backdrop"
 import { ProjectRequestForm } from "@/components/marketing/project-request-form"
 import { buildMetadata, JsonLd, breadcrumbJsonLd } from "@/lib/seo"
 import { getContent, pairs } from "@/lib/content"
@@ -20,41 +19,31 @@ export default async function RequestProjectPage() {
 		<>
 			<JsonLd data={breadcrumbJsonLd([{ name: "ثبت درخواست پروژه", path: "/request-project" }])} />
 
-			<PageHead
-				lines={[c.headLine1, c.headLine2]}
-				lead={c.headLead}
-			/>
+			<PageHead label="شروع پروژه" art={2} lines={[c.headLine1, c.headLine2]} lead={c.headLead} />
 
-			<section className="stage stage--r relative px-[var(--pad)] pb-[var(--sec)]">
-				<MarkBackdrop className="pointer-events-none absolute -top-[8%] left-[-20%] hidden h-[min(62vh,540px)] w-[min(62vh,540px)] opacity-60 lg:block" />
+			<section className="wrap pb-[var(--sec)]">
+				<div className="g12">
+					{/* فرم اول می‌آید — در موبایل هم. تعهدها حاشیه‌ی آن‌اند، نه مانعِ رسیدن به آن. */}
+					<div className="md:col-span-7">
+						<Folio label={c.formTitle} />
+						<div className="mt-10">
+							<ProjectRequestForm />
+						</div>
+					</div>
 
-				<div className="relative z-10 grid gap-16 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-24">
-					{/* تعهدها — روی خطِ عمودی، مثل روش کارِ صفحه‌ی اصلی */}
-					<div className="lg:sticky lg:top-32 lg:h-fit">
-						<h2 className="h3 mb-8">{c.sideTitle}</h2>
-						<ol className="track">
+					<aside className="md:sticky md:top-28 md:col-span-4 md:col-start-9 md:h-fit">
+						<Folio label={c.sideTitle} />
+						<ul className="mt-2">
 							{assurances.map((a, i) => (
-								<li key={a.t} className="group relative">
-									<span className="track__dot" aria-hidden="true" />
-									<Reveal as="rv-blur" delay={i * 90} className="py-7">
-										<h3 className="font-medium transition-colors duration-500 group-hover:text-[var(--accent)]">
-											{a.t}
-										</h3>
-										<p className="body-t mt-2 text-[15px]">{a.d}</p>
+								<li key={a.t} className="border-b border-[var(--line)]">
+									<Reveal delay={i * 80} className="py-6">
+										<h3 className="t-title">{a.t}</h3>
+										<p className="body-t mt-1 text-[.94rem]">{a.d}</p>
 									</Reveal>
 								</li>
 							))}
-						</ol>
-					</div>
-
-					{/* فرم، داخل یک تخته */}
-					<Reveal as="rv-blur" delay={160}>
-						<div className="panel p-[clamp(24px,4vw,56px)]">
-							<span className="panel__edge" aria-hidden="true" />
-							<h2 className="h3 mb-8">{c.formTitle}</h2>
-							<ProjectRequestForm />
-						</div>
-					</Reveal>
+						</ul>
+					</aside>
 				</div>
 			</section>
 		</>

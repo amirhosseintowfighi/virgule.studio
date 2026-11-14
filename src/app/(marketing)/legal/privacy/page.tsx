@@ -1,34 +1,44 @@
-import type { Metadata } from "next"
+import { LegalPage } from "@/components/marketing/legal-page"
+import { buildMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
 	title: "حریم خصوصی",
 	description: "سیاست حفظ حریم خصوصی ویرگول.",
-}
+	path: "/legal/privacy",
+})
 
 export default function PrivacyPage() {
 	return (
-		<section className="stage stage--tl mx-auto max-w-[72ch] px-[var(--pad)] pb-[var(--sec)] pt-[clamp(120px,16vw,200px)]">
-				<h1 className="h1">حریم خصوصی</h1>
-				<p className="meta-fa mt-5">آخرین به‌روزرسانی: ۱۴۰۴</p>
-				<div className="mt-14 space-y-8">
-					<p className="body-t">حفظ حریم خصوصی شما برای ویرگول بسیار مهم است. این صفحه توضیح می‌دهد که چه اطلاعاتی جمع‌آوری می‌کنیم و چگونه از آن محافظت می‌کنیم.</p>
-					<div>
-						<h2 className="h3 mb-3">۱. اطلاعاتی که جمع‌آوری می‌کنیم</h2>
-						<p className="body-t">تنها اطلاعاتی که شما از طریق فرم‌های تماس و درخواست پروژه در اختیار ما قرار می‌دهید (نام، ایمیل، شماره تماس و توضیحات پروژه).</p>
-					</div>
-					<div>
-						<h2 className="h3 mb-3">۲. نحوه‌ی استفاده</h2>
-						<p className="body-t">از این اطلاعات فقط برای پاسخ‌گویی به درخواست شما و ارائه‌ی خدمات استفاده می‌کنیم و آن را با هیچ شخص ثالثی به اشتراک نمی‌گذاریم.</p>
-					</div>
-					<div>
-						<h2 className="h3 mb-3">۳. امنیت داده‌ها</h2>
-						<p className="body-t">داده‌های شما روی بستری امن نگهداری می‌شود و دسترسی به آن محدود و کنترل‌شده است.</p>
-					</div>
-					<div>
-						<h2 className="h3 mb-3">۴. تماس با ما</h2>
-						<p className="body-t">برای هر پرسش درباره‌ی حریم خصوصی می‌توانید با <span className="font-latin">info@virgule.studio</span> در تماس باشید.</p>
-					</div>
-				</div>
-		</section>
+		<LegalPage
+			title="حریم خصوصی"
+			updated="۱۴۰۴"
+			intro="حفظ حریم خصوصی شما برای ویرگول بسیار مهم است. این صفحه توضیح می‌دهد که چه اطلاعاتی جمع‌آوری می‌کنیم و چگونه از آن محافظت می‌کنیم."
+			sections={[
+				{
+					t: "۱. اطلاعاتی که جمع‌آوری می‌کنیم",
+					d: "تنها اطلاعاتی که شما از طریق فرم‌های تماس و درخواست پروژه در اختیار ما قرار می‌دهید (نام، ایمیل، شماره تماس و توضیحات پروژه).",
+				},
+				{
+					t: "۲. نحوه‌ی استفاده",
+					d: "از این اطلاعات فقط برای پاسخ‌گویی به درخواست شما و ارائه‌ی خدمات استفاده می‌کنیم و آن را با هیچ شخص ثالثی به اشتراک نمی‌گذاریم.",
+				},
+				{
+					t: "۳. امنیت داده‌ها",
+					d: "داده‌های شما روی بستری امن نگهداری می‌شود و دسترسی به آن محدود و کنترل‌شده است.",
+				},
+				{
+					t: "۴. تماس با ما",
+					d: (
+						<>
+							برای هر پرسش درباره‌ی حریم خصوصی می‌توانید با{" "}
+							<a href="mailto:info@virgule.studio" className="link-a tap-inline font-latin" dir="ltr">
+								info@virgule.studio
+							</a>{" "}
+							در تماس باشید.
+						</>
+					),
+				},
+			]}
+		/>
 	)
 }

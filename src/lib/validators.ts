@@ -38,7 +38,8 @@ export const resetPasswordSchema = z.object({
 export const contactSchema = z.object({
 	name: z.string().min(2, "نام را وارد کنید."),
 	email: z.string().email("ایمیل معتبر نیست."),
-	phone: iranPhone.optional(),
+	// فیلدِ خالیِ فرم رشته‌ی خالی می‌فرستد، نه undefined — بدون این، «اختیاری» در عمل اجباری بود
+	phone: iranPhone.optional().or(z.literal("")),
 	message: z.string().min(10, "پیام حداقل ۱۰ کاراکتر باشد."),
 	website: z.string().max(0).optional(),
 })

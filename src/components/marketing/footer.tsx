@@ -1,11 +1,13 @@
 import Link from "next/link"
 import prisma from "@/lib/prisma"
 import { safe } from "@/lib/safe"
-import { LogoMark } from "@/components/ui/logo"
+import { LogoMark } from "@/components/ui/marks"
 import { STUDIO } from "@/lib/seo"
+import { faNum } from "@/lib/fa"
 
 const studioLinks = [
 	{ href: "/portfolio", label: "نمونه‌کارها" },
+	{ href: "/services", label: "خدمات" },
 	{ href: "/about", label: "درباره‌ی ما" },
 	{ href: "/blog", label: "یادداشت‌ها" },
 	{ href: "/faq", label: "پرسش‌های متداول" },
@@ -17,6 +19,7 @@ const legalLinks = [
 	{ href: "/legal/terms", label: "قوانین و مقررات" },
 ]
 
+/** پانوشتِ سایت — ادامه‌ی همان نوارِ مرکبیِ پایانِ صفحه. */
 export async function Footer() {
 	// ستون خدمات از دیتابیس می‌آید؛ اسلاگِ ثابت در کد یعنی لینک شکسته به‌محض
 	// اینکه مدیر خدمتی را غیرفعال کند یا اسلاگش را عوض کند.
@@ -24,78 +27,89 @@ export async function Footer() {
 		prisma.service.findMany({
 			where: { active: true },
 			orderBy: { order: "asc" },
-			take: 5,
+			take: 6,
 			select: { slug: true, title: true },
 		}),
 		[]
 	)
 
-	return (
-		<footer className="relative z-[1] border-t border-[var(--line)] px-[var(--pad)] pb-12 pt-[clamp(72px,10vw,140px)]">
-			<div className="grid gap-14 md:grid-cols-[1.4fr_repeat(3,minmax(0,1fr))] md:gap-10">
-				<div>
-					<LogoMark className="h-10 w-10 text-[var(--fg)]" />
-					{/* در یک عبارت، وگرنه شکستن خطِ JSX قبل از «؛» و «.» فاصله می‌گذارد */}
-					<p className="body-t mt-6 max-w-[34ch] text-[15px]">
-						{`${STUDIO.tagline}؛ استودیوی طراحی و توسعه‌ی وب در ${STUDIO.city}.`}
-					</p>
-					<div className="mt-8 flex flex-col gap-2">
-						<a href={`mailto:${STUDIO.email}`} className="link-u tap font-latin w-fit text-sm" dir="ltr">
-							{STUDIO.email}
-						</a>
-						<a href={`tel:${STUDIO.phone}`} className="link-u tap num w-fit text-sm" dir="ltr">
-							{STUDIO.phoneDisplay}
-						</a>
-					</div>
-				</div>
+	const year = new Intl.DateTimeFormat("fa-IR-u-nu-latn", { year: "numeric" }).format(new Date())
 
-				{services.length > 0 && (
-					<nav aria-label="خدمات">
-						<h4 className="meta-fa mb-6">خدمات</h4>
-						<ul className="flex flex-col gap-3">
-							{services.map((s) => (
-								<li key={s.slug}>
-									<Link href={`/services/${s.slug}`} className="link-u tap text-sm">
-										{s.title}
+	return (
+		<footer className="ink relative">
+			<div className="wrap pb-10 pt-[clamp(56px,7vw,104px)]">
+				<div className="g12 border-t border-[var(--line-2)] pt-10">
+					<div className="md:col-span-4">
+						<div className="flex items-center gap-3">
+							<LogoMark className="h-9 w-9" />
+							<span className="serif text-[1.9rem] leading-none">ویرگول</span>
+						</div>
+						<p className="h3 mt-6 max-w-[18ch]">{`${STUDIO.tagline}.`}</p>
+						<p className="body-t mt-4 max-w-[34ch] text-[.94rem]">
+							{`استودیوی طراحی و توسعه‌ی وب در ${STUDIO.city}، از سال ${STUDIO.foundedFa}.`}
+						</p>
+					</div>
+
+					{services.length > 0 && (
+						<nav aria-label="خدمات" className="md:col-span-3 md:col-start-6">
+							<h2 className="meta-fa mb-5">خدمات</h2>
+							<ul className="flex flex-col gap-2.5">
+								{services.map((s) => (
+									<li key={s.slug}>
+										<Link href={`/services/${s.slug}`} className="link-u tap text-[.94rem]">
+											{s.title}
+										</Link>
+									</li>
+								))}
+							</ul>
+						</nav>
+					)}
+
+					<nav aria-label="استودیو" className="md:col-span-2">
+						<h2 className="meta-fa mb-5">استودیو</h2>
+						<ul className="flex flex-col gap-2.5">
+							{studioLinks.map((l) => (
+								<li key={l.href}>
+									<Link href={l.href} className="link-u tap text-[.94rem]">
+										{l.label}
 									</Link>
 								</li>
 							))}
 						</ul>
 					</nav>
-				)}
 
-				<nav aria-label="استودیو">
-					<h4 className="meta-fa mb-6">استودیو</h4>
-					<ul className="flex flex-col gap-3">
-						{studioLinks.map((l) => (
-							<li key={l.href}>
-								<Link href={l.href} className="link-u tap text-sm">
-									{l.label}
-								</Link>
+					<div className="md:col-span-2">
+						<h2 className="meta-fa mb-5">تماس</h2>
+						<ul className="flex flex-col gap-2.5 text-[.94rem]">
+							<li>
+								<a href={`mailto:${STUDIO.email}`} className="link-u tap font-latin" dir="ltr">
+									{STUDIO.email}
+								</a>
 							</li>
-						))}
-					</ul>
-				</nav>
+							<li>
+								<a href={`tel:${STUDIO.phone}`} className="link-u tap num" dir="ltr">
+									{faNum(STUDIO.phoneDisplay)}
+								</a>
+							</li>
+							<li className="text-[var(--fg-2)]">{`${STUDIO.city}، ایران`}</li>
+						</ul>
+					</div>
+				</div>
 
-				<nav aria-label="قانونی">
-					<h4 className="meta-fa mb-6">قانونی</h4>
-					<ul className="flex flex-col gap-3">
+				<div className="mt-[clamp(48px,6vw,88px)] flex flex-wrap items-center justify-between gap-x-10 gap-y-3 border-t border-[var(--line)] pt-6">
+					<span className="meta-fa">
+						{`© ${faNum(year)} ${STUDIO.legalName}. تمامی حقوق محفوظ است.`}
+					</span>
+					<ul className="flex gap-8">
 						{legalLinks.map((l) => (
 							<li key={l.href}>
-								<Link href={l.href} className="link-u tap text-sm">
+								<Link href={l.href} className="link-u tap meta-fa">
 									{l.label}
 								</Link>
 							</li>
 						))}
 					</ul>
-				</nav>
-			</div>
-
-			<div className="mt-20 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--line)] pt-8">
-				<span className="meta-fa">
-					© {new Date().getFullYear()} {STUDIO.name} — تمامی حقوق محفوظ است.
-				</span>
-				<span className="meta font-latin">{STUDIO.altName}</span>
+				</div>
 			</div>
 		</footer>
 	)
