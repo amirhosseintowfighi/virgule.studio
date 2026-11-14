@@ -40,11 +40,12 @@ export function Closing({
 						)}
 					</div>
 
-					<div className="relative md:col-span-5 md:col-start-8">
+					{/* کارت به گوشه‌ی پایینِ تصویر تکیه می‌دهد و از آن بیرون می‌زند؛ مرکزِ ترکیب دیده می‌ماند */}
+					<div className="relative md:col-span-5 md:col-start-8 md:pb-[14%]">
 						<Reveal as="art-rv">
 							<Composition variant={art} shift={art} />
 						</Reveal>
-						<Reveal delay={300} className="relative -mt-[18%] w-[min(100%,340px)] md:absolute md:-bottom-[6%] md:start-0 md:mt-0">
+						<Reveal delay={300} className="relative -mt-[18%] w-[min(100%,340px)] md:absolute md:bottom-0 md:-start-[18%] md:mt-0 md:w-[min(74%,320px)]">
 							<div className="glass p-[clamp(20px,2.2vw,32px)]">
 								<Cta href={href} solid className="w-full">
 									{cta}

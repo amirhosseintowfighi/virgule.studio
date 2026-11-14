@@ -53,6 +53,14 @@ export const CONTENT_GROUPS: ContentGroup[] = [
 			},
 			{ name: "heroCtaPrimary", label: "دکمه‌ی اصلی", type: "text", def: "دریافت مشاوره‌ی رایگان" },
 			{ name: "heroCtaSecondary", label: "دکمه‌ی دوم", type: "text", def: "دیدن نمونه‌کارها" },
+			{
+				name: "heroPromises",
+				label: "قول‌های کوتاهِ کنار تصویر",
+				type: "list",
+				help: LIST_HELP,
+				rows: 3,
+				def: ["جلسه‌ی اول رایگان است", "پاسخ در همان روز کاری", "سه ماه پشتیبانی پس از انتشار"].join("\n"),
+			},
 
 			{ name: "servicesLine1", label: "خدمات — تیتر خط اول", type: "text", def: "چه کاری برای" },
 			{ name: "servicesLine2", label: "خدمات — تیتر خط دوم", type: "text", def: "شما انجام می‌دهیم" },
@@ -356,6 +364,14 @@ export const CONTENT_GROUPS: ContentGroup[] = [
 				].join("\n"),
 			},
 			{ name: "formTitle", label: "عنوان فرم", type: "text", def: "اطلاعات پروژه" },
+			{
+				name: "budgets",
+				label: "بازه‌های بودجه",
+				type: "list",
+				help: LIST_HELP,
+				rows: 4,
+				def: ["تا ۱۰ میلیون تومان", "۱۰ تا ۳۰ میلیون تومان", "۳۰ تا ۸۰ میلیون تومان", "بیش از ۸۰ میلیون تومان"].join("\n"),
+			},
 		],
 	},
 

@@ -2,7 +2,7 @@
 
 > **ویرگول؛ مکثی که دیده می‌شود.**
 
-وب‌سایت استودیوی طراحی و توسعه‌ی وب ویرگول. Next.js 15، محیط تاریک، تایپوگرافی نمایشی و سیستم حرکتی سبک.
+وب‌سایت استودیوی طراحی و توسعه‌ی وب ویرگول. Next.js 15، طراحیِ مینیمال با تصویرهای برداریِ اصلی و شیشه‌ی کم‌رنگ. جزئیاتِ زبانِ طراحی در `docs/README-FRONTEND.md`.
 
 ---
 
@@ -15,7 +15,7 @@
 | Database | PostgreSQL 16 |
 | Auth | JWT (jose)، bcrypt، RBAC نقش‌محور |
 | فرم | Server Actions + Zod |
-| حرکت | CSS/rAF دست‌ساز + Lenis (اسکرول نرم) |
+| حرکت | CSS + IntersectionObserver (بدون کتابخانه) |
 | دیپلوی | Docker، Docker Compose، Nginx، HTTPS |
 | تست | Vitest (unit)، Playwright (E2E) |
 
