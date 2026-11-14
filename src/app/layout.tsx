@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { iranYekan, inter } from "@/lib/fonts"
+import { iranYekan, inter, markazi, markaziLatin } from "@/lib/fonts"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import { BASE, STUDIO, JsonLd, organizationJsonLd, webSiteJsonLd } from "@/lib/seo"
 import "@/styles/globals.css"
@@ -35,8 +35,8 @@ export const viewport: Viewport = {
 	maximumScale: 5,
 	viewportFit: "cover",
 	themeColor: [
-		{ media: "(prefers-color-scheme: light)", color: "#ffffff" },
-		{ media: "(prefers-color-scheme: dark)", color: "#0c0a10" },
+		{ media: "(prefers-color-scheme: light)", color: "#f3f1ec" },
+		{ media: "(prefers-color-scheme: dark)", color: "#141413" },
 	],
 }
 
@@ -47,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 		<html
 			lang="fa"
 			dir="rtl"
-			className={`${iranYekan.variable} ${inter.variable}`}
+			className={`${iranYekan.variable} ${inter.variable} ${markazi.variable} ${markaziLatin.variable}`}
 			suppressHydrationWarning
 		>
 			<head>

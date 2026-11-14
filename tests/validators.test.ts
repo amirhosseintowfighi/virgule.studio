@@ -13,6 +13,17 @@ describe("contactSchema", () => {
 		expect(result.success).toBe(true)
 	})
 
+	it("شماره‌ی تماسِ خالی را می‌پذیرد (فیلد اختیاری است)", () => {
+		const result = contactSchema.safeParse({
+			name: "علی رضایی",
+			email: "ali@example.com",
+			phone: "",
+			message: "سلام، درخواست همکاری دارم.",
+			website: "",
+		})
+		expect(result.success).toBe(true)
+	})
+
 	it("ایمیل نامعتبر را رد می‌کند", () => {
 		const result = contactSchema.safeParse({
 			name: "علی",

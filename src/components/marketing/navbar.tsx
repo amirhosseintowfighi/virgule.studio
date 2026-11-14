@@ -1,19 +1,21 @@
 "use client"
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { clsx } from "clsx"
-import { LogoMark } from "@/components/ui/logo"
+import { LogoMark, Arrow } from "@/components/ui/marks"
 
 const links = [
-	{ href: "/services", label: "خدمات", en: "Services" },
-	{ href: "/portfolio", label: "نمونه‌کارها", en: "Work" },
-	{ href: "/about", label: "درباره", en: "About" },
-	{ href: "/blog", label: "یادداشت‌ها", en: "Journal" },
-	{ href: "/contact", label: "تماس", en: "Contact" },
+	{ href: "/portfolio", label: "نمونه‌کارها" },
+	{ href: "/services", label: "خدمات" },
+	{ href: "/about", label: "درباره" },
+	{ href: "/blog", label: "یادداشت‌ها" },
+	{ href: "/contact", label: "تماس" },
 ]
 
 export function Navbar() {
+	const pathname = usePathname()
 	const [open, setOpen] = useState(false)
 	const [hidden, setHidden] = useState(false)
 	const [scrolled, setScrolled] = useState(false)
@@ -27,9 +29,13 @@ export function Navbar() {
 			setScrolled(y > 24)
 			last.current = y
 		}
+		onScroll()
 		window.addEventListener("scroll", onScroll, { passive: true })
 		return () => window.removeEventListener("scroll", onScroll)
 	}, [])
+
+	// با عوض‌شدن صفحه، منو بسته می‌شود
+	useEffect(() => setOpen(false), [pathname])
 
 	useEffect(() => {
 		document.body.classList.toggle("lock", open)
@@ -41,59 +47,50 @@ export function Navbar() {
 		}
 	}, [open])
 
+	const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`)
+
 	return (
 		<>
 			<header
 				className={clsx(
-					"fixed inset-x-0 top-0 z-[9995] transition-transform duration-500",
-					hidden && !open && "-translate-y-full"
+					"site-nav fixed inset-x-0 top-0 z-[45] border-b transition-[transform,background-color,border-color] duration-500",
+					hidden && !open && "-translate-y-full",
+					scrolled && !open ? "is-glass" : "border-transparent"
 				)}
 				style={{ transitionTimingFunction: "var(--ease)" }}
 			>
-				{/* نوار شیشه‌ای: وقتی صفحه پایین می‌رود، پس‌زمینه آرام ظاهر می‌شود */}
-				<div
-					className={clsx(
-						"flex items-center justify-between px-[var(--pad)] py-6 transition-[background-color,backdrop-filter,border-color] duration-700",
-						scrolled
-							? "border-b border-[var(--line)] bg-[var(--bg-glass)] backdrop-blur-xl"
-							: "border-b border-transparent"
-					)}
-					style={{ transitionTimingFunction: "var(--ease)" }}
-				>
+				<div className="wrap flex h-[76px] items-center justify-between gap-6">
 					<Link href="/" aria-label="ویرگول، خانه" className="tap flex items-center gap-3">
-						<LogoMark className="h-8 w-8 text-[var(--fg)]" />
-						<span className="text-[15px] font-medium">ویرگول</span>
+						<LogoMark className="h-8 w-8" />
+						<span className="serif text-[1.7rem] leading-none">ویرگول</span>
 					</Link>
 
-					<nav className="hidden items-center gap-10 md:flex" aria-label="ناوبری اصلی">
+					<nav className="hidden items-center gap-9 md:flex" aria-label="ناوبری اصلی">
 						{links.map((l) => (
-							// متن دولایه: با هاور، نسخه‌ی طلایی از پایین بالا می‌آید.
-							// نسخه‌ی دوم از صفحه‌خوان پنهان است تا برچسب دوبار خوانده نشود.
-							<Link key={l.href} href={l.href} className="nav-l text-sm text-[var(--fg-2)]">
-								<span className="nav-l__in">
-									<span>{l.label}</span>
-									<span aria-hidden="true">{l.label}</span>
-								</span>
+							<Link
+								key={l.href}
+								href={l.href}
+								aria-current={isActive(l.href) ? "page" : undefined}
+								className="nav-l text-[.92rem]"
+							>
+								{l.label}
 							</Link>
 						))}
 					</nav>
 
 					<div className="flex items-center gap-4">
-						{/* پوشش لازم است: .link-u در globals مقدار display را می‌دهد و
-						    کلاس `hidden` تیلویند را خنثی می‌کند. */}
-						<span className="hidden md:inline-block">
-							<Link href="/request-project" className="link-u tap accent text-sm font-medium">
-								شروع پروژه
-							</Link>
-						</span>
+						<Link href="/request-project" className="link-a hidden text-[.92rem] md:inline-flex">
+							شروع پروژه
+							<Arrow />
+						</Link>
 						<button
 							onClick={() => setOpen((v) => !v)}
 							aria-expanded={open}
 							aria-controls="fullmenu"
 							aria-label={open ? "بستن منو" : "باز کردن منو"}
-							className="relative z-10 grid h-11 w-11 place-items-center rounded-full border border-[var(--line-2)] transition-colors duration-500 hover:border-[var(--accent-line)] md:hidden"
+							className="grid h-11 w-11 place-items-center md:hidden"
 						>
-							<span className="relative block h-[9px] w-4">
+							<span className="relative block h-[9px] w-6">
 								<span
 									className={clsx(
 										"absolute inset-x-0 top-0 h-px bg-current transition-transform duration-500",
@@ -112,35 +109,34 @@ export function Navbar() {
 				</div>
 			</header>
 
-			{/* منوی تمام‌صفحه — نه یک کشوی معمولی */}
-			<div id="fullmenu" className={clsx("menu md:hidden", open && "open")} hidden={!open}>
-				<div className="flex h-full flex-col justify-between px-[var(--pad)] pb-12 pt-28">
-					<nav aria-label="ناوبری موبایل">
+			{/* منوی تمام‌صفحه‌ی موبایل. inert: وقتی بسته است، از ترتیبِ Tab و صفحه‌خوان بیرون است. */}
+			<div id="fullmenu" className={clsx("menu md:hidden", open && "open")} inert={!open}>
+				<div className="wrap flex min-h-full flex-col justify-between pb-10 pt-[104px]">
+					<nav aria-label="ناوبری موبایل" className="border-t border-[var(--fg)]">
 						{links.map((l, i) => (
 							<Link
 								key={l.href}
 								href={l.href}
+								aria-current={isActive(l.href) ? "page" : undefined}
 								onClick={() => setOpen(false)}
-								className="menu-item border-b border-[var(--line)] py-6"
+								className="menu-item border-b border-[var(--line)] py-4"
 							>
-								{/* لایه‌ی بیرونی حرکت ماسک را می‌گیرد (display:block از globals)، لایه‌ی درونی چیدمان را */}
-								<span style={{ transitionDelay: `${140 + i * 60}ms` }}>
-									<span className="flex items-baseline justify-between gap-6">
-										<span className="h3">{l.label}</span>
-										<span className="accent text-xl" aria-hidden="true">
-											←
-										</span>
+								<span style={{ transitionDelay: `${120 + i * 55}ms` }}>
+									<span className="flex items-center justify-between gap-6">
+										<span className="serif text-[2.6rem] leading-[1.15]">{l.label}</span>
+										<Arrow className="accent text-xl" />
 									</span>
 								</span>
 							</Link>
 						))}
 					</nav>
-					<div className="menu-item">
-						<span style={{ transitionDelay: "560ms" }}>
+					<div className="menu-item mt-10">
+						<span style={{ transitionDelay: "460ms" }}>
 							<Link href="/request-project" onClick={() => setOpen(false)} className="btn btn--solid w-full">
 								شروع پروژه
+								<Arrow />
 							</Link>
-							<a href="mailto:info@virgule.studio" className="meta font-latin mt-6 block">
+							<a href="mailto:info@virgule.studio" className="font-latin mt-6 block text-sm text-[var(--fg-2)]" dir="ltr">
 								info@virgule.studio
 							</a>
 						</span>

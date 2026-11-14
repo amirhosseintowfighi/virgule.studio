@@ -7,7 +7,25 @@ import { rateLimit } from "@/lib/rate-limit"
 import { getClientIp, looksLikeSpam, sanitizeText } from "@/lib/security"
 import { FormType } from "@prisma/client"
 
-export type FormState = { error?: string; success?: boolean; message?: string }
+export type FormState = {
+	error?: string
+	success?: boolean
+	message?: string
+	/** آنچه کاربر نوشته بود — React بعد از هر ارسال فرم را خالی می‌کند؛ با خطا نباید متنش از دست برود */
+	values?: Record<string, string>
+}
+
+/** مقدارهای متنیِ فرم، برای برگرداندن به خودِ فرم هنگام خطا. */
+function echo(fd: FormData): Record<string, string> {
+	const out: Record<string, string> = {}
+	for (const [k, v] of fd) if (typeof v === "string" && k !== "website") out[k] = v
+	return out
+}
+
+/** پیامِ همان فیلدی که مشکل دارد — «فیلدها را درست پر کنید» به کاربر نمی‌گوید کدام. */
+function firstIssue(error: { issues: { message: string }[] }) {
+	return error.issues[0]?.message ?? "لطفاً فیلدها را به درستی پر کنید."
+}
 
 async function guard(scope: string) {
 	const h = await headers()
@@ -23,7 +41,7 @@ export async function submitContact(_p: FormState, fd: FormData): Promise<FormSt
 		const { ip, userAgent } = await guard("contact")
 		const raw = Object.fromEntries(fd) as Record<string, string>
 		const parsed = contactSchema.safeParse(raw)
-		if (!parsed.success) return { error: "لطفاً فیلدها را به درستی پر کنید." }
+		if (!parsed.success) return { error: firstIssue(parsed.error), values: echo(fd) }
 
 		const isSpam = looksLikeSpam(parsed.data)
 		await prisma.formSubmission.create({
@@ -40,7 +58,7 @@ export async function submitContact(_p: FormState, fd: FormData): Promise<FormSt
 		})
 		return { success: true, message: "پیام شما دریافت شد. به‌زودی تماس می‌گیریم." }
 	} catch (e) {
-		return { error: e instanceof Error ? e.message : "خطا در ثبت فرم." }
+		return { error: e instanceof Error ? e.message : "خطا در ثبت فرم.", values: echo(fd) }
 	}
 }
 
@@ -50,7 +68,7 @@ export async function submitProjectRequest(_p: FormState, fd: FormData): Promise
 		const { ip, userAgent } = await guard("project")
 		const raw = Object.fromEntries(fd) as Record<string, string>
 		const parsed = projectRequestSchema.safeParse(raw)
-		if (!parsed.success) return { error: "لطفاً فیلدها را به درستی پر کنید." }
+		if (!parsed.success) return { error: firstIssue(parsed.error), values: echo(fd) }
 
 		await prisma.formSubmission.create({
 			data: {
@@ -61,7 +79,7 @@ export async function submitProjectRequest(_p: FormState, fd: FormData): Promise
 		})
 		return { success: true, message: "درخواست پروژه‌ی شما ثبت شد." }
 	} catch (e) {
-		return { error: e instanceof Error ? e.message : "خطا در ثبت درخواست." }
+		return { error: e instanceof Error ? e.message : "خطا در ثبت درخواست.", values: echo(fd) }
 	}
 }
 

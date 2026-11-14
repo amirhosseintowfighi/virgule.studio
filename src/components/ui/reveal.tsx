@@ -8,8 +8,8 @@ type Props = {
 	className?: string
 	/** تاخیر پلکانی (میلی‌ثانیه) */
 	delay?: number
-	/** نوع حرکت: جابه‌جایی ساده، پرده‌ی تصویر، یا خطِ کشیده‌شونده */
-	as?: "rv" | "rv-blur" | "img-rv" | "rule" | "line-mask"
+	/** نوع حرکت: جابه‌جایی ساده، بازشدنِ تصویر، خطِ کشیده‌شونده، یا تصویرِ برداری */
+	as?: "rv" | "img-rv" | "rule" | "art-rv"
 }
 
 /** یک ناظر برای کل صفحه — به‌جای یک IntersectionObserver به ازای هر عنصر. */
@@ -32,8 +32,9 @@ function observe(el: Element, cb: () => void) {
 				}
 			},
 			{
-				threshold: 0.15,
-				// پایین: ۱۰٪ دیرتر، تا عنصر کمی بالاتر از لبه ظاهر شود.
+				// آستانه‌ی کوچک و بدونِ حاشیه‌ی پایین: عنصری که نزدیکِ لبه‌ی پایینِ صفحه
+				// نشسته (مثل دکمه‌های بخش معرفی) هم باید همان لحظه وارد شود، نه بعد از اسکرول.
+				threshold: 0.01,
 				//
 				// بالا: کادرِ ناظر را بسیار بلند می‌کنیم تا هر عنصری که از بالای صفحه
 				// رد شده هنوز «در حال تقاطع» حساب شود. بدون این، اسکرول سریع —
@@ -42,9 +43,7 @@ function observe(el: Element, cb: () => void) {
 				// هیچ آستانه‌ای قطع نمی‌شد، پس callback اصلاً صدا زده نمی‌شد و آن
 				// محتوا تا پایان عمرِ صفحه نامرئی می‌ماند.
 				// چپ و راست هم باز است: موقعیت افقی نباید ورودِ عنصر را کنترل کند.
-				// کارت‌های ریلِ افقی بیرون از عرضِ صفحه‌اند و بدون این، آخرین کارت
-				// هیچ‌وقت تقاطع نمی‌کرد و محو باقی می‌ماند.
-				rootMargin: "100000px 100000px -10% 100000px",
+				rootMargin: "100000px 100000px 0px 100000px",
 			}
 		)
 	}
@@ -105,7 +104,7 @@ export function RevealLines({
 	}, [])
 
 	return (
-		<div ref={ref} className={clsx(inView && "in", className)}>
+		<div ref={ref} className={clsx("lines", inView && "in", className)}>
 			{lines.map((line, i) => (
 				<span key={i} className={clsx("line-mask", lineClassName)}>
 					<span style={{ transitionDelay: `${delay + i * step}ms` }}>{line}</span>

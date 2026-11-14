@@ -1,11 +1,10 @@
-import Link from "next/link"
-import { PageHead } from "@/components/ui/container"
+import { PageHead, Folio } from "@/components/ui/section"
 import { Reveal, RevealLines } from "@/components/ui/reveal"
-import { Magnetic } from "@/components/fx/magnetic"
-import { MarkBackdrop } from "@/components/fx/mark-backdrop"
+import { Cta, More } from "@/components/ui/cta"
 import { ContactForm } from "@/components/marketing/contact-form"
 import { buildMetadata, JsonLd, breadcrumbJsonLd, STUDIO } from "@/lib/seo"
 import { getContent } from "@/lib/content"
+import { faNum } from "@/lib/fa"
 
 export const metadata = buildMetadata({
 	title: "تماس با استودیو ویرگول",
@@ -15,9 +14,9 @@ export const metadata = buildMetadata({
 })
 
 const channels = [
-	{ label: "ایمیل", value: STUDIO.email, href: `mailto:${STUDIO.email}`, latin: true },
-	{ label: "تلفن", value: STUDIO.phoneDisplay, href: `tel:${STUDIO.phone}`, latin: true },
-	{ label: "محل", value: `${STUDIO.city}، ایران`, href: null, latin: false },
+	{ label: "ایمیل", value: STUDIO.email, href: `mailto:${STUDIO.email}` },
+	{ label: "تلفن", value: faNum(STUDIO.phoneDisplay), href: `tel:${STUDIO.phone}` },
+	{ label: "محل", value: `${STUDIO.city}، ایران`, href: null },
 ]
 
 export default async function ContactPage() {
@@ -27,77 +26,64 @@ export default async function ContactPage() {
 		<>
 			<JsonLd data={breadcrumbJsonLd([{ name: "تماس", path: "/contact" }])} />
 
-			<PageHead
-				lines={[c.headLine1, c.headLine2]}
-				lead={c.headLead}
-			/>
+			<PageHead label="تماس" art={4} lines={[c.headLine1, c.headLine2]} lead={c.headLead} />
 
-			<section className="stage stage--l relative px-[var(--pad)] pb-[var(--sec)]">
-				<MarkBackdrop className="pointer-events-none absolute -top-[6%] left-[-20%] hidden h-[min(60vh,520px)] w-[min(60vh,520px)] opacity-60 lg:block" />
-
-				<div className="relative z-10 grid gap-16 lg:grid-cols-[minmax(0,24rem)_1fr] lg:gap-24">
-					{/* راه‌های تماس */}
-					<div className="lg:sticky lg:top-32 lg:h-fit">
-						<ul>
+			<section className="wrap pb-[var(--sec)]">
+				<div className="g12">
+					{/* راه‌های تماسِ مستقیم */}
+					<div className="md:col-span-4">
+						<Folio n={1} label="مستقیم" />
+						<dl className="m-0 mt-2">
 							{channels.map((ch, i) => (
-								<li key={ch.label}>
-									<Reveal as="rule" />
-									<Reveal delay={i * 90} className="py-7">
-										<div className="meta-fa mb-3">{ch.label}</div>
+								<Reveal key={ch.label} delay={i * 80} className="border-b border-[var(--line)] py-6">
+									<dt className="meta-fa">{ch.label}</dt>
+									<dd className="m-0 mt-1">
 										{ch.href ? (
-											<a
-												href={ch.href}
-												className={`link-u tap h3 ${ch.latin ? "font-latin" : ""}`}
-												dir={ch.latin ? "ltr" : undefined}
-											>
+											<a href={ch.href} className="link-u tap h3" dir="ltr">
 												{ch.value}
 											</a>
 										) : (
 											<span className="h3">{ch.value}</span>
 										)}
-									</Reveal>
-								</li>
+									</dd>
+								</Reveal>
 							))}
-							<Reveal as="rule" />
-						</ul>
-
-						<Reveal delay={320} className="mt-10">
-							<p className="body-t max-w-[34ch] text-[15px]">
-								اگر درخواست‌تان مفصل است، بهتر است{" "}
-								<Link href="/request-project" className="link-u tap-inline accent">
-									فرم ثبت پروژه
-								</Link>{" "}
-								را پر کنید تا از همان ابتدا تصویر کامل‌تری داشته باشیم.
+						</dl>
+						<Reveal delay={280} className="mt-8">
+							<p className="body-t max-w-[36ch] text-[.94rem]">
+								اگر درخواست‌تان مفصل است، فرم ثبت پروژه تصویر کامل‌تری به ما می‌دهد.
 							</p>
+							<More href="/request-project" className="mt-5">
+								فرم ثبت پروژه
+							</More>
 						</Reveal>
 					</div>
 
-					{/* فرم، داخل یک تخته — مثل بقیه‌ی سطوح سایت */}
-					<Reveal as="rv-blur" delay={160}>
-						<div className="panel p-[clamp(24px,4vw,56px)]">
-							<span className="panel__edge" aria-hidden="true" />
-							<h2 className="h3 mb-8">{c.formTitle}</h2>
+					<div className="md:col-span-7 md:col-start-6">
+						<Folio n={2} label={c.formTitle} />
+						<div className="mt-10">
 							<ContactForm />
 						</div>
-					</Reveal>
+					</div>
 				</div>
 			</section>
 
-			<section className="stage stage--c px-[var(--pad)] py-[var(--sec)]">
-				<Reveal as="rule" className="mb-[var(--sec)]" />
-				<h2 className="h2 max-w-[20ch]">
-					<RevealLines className="sheen" lines={[c.priceLine1, c.priceLine2]} />
-				</h2>
-				<Reveal delay={240} className="mt-10">
-					<p className="body-t max-w-[56ch]">{c.priceBody}</p>
-				</Reveal>
-				<Reveal delay={380} className="mt-12">
-					<Magnetic strength={0.22}>
-						<Link href="/request-project" className="btn btn--solid">
-							{c.priceCta}
-						</Link>
-					</Magnetic>
-				</Reveal>
+			{/* هزینه — پرسشی که همه دارند و کمتر کسی می‌پرسد */}
+			<section className="ink">
+				<div className="wrap py-[var(--sec)]">
+					<Folio label="هزینه" />
+					<div className="g12 mt-[clamp(40px,6vw,88px)] items-end">
+						<h2 className="h1 md:col-span-7">
+							<RevealLines lines={[c.priceLine1, c.priceLine2]} />
+						</h2>
+						<Reveal delay={220} className="md:col-span-4 md:col-start-9">
+							<p className="body-t">{c.priceBody}</p>
+							<Cta href="/request-project" solid className="mt-8">
+								{c.priceCta}
+							</Cta>
+						</Reveal>
+					</div>
+				</div>
 			</section>
 		</>
 	)

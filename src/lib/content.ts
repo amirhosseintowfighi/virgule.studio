@@ -43,7 +43,7 @@ export const CONTENT_GROUPS: ContentGroup[] = [
 		fields: [
 			{ name: "heroLine1", label: "تیتر اصلی — خط اول", type: "text", def: "مکثی که" },
 			{ name: "heroLine2", label: "تیتر اصلی — خط دوم", type: "text", def: "دیده" },
-			{ name: "heroAccent", label: "تیتر اصلی — واژه‌ی طلایی", type: "text", def: "می‌شود" },
+			{ name: "heroAccent", label: "تیتر اصلی — ادامه‌ی خط دوم", type: "text", def: "می‌شود" },
 			{
 				name: "heroLead",
 				label: "جمله‌ی زیر تیتر",
@@ -71,9 +71,9 @@ export const CONTENT_GROUPS: ContentGroup[] = [
 				label: "نمونه‌کارها — توضیح",
 				type: "textarea",
 				rows: 2,
-				def: "بکشید یا از دکمه‌ها استفاده کنید. روی هر کار بزنید تا مسئله و تصمیم‌های طراحی‌اش را ببینید.",
+				def: "روی هر کار بزنید تا مسئله، تصمیم‌های طراحی و تکنولوژی‌های به‌کاررفته را ببینید.",
 			},
-			{ name: "workCta", label: "نمونه‌کارها — دکمه", type: "text", def: "مشاهده‌ی بیشتر" },
+			{ name: "workCta", label: "نمونه‌کارها — دکمه", type: "text", def: "همه‌ی نمونه‌کارها" },
 
 			{ name: "processLine1", label: "روش کار — تیتر خط اول", type: "text", def: "چطور کار" },
 			{ name: "processLine2", label: "روش کار — تیتر خط دوم", type: "text", def: "می‌کنیم" },

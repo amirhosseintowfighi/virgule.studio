@@ -2,9 +2,14 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import prisma from "@/lib/prisma"
+import { safe } from "@/lib/safe"
 import { Reveal, RevealLines } from "@/components/ui/reveal"
+import { Folio } from "@/components/ui/section"
+import { Arrow } from "@/components/ui/marks"
 import { ProjectCover } from "@/components/marketing/project-cover"
+import { Closing } from "@/components/marketing/closing"
 import { buildMetadata, JsonLd, projectJsonLd, breadcrumbJsonLd } from "@/lib/seo"
+import { faIndex, faNum } from "@/lib/fa"
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -24,14 +29,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 /** شماره‌ی فصل‌ها بر اساس فصل‌هایی که واقعاً داده دارند ساخته می‌شود، نه یک قالب ثابت. */
 function Chapter({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
 	return (
-		<section className="py-[clamp(48px,7vw,96px)]">
-			<Reveal as="rule" className="mb-10" />
-			<div className="grid gap-8 md:grid-cols-[minmax(0,16rem)_1fr] md:gap-16">
-				<Reveal className="flex items-baseline gap-4 md:sticky md:top-28 md:h-fit">
-					<span className="meta font-latin">{String(n).padStart(2, "0")}</span>
-					<h2 className="h3">{title}</h2>
-				</Reveal>
-				<div>{children}</div>
+		<section className="pt-[clamp(56px,7vw,112px)]">
+			<Folio n={n} label={title} />
+			<div className="g12 mt-[clamp(32px,4vw,64px)]">
+				<div className="md:col-span-8 md:col-start-5">{children}</div>
 			</div>
 		</section>
 	)
@@ -45,16 +46,27 @@ export default async function PortfolioDetailPage({ params }: Props) {
 	})
 	if (!project) notFound()
 
+	// ترتیبِ همان صفحه‌ی فهرست — تا «پروژه‌ی بعدی» همان چیزی باشد که بازدیدکننده انتظار دارد
+	const order = await safe(
+		prisma.project.findMany({
+			orderBy: [{ featured: "desc" }, { order: "asc" }],
+			select: { slug: true, title: true },
+		}),
+		[]
+	)
+	const at = order.findIndex((p) => p.slug === project.slug)
+	const next = order.length > 1 ? order[(at + 1) % order.length] : null
+
 	const paragraphs = (project.content ?? "")
 		.split("\n\n")
 		.map((p) => p.trim())
 		.filter(Boolean)
 
 	const facts = [
-		project.client && { k: "کارفرما", v: project.client, latin: false },
-		project.year && { k: "سال", v: String(project.year), latin: true },
-		project.category && { k: "دسته", v: project.category.name, latin: false },
-	].filter(Boolean) as { k: string; v: string; latin: boolean }[]
+		project.client && { k: "کارفرما", v: project.client },
+		project.category && { k: "دسته", v: project.category.name },
+		project.year && { k: "سال", v: faNum(project.year) },
+	].filter(Boolean) as { k: string; v: string }[]
 
 	let n = 0
 
@@ -75,91 +87,99 @@ export default async function PortfolioDetailPage({ params }: Props) {
 					]),
 				]}
 			/>
-			<header className="stage stage--tl px-[var(--pad)] pb-[clamp(40px,6vw,80px)] pt-[clamp(128px,17vw,220px)]">
-				<Reveal className="mb-8">
-					<Link href="/portfolio" className="link-u tap meta-fa">
-						→ بازگشت به نمونه‌کارها
-					</Link>
-				</Reveal>
-				<h1 className="h1 max-w-[16ch]">
-					<RevealLines className="sheen" lines={[project.title]} />
-				</h1>
-				{project.summary && (
-					<Reveal delay={220}>
-						<p className="lead mt-8 max-w-[52ch]">{project.summary}</p>
-					</Reveal>
-				)}
 
-				{facts.length > 0 && (
-					<Reveal delay={300} className="mt-12 flex flex-wrap gap-x-16 gap-y-6">
-						{facts.map((f) => (
-							<div key={f.k}>
-								<div className="meta-fa mb-2">{f.k}</div>
-								<div className={f.latin ? "num font-bold" : "font-bold"}>{f.v}</div>
-							</div>
-						))}
-						{project.url && (
-							<div>
-								<div className="meta-fa mb-2">لینک</div>
-								<a
-									href={project.url}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="link-u tap accent font-bold"
-								>
-									مشاهده‌ی سایت
-								</a>
-							</div>
-						)}
+			<header className="wrap pb-[clamp(40px,5vw,72px)] pt-[clamp(120px,13vw,190px)]">
+				<Folio
+					label="نمونه‌کار"
+					aside={
+						<Link href="/portfolio" className="link-u tap">
+							بازگشت به همه‌ی کارها
+						</Link>
+					}
+				/>
+				<div className="g12 mt-[clamp(40px,6vw,96px)] items-end">
+					<h1 className="h1 md:col-span-8">
+						<RevealLines lines={[project.title]} />
+					</h1>
+					{project.summary && (
+						<Reveal delay={220} className="md:col-span-4 md:pb-3">
+							<p className="lead">{project.summary}</p>
+						</Reveal>
+					)}
+				</div>
+
+				{(facts.length > 0 || project.url) && (
+					<Reveal delay={300}>
+						<dl className="mt-[clamp(40px,5vw,72px)] grid grid-cols-2 gap-x-[var(--gap)] gap-y-6 border-t border-[var(--line-2)] pt-6 md:grid-cols-4">
+							{facts.map((f) => (
+								<div key={f.k}>
+									<dt className="meta-fa">{f.k}</dt>
+									<dd className="t-title m-0 mt-1">{f.v}</dd>
+								</div>
+							))}
+							{project.url && (
+								<div>
+									<dt className="meta-fa">نشانی</dt>
+									<dd className="m-0 mt-1">
+										<a href={project.url} target="_blank" rel="noopener noreferrer" className="link-a tap">
+											مشاهده‌ی سایت
+											<Arrow />
+										</a>
+									</dd>
+								</div>
+							)}
+						</dl>
 					</Reveal>
 				)}
 			</header>
 
-			<div className="px-[var(--pad)]">
-				<Reveal as="img-rv" className="card parallax overflow-hidden">
-					<div className="flex aspect-[16/8] items-center justify-center overflow-hidden bg-[var(--bg-2)]">
+			<div className="wrap">
+				<Reveal as="img-rv">
+					<div className="aspect-[4/3] overflow-hidden rounded-[var(--r)] bg-[var(--bg-2)] md:aspect-[16/8]">
 						{project.coverImage ? (
 							// eslint-disable-next-line @next/next/no-img-element
 							<img
 								src={project.coverImage}
-								alt={project.title}
+								alt={`${project.title} — نمای اصلی پروژه`}
 								className="h-full w-full object-cover"
 								decoding="async"
+								fetchPriority="high"
 							/>
 						) : (
-							<ProjectCover
-								title={project.title}
-								client={project.client}
-								category={project.category?.name}
-								year={project.year}
-								wide
-							/>
+							<ProjectCover title={project.title} index={Math.max(at, 0)} />
 						)}
 					</div>
 				</Reveal>
 			</div>
 
-			<div className="stage stage--r px-[var(--pad)] pb-[var(--sec)]">
+			<div className="wrap pb-[var(--sec)]">
 				{paragraphs.length > 0 && (
 					<Chapter n={++n} title="روایت پروژه">
-						<div className="space-y-6">
-							{paragraphs.map((p, i) => (
-								<Reveal key={i} delay={i * 60}>
-									<p className="body-t max-w-[62ch] text-[var(--fg)]">{p}</p>
-								</Reveal>
-							))}
-						</div>
+						<Reveal>
+							<p className="statement">{paragraphs[0]}</p>
+						</Reveal>
+						{paragraphs.length > 1 && (
+							<div className="prose-v mt-[clamp(28px,3.4vw,52px)] max-w-[62ch]">
+								{paragraphs.slice(1).map((p, i) => (
+									<Reveal key={i} delay={i * 60}>
+										<p>{p}</p>
+									</Reveal>
+								))}
+							</div>
+						)}
 					</Chapter>
 				)}
 
 				{project.features.length > 0 && (
 					<Chapter n={++n} title="آنچه ساخته شد">
-						<ul className="max-w-[62ch]">
+						<ul className="border-t border-[var(--line-2)]">
 							{project.features.map((f, i) => (
-								<li key={f}>
-									<Reveal delay={i * 50} className="flex items-baseline gap-5 border-b border-[var(--line)] py-5">
-										<span className="meta font-latin">{String(i + 1).padStart(2, "0")}</span>
-										<span>{f}</span>
+								<li key={f} className="border-b border-[var(--line)]">
+									<Reveal delay={i * 50} className="flex items-baseline gap-6 py-5">
+										<span className="idx__n" aria-hidden="true">
+											{faIndex(i + 1)}
+										</span>
+										<span className="h3">{f}</span>
 									</Reveal>
 								</li>
 							))}
@@ -169,21 +189,23 @@ export default async function PortfolioDetailPage({ params }: Props) {
 
 				{project.technologies.length > 0 && (
 					<Chapter n={++n} title="پشته‌ی فنی">
-						<Reveal className="flex flex-wrap gap-x-10 gap-y-4">
-							{project.technologies.map((t) => (
-								<span key={t} className="font-latin h3 stroke-text">
-									{t}
-								</span>
-							))}
+						<Reveal>
+							<ul className="flex flex-wrap gap-x-10 gap-y-2" dir="ltr">
+								{project.technologies.map((t) => (
+									<li key={t} className="h2 !font-normal text-[clamp(2rem,3.6vw,3.4rem)]">
+										{t}
+									</li>
+								))}
+							</ul>
 						</Reveal>
 					</Chapter>
 				)}
 
 				{project.gallery.length > 0 && (
 					<Chapter n={++n} title="تصاویر">
-						<div className="grid gap-6 sm:grid-cols-2">
+						<div className="grid gap-[var(--gap)] sm:grid-cols-2">
 							{project.gallery.map((m) => (
-								<Reveal key={m.id} as="img-rv" className="card overflow-hidden">
+								<Reveal key={m.id} as="img-rv">
 									{/* eslint-disable-next-line @next/next/no-img-element */}
 									<img
 										src={m.url}
@@ -192,26 +214,34 @@ export default async function PortfolioDetailPage({ params }: Props) {
 										height={m.height ?? undefined}
 										loading="lazy"
 										decoding="async"
-										className="w-full"
+										className="h-auto w-full"
 									/>
 								</Reveal>
 							))}
 						</div>
 					</Chapter>
 				)}
+
+				{next && (
+					<Link
+						href={`/portfolio/${next.slug}`}
+						className="group mt-[clamp(72px,9vw,144px)] flex items-end justify-between gap-8 border-t border-[var(--fg)] pt-6"
+					>
+						<span>
+							<span className="meta-fa block">پروژه‌ی بعدی</span>
+							<span className="h2 mt-3 block transition-colors duration-500 group-hover:text-[var(--accent)]">
+								{next.title}
+							</span>
+						</span>
+						<Arrow className="mb-2 text-4xl transition-transform duration-500 group-hover:-translate-x-2" />
+					</Link>
+				)}
 			</div>
 
-			<section className="stage stage--c px-[var(--pad)] py-[var(--sec)]">
-				<Reveal as="rule" className="mb-[var(--sec)]" />
-				<h2 className="h2 max-w-[16ch]">
-					<RevealLines className="sheen" lines={["پروژه‌ای مشابه", "در ذهن دارید؟"]} />
-				</h2>
-				<Reveal delay={220} className="mt-10">
-					<Link href="/request-project" className="btn btn--solid">
-						شروع پروژه
-					</Link>
-				</Reveal>
-			</section>
+			<Closing
+				lines={["پروژه‌ای مشابه", "در ذهن دارید؟"]}
+				lead="پروژه‌تان را برایمان تعریف کنید. جلسه‌ی اول رایگان است و اگر کار به ما نخورد، همان‌جا صادقانه می‌گوییم."
+			/>
 		</>
 	)
 }

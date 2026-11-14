@@ -1,16 +1,17 @@
-import { Fragment } from "react"
 import Link from "next/link"
 import prisma from "@/lib/prisma"
 import { safe } from "@/lib/safe"
 import { Reveal, RevealLines } from "@/components/ui/reveal"
-import { Magnetic } from "@/components/fx/magnetic"
-import { Spotlight } from "@/components/fx/spotlight"
-import { MarkBackdrop } from "@/components/fx/mark-backdrop"
+import { Folio } from "@/components/ui/section"
+import { Cta, More } from "@/components/ui/cta"
+import { Arrow } from "@/components/ui/marks"
+import { HeroArt, Glyph } from "@/components/ui/art"
 import { FaqAccordion } from "@/components/marketing/faq-accordion"
-import { ProjectCover } from "@/components/marketing/project-cover"
-import { WorkRail } from "@/components/marketing/work-rail"
-import { buildMetadata, JsonLd, faqJsonLd } from "@/lib/seo"
+import { WorkCard } from "@/components/marketing/work-card"
+import { Closing } from "@/components/marketing/closing"
+import { buildMetadata, JsonLd, faqJsonLd, STUDIO } from "@/lib/seo"
 import { getContent, pairs } from "@/lib/content"
+import { faIndex, faNum } from "@/lib/fa"
 
 export const metadata = buildMetadata({
 	title: "طراحی سایت اختصاصی و توسعه‌ی وب | استودیو ویرگول",
@@ -38,340 +39,236 @@ async function getData() {
 	return { projects, services, faqs, c }
 }
 
+/* ریتمِ شبکه‌ی کارهای منتخب: پهن و باریک، یکی‌درمیان، و ستونِ باریک پایین‌تر می‌نشیند. */
+const WORK_LAYOUT = [
+	{ col: "md:col-span-7", aspect: "aspect-[4/3]", large: true },
+	{ col: "md:col-span-5 md:mt-[clamp(64px,11vw,176px)]", aspect: "aspect-[4/5]", large: false },
+	{ col: "md:col-span-5", aspect: "aspect-[4/5]", large: false },
+	{ col: "md:col-span-7 md:mt-[clamp(64px,11vw,176px)]", aspect: "aspect-[4/3]", large: true },
+]
+
 export default async function HomePage() {
 	const { projects, services, faqs, c } = await getData()
 	const faqItems = faqs.map((f) => ({ q: f.question, a: f.answer }))
 	const process = pairs(c.process)
 	const assurances = pairs(c.assurances)
 
+	// بخش‌های بی‌داده حذف می‌شوند، پس شماره‌ها از روی بخش‌های واقعاً رندرشده می‌آیند
+	let n = 0
+
 	return (
 		<>
 			{faqItems.length > 0 && <JsonLd data={faqJsonLd(faqItems)} />}
 
-			{/* ══════════ معرفی ══════════ */}
-			<Spotlight className="stage spot relative flex min-h-[100svh] flex-col justify-center px-[var(--pad)] pb-28 pt-40">
-				{/* نشان برند، بزرگ و کم‌نور — لنگرِ بصری سمت چپ، در برابر تیتر راست‌چین */}
-				<MarkBackdrop className="pointer-events-none absolute left-[-26%] top-[6%] h-[min(46vh,380px)] w-[min(46vh,380px)] opacity-60 md:left-[-6%] md:top-1/2 md:h-[min(86vh,900px)] md:w-[min(86vh,900px)] md:-translate-y-1/2 md:opacity-100" />
+			{/* ══════════ معرفی ══════════
+			    متن در راست، تصویر در چپ. کارتِ شیشه‌ای عمداً روی تصویر می‌نشیند —
+			    شیشه فقط وقتی معنا دارد که چیزی پشتش باشد. */}
+			<section className="wrap pt-[76px]">
+				<div className="g12 items-center pb-[clamp(56px,7vw,112px)] pt-[clamp(32px,5vw,72px)] md:min-h-[calc(100svh-76px)]">
+					<div className="md:col-span-6">
+						<Reveal className="meta-fa flex items-center gap-3">
+							<span className="h-px w-8 bg-[var(--accent)]" aria-hidden="true" />
+							{`استودیوی طراحی و توسعه‌ی وب — ${STUDIO.city}، از سال ${STUDIO.foundedFa}`}
+						</Reveal>
 
-				<div className="relative z-10">
-					<h1 className="display max-w-[15ch]">
-						<RevealLines
-							className="sheen"
-							step={130}
-							// رشته‌ها کلید نمی‌خواهند؛ تنها خطی که نشانه‌گذاری درونی دارد کلید می‌گیرد
-							lines={[
-								c.heroLine1,
-								<Fragment key="accent">
-									{c.heroLine2} <span className="accent">{c.heroAccent}</span>
-								</Fragment>,
-							]}
-						/>
-					</h1>
+						<h1 className="display mt-[clamp(20px,2.4vw,36px)]">
+							<RevealLines step={130} lines={[c.heroLine1, `${c.heroLine2} ${c.heroAccent}`]} />
+						</h1>
 
-					<Reveal as="rv-blur" delay={420} className="mt-12">
-						<p className="lead max-w-[34ch]">{c.heroLead}</p>
-					</Reveal>
+						<Reveal delay={320} className="mt-[clamp(24px,2.8vw,40px)]">
+							<p className="lead max-w-[38ch]">{c.heroLead}</p>
+						</Reveal>
 
-					<Reveal delay={580} className="mt-12 flex flex-wrap items-center gap-4">
-						<Magnetic strength={0.22}>
-							<Link href="/request-project" className="btn btn--solid">
+						<Reveal delay={440} className="mt-[clamp(28px,3vw,44px)] flex flex-wrap items-center gap-4">
+							<Cta href="/request-project" solid>
 								{c.heroCtaPrimary}
-							</Link>
-						</Magnetic>
-						<Magnetic strength={0.22}>
-							<Link href="/portfolio" className="btn">
-								{c.heroCtaSecondary}
-							</Link>
-						</Magnetic>
-					</Reveal>
-				</div>
-
-				<Reveal delay={760} className="relative z-10 mt-24 flex items-center gap-4">
-					<span className="meta">Scroll</span>
-					<span className="h-px w-14 bg-[var(--accent-line)]" />
-				</Reveal>
-			</Spotlight>
-
-			{/* ══════════ چه کاری انجام می‌دهیم ══════════ */}
-			{/* بدون داده، عنوانِ تنها روی فضای خالی می‌نشیند — پس کل بخش حذف می‌شود. */}
-			{services.length > 0 && (
-				<section id="services" className="stage stage--r px-[var(--pad)] py-[var(--sec)]">
-					<div className="mb-16 grid gap-10 md:grid-cols-2 md:items-end">
-						<h2 className="h2 max-w-[16ch]">
-							<RevealLines lines={[c.servicesLine1, c.servicesLine2]} />
-						</h2>
-						<Reveal delay={220} className="md:justify-self-end">
-							<p className="body-t max-w-[40ch]">{c.servicesLead}</p>
+							</Cta>
+							<Cta href="/portfolio">{c.heroCtaSecondary}</Cta>
 						</Reveal>
 					</div>
 
-					{/* پشته‌ی چسبان: هر خدمت بالا می‌ایستد و بعدی رویش سر می‌خورد */}
-					<ul className="stack">
+					<div className="relative md:col-span-5 md:col-start-8">
+						<Reveal as="art-rv">
+							<HeroArt className="mx-auto max-w-[min(100%,58svh)]" />
+						</Reveal>
+
+						{/* سه قولِ کوتاه — همان‌هایی که پایین‌تر مفصل آمده‌اند */}
+						<Reveal delay={700} className="absolute bottom-[4%] start-0 w-[min(78%,300px)] md:-start-[8%]">
+							<ul className="glass divide-y divide-[var(--line)] px-5 py-1 text-[.9rem] font-medium">
+								{["جلسه‌ی اول رایگان است", "پاسخ در همان روز کاری", "سه ماه پشتیبانی پس از انتشار"].map((t) => (
+									<li key={t} className="flex items-center gap-3 py-3">
+										<span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" aria-hidden="true" />
+										{t}
+									</li>
+								))}
+							</ul>
+						</Reveal>
+					</div>
+				</div>
+			</section>
+
+			{/* ══════════ کارهای منتخب — اول مدرک، بعد ادعا ══════════ */}
+			{projects.length > 0 && (
+				<section id="work" className="wrap py-[var(--sec)]">
+					<Folio n={++n} label="نمونه‌کارها" aside="کارهای منتخب" />
+					<div className="g12 mt-[clamp(40px,6vw,88px)] items-end">
+						<h2 className="h2 md:col-span-6">
+							<RevealLines lines={[c.workLine1, c.workLine2]} />
+						</h2>
+						<Reveal delay={200} className="md:col-span-4 md:col-start-9">
+							<p className="body-t">{c.workLead}</p>
+						</Reveal>
+					</div>
+
+					<div className="g12 mt-[clamp(48px,7vw,104px)] !gap-y-[clamp(56px,7vw,104px)]">
+						{projects.map((p, i) => {
+							const l = WORK_LAYOUT[i % WORK_LAYOUT.length]
+							return (
+								<WorkCard key={p.id} project={p} index={i} aspect={l.aspect} large={l.large} className={l.col} />
+							)
+						})}
+					</div>
+
+					<Reveal className="mt-[clamp(48px,6vw,88px)] flex justify-end border-t border-[var(--line-2)] pt-6">
+						<More href="/portfolio">{c.workCta}</More>
+					</Reveal>
+				</section>
+			)}
+
+			{/* ══════════ درباره — یک جمله، بزرگ ══════════ */}
+			<section id="about" className="wrap py-[var(--sec)]">
+				<Folio n={++n} label="استودیو" aside={`${STUDIO.city}، از سال ${STUDIO.foundedFa}`} />
+				<div className="g12 mt-[clamp(40px,6vw,88px)]">
+					<h2 className="meta-fa md:col-span-3">{`${c.aboutLine1} ${c.aboutLine2}`}</h2>
+					<Reveal className="md:col-span-9">
+						<p className="statement">{c.aboutPull}</p>
+					</Reveal>
+				</div>
+				<div className="g12 mt-[clamp(40px,6vw,88px)]">
+					<Reveal delay={100} className="md:col-span-4 md:col-start-4">
+						<p className="body-t">{c.aboutP1}</p>
+					</Reveal>
+					<Reveal delay={200} className="md:col-span-4 md:col-start-9">
+						<p className="body-t">{c.aboutP2}</p>
+						<More href="/about" className="mt-8">
+							بیشتر درباره‌ی ما
+						</More>
+					</Reveal>
+				</div>
+			</section>
+
+			{/* ══════════ خدمات — فهرست، مثل فهرستِ کتاب ══════════ */}
+			{services.length > 0 && (
+				<section id="services" className="wrap py-[var(--sec)]">
+					<Folio n={++n} label="خدمات" aside={`${faNum(services.length)} خدمت`} />
+					<div className="g12 mt-[clamp(40px,6vw,88px)] items-end">
+						<h2 className="h2 md:col-span-6">
+							<RevealLines lines={[c.servicesLine1, c.servicesLine2]} />
+						</h2>
+						<Reveal delay={200} className="md:col-span-4 md:col-start-9">
+							<p className="body-t">{c.servicesLead}</p>
+						</Reveal>
+					</div>
+
+					<ul className="idx mt-[clamp(40px,5vw,72px)]">
 						{services.map((s, i) => (
-							<li
-								key={s.id}
-								className="stack__i"
-								style={{ "--i": i } as React.CSSProperties}
-							>
-								<article className="panel flex min-h-[clamp(320px,50svh,480px)] flex-col p-[clamp(24px,4vw,64px)]">
-									<span className="panel__edge" aria-hidden="true" />
-									<span className="panel__ghost num" aria-hidden="true">
-										{String(i + 1).padStart(2, "0")}
-									</span>
-
-									{/* my-auto وسط‌چین می‌کند ولی برخلاف justify-center، وقتی محتوا بلندتر شود نمی‌بُرد */}
-										<div className="my-auto grid gap-10 md:grid-cols-[1fr_minmax(0,22rem)] md:gap-16">
-										<div>
-											<h3 className="h2 text-[clamp(1.6rem,2.6vw,2.4rem)]">{s.title}</h3>
-											{s.summary && <p className="body-t mt-5 max-w-[48ch]">{s.summary}</p>}
-											<div className="mt-10">
-												<Magnetic strength={0.18}>
-													<Link href={`/services/${s.slug}`} className="btn">
-														جزئیات این خدمت
-													</Link>
-												</Magnetic>
-											</div>
-										</div>
-
-										{/* ویژگی‌ها همان داده‌ی واقعی دیتابیس‌اند — نه پرکننده‌ی تزئینی */}
-										{s.features.length > 0 && (
-											<ul className="flex flex-col gap-4 md:border-s md:border-[var(--line)] md:ps-12">
-												{s.features.map((f) => (
-													<li key={f} className="feat body-t text-[15px] leading-relaxed">
-														{f}
-													</li>
-												))}
-											</ul>
-										)}
-									</div>
-								</article>
+							<li key={s.id}>
+								<Link href={`/services/${s.slug}`} className="idx__row">
+									<Glyph i={i} className="idx__n self-center" />
+									<h3 className="h3 idx__t">{s.title}</h3>
+									{s.summary && <p className="body-t text-[.94rem]">{s.summary}</p>}
+									<Arrow className="idx__go text-2xl" />
+								</Link>
 							</li>
 						))}
 					</ul>
 				</section>
 			)}
 
-			{/* ══════════ کارهای منتخب ══════════ */}
-			{projects.length > 0 && (
-				<section id="work" className="stage stage--tl px-[var(--pad)] py-[var(--sec)]">
-					<div className="mb-16 grid gap-8 md:grid-cols-2 md:items-end">
-						<h2 className="h2 max-w-[16ch]">
-							<RevealLines lines={[c.workLine1, c.workLine2]} />
-						</h2>
-						<Reveal delay={220} className="md:justify-self-end">
-							<p className="body-t max-w-[38ch]">{c.workLead}</p>
-						</Reveal>
-					</div>
+			{/* ══════════ روش کار ══════════ */}
+			{process.length > 0 && (
+				<section id="process" className="wrap py-[var(--sec)]">
+					<Folio n={++n} label="روش کار" aside={`${faNum(process.length)} مرحله`} />
+					<div className="g12 mt-[clamp(40px,6vw,88px)]">
+						<div className="md:sticky md:top-28 md:col-span-4 md:h-fit">
+							<h2 className="h2">
+								<RevealLines lines={[c.processLine1, c.processLine2]} />
+							</h2>
+							<Reveal delay={200}>
+								<p className="body-t mt-8 max-w-[38ch]">{c.processLead}</p>
+							</Reveal>
+						</div>
 
-					{/* ریل افقی: اسکرول بومی + snap، و پارالاکس جلد هنگام حرکت */}
-					<WorkRail>
-						{projects.map((p) => (
-							<article key={p.id} className="rail__i">
-								<Link href={`/portfolio/${p.slug}`} data-cursor="مشاهده" className="group block">
-									{/* اینجا Reveal نمی‌گذاریم: کارت‌های ریل داخل یک ancestor با
-									    overflow:hidden هستند و IntersectionObserver رخداد تقاطع را
-									    نسبت به همان کادرِ بریده حساب می‌کند — یعنی کارت‌هایی که هنوز
-									    افقی وارد نشده‌اند هیچ‌وقت تقاطع نمی‌کنند و محو باقی می‌مانند.
-									    ورودِ خود بخش و حرکت افقی به‌اندازه‌ی کافی حرکت دارد. */}
-									<div className="rail__par">
-										<div className="relative aspect-[4/3] overflow-hidden bg-[var(--bg-2)]">
-											{p.coverImage ? (
-												// eslint-disable-next-line @next/next/no-img-element
-												<img
-													src={p.coverImage}
-													alt={`نمونه‌کار ${p.title} — ${p.category?.name ?? "طراحی و توسعه‌ی وب"} توسط استودیو ویرگول`}
-													loading="lazy"
-													decoding="async"
-													className="h-full w-full object-cover"
-												/>
-											) : (
-												/* بدون تصویر واقعی: جلدِ ساخته‌شده از داده‌ی خود پروژه */
-												<ProjectCover
-													title={p.title}
-													client={p.client}
-													category={p.category?.name}
-													year={p.year}
-												/>
-											)}
-										</div>
-									</div>
-
-									{/* دسته و سال روی خودِ جلد آمده‌اند؛ اینجا تکرارشان نمی‌کنیم */}
-									<div className="mt-6 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-										<h3 className="h3 link-u">{p.title}</h3>
-										<span
-											className="meta-fa accent translate-x-3 opacity-0 transition-[opacity,transform] duration-500 group-hover:translate-x-0 group-hover:opacity-100"
-											style={{ transitionTimingFunction: "var(--ease)" }}
-											aria-hidden="true"
-										>
-											مشاهده‌ی پروژه ←
+						<ol className="border-t border-[var(--line-2)] md:col-span-7 md:col-start-6">
+							{process.map((s, i) => (
+								<li key={s.t} className="border-b border-[var(--line)]">
+									<Reveal className="grid grid-cols-[3.4rem_1fr] gap-x-4 py-[clamp(26px,3.2vw,44px)] md:grid-cols-[6rem_minmax(0,14rem)_1fr] md:gap-x-8">
+										<span className="numeral text-[clamp(2.6rem,4.4vw,4.2rem)]" aria-hidden="true">
+											{faNum(i + 1)}
 										</span>
-									</div>
-
-									{p.summary && <p className="body-t mt-3 text-[15px]">{p.summary}</p>}
-
-									{p.technologies.length > 0 && (
-										<ul className="mt-5 flex flex-wrap gap-2">
-											{p.technologies.map((t) => (
-												<li key={t} className="tag font-latin">
-													{t}
-												</li>
-											))}
-										</ul>
-									)}
-								</Link>
-							</article>
-						))}
-					</WorkRail>
-
-					<Reveal delay={160} className="mt-14">
-						<Magnetic strength={0.22}>
-							<Link href="/portfolio" className="btn btn--solid">
-								{c.workCta}
-							</Link>
-						</Magnetic>
-					</Reveal>
+										<h3 className="h3 self-center md:self-start md:pt-1">{s.t}</h3>
+										<p className="body-t col-start-2 mt-3 text-[.94rem] md:col-start-3 md:mt-1">{s.d}</p>
+									</Reveal>
+								</li>
+							))}
+						</ol>
+					</div>
 				</section>
 			)}
 
-			{/* ══════════ چطور کار می‌کنیم ══════════ */}
-			<section id="process" className="stage stage--l px-[var(--pad)] py-[var(--sec)]">
-				<div className="grid gap-16 md:grid-cols-[minmax(0,24rem)_1fr] md:gap-28">
-					<div className="md:sticky md:top-32 md:h-fit">
-						<h2 className="h2">
-							<RevealLines lines={[c.processLine1, c.processLine2]} />
+			{/* ══════════ تعهدها — روی مرکب ══════════ */}
+			{assurances.length > 0 && (
+				<section id="assurances" className="ink">
+					<div className="wrap py-[var(--sec)]">
+						<Folio n={++n} label="تعهدها" aside="آنچه مکتوب می‌شود" />
+						<h2 className="h1 mt-[clamp(40px,6vw,88px)] max-w-[12ch]">
+							<RevealLines lines={[c.assurancesLine1, c.assurancesLine2]} />
 						</h2>
-						<Reveal delay={240}>
-							<p className="body-t mt-8 max-w-[40ch]">{c.processLead}</p>
-						</Reveal>
+
+						<ul className="mt-[clamp(48px,7vw,104px)] grid border-t border-[var(--line-2)] md:grid-cols-2">
+							{assurances.map((a, i) => (
+								<li
+									key={a.t}
+									className="border-b border-[var(--line)] py-[clamp(28px,3.4vw,52px)] md:odd:border-e md:odd:pe-[clamp(24px,4vw,72px)] md:even:ps-[clamp(24px,4vw,72px)]"
+								>
+									<Reveal delay={(i % 2) * 120}>
+										<span className="numeral text-[1.5rem]" aria-hidden="true">
+											{faIndex(i + 1)}
+										</span>
+										<h3 className="h3 mt-4">{a.t}</h3>
+										<p className="body-t mt-4 max-w-[46ch] text-[.94rem]">{a.d}</p>
+									</Reveal>
+								</li>
+							))}
+						</ul>
 					</div>
+				</section>
+			)}
 
-					{/* خطِ کناری با اسکرول پر می‌شود — پیشرفت را حس می‌کنید، نه اینکه بخوانید */}
-					<ol className="track">
-						{process.map((s, i) => (
-							<li key={s.t} className="group relative">
-								{/* گرهِ روی خط — با نزدیک‌شدن اشاره‌گر روشن می‌شود */}
-								<span className="track__dot" aria-hidden="true" />
-								<Reveal as="rv-blur" delay={i * 90} className="py-12">
-									<h3 className="h3 transition-colors duration-500 group-hover:text-[var(--accent)]">
-										{s.t}
-									</h3>
-									<p className="body-t mt-4 max-w-[56ch] text-[15px]">{s.d}</p>
-								</Reveal>
-							</li>
-						))}
-					</ol>
-				</div>
-			</section>
-
-			{/* ══════════ تعهدها — چیدمان پلکانی، نه شبکه‌ی متقارن ══════════ */}
-			<section id="assurances" className="stage stage--br px-[var(--pad)] py-[var(--sec)]">
-				<h2 className="h2 mb-20 max-w-[18ch]">
-					<RevealLines lines={[c.assurancesLine1, c.assurancesLine2]} />
-				</h2>
-
-				<ul className="grid gap-4 md:gap-0">
-					{assurances.map((a, i) => (
-						<li
-							key={a.t}
-							// عرض و تورفتگیِ متفاوت برای هر ردیف — ریتم دستی، نه شبکه‌ی یکنواخت
-							className={i % 2 === 0 ? "md:w-[74%]" : "md:ms-auto md:w-[74%] lg:w-[68%]"}
-						>
-							<Reveal as="rv-blur" delay={i * 100}>
-								<article className="vow" style={{ "--i": i } as React.CSSProperties}>
-									<span className="vow__n num" aria-hidden="true">
-										{String(i + 1).padStart(2, "0")}
-									</span>
-									<div className="grid gap-3 md:grid-cols-[minmax(0,15rem)_1fr] md:gap-12">
-										<h3 className="h3 max-w-[16ch]">{a.t}</h3>
-										<p className="body-t text-[15px]">{a.d}</p>
-									</div>
-								</article>
-							</Reveal>
-						</li>
-					))}
-				</ul>
-			</section>
-
-			{/* ══════════ درباره ══════════ */}
-			<section id="about" className="stage stage--r px-[var(--pad)] py-[var(--sec)]">
-				<div className="grid gap-16 md:grid-cols-[1fr_minmax(0,32rem)] md:gap-28">
-					<div>
-						<h2 className="h2 max-w-[18ch]">
-							<RevealLines lines={[c.aboutLine1, c.aboutLine2]} />
-						</h2>
-						<Reveal as="rv-blur" delay={240} className="mt-12">
-							<p className="pull">{c.aboutPull}</p>
-						</Reveal>
-					</div>
-					<div>
-						<Reveal delay={180}>
-							<p className="body-t">{c.aboutP1}</p>
-						</Reveal>
-						<Reveal delay={280}>
-							<p className="body-t mt-8">{c.aboutP2}</p>
-						</Reveal>
-						<Reveal delay={380} className="mt-12">
-							<Link href="/about" className="link-u tap font-medium">
-								بیشتر درباره‌ی ما ←
-							</Link>
-						</Reveal>
-					</div>
-				</div>
-			</section>
-
-			{/* ══════════ پرسش‌های متداول — تعامل واقعی، و خوراکِ نتایج گوگل ══════════ */}
+			{/* ══════════ پرسش‌های متداول ══════════ */}
 			{faqItems.length > 0 && (
-				<section id="faq" className="stage stage--c px-[var(--pad)] py-[var(--sec)]">
-					<div className="grid gap-14 md:grid-cols-[minmax(0,22rem)_1fr] md:gap-24">
-						<div className="md:sticky md:top-32 md:h-fit">
+				<section id="faq" className="wrap py-[var(--sec)]">
+					<Folio n={++n} label="پرسش‌ها" />
+					<div className="g12 mt-[clamp(40px,6vw,88px)]">
+						<div className="md:sticky md:top-28 md:col-span-4 md:h-fit">
 							<h2 className="h2">
 								<RevealLines lines={[c.faqLine1, c.faqLine2]} />
 							</h2>
-							<Reveal delay={220}>
+							<Reveal delay={200}>
 								<p className="body-t mt-8 max-w-[32ch]">{c.faqLead}</p>
+								<More href="/faq" className="mt-8">
+									همه‌ی پرسش‌ها
+								</More>
 							</Reveal>
 						</div>
-						<div>
+						<div className="md:col-span-7 md:col-start-6">
 							<FaqAccordion items={faqItems} />
-							<Reveal delay={160} className="mt-12">
-								<Link href="/faq" className="link-u tap font-medium">
-									همه‌ی پرسش‌ها ←
-								</Link>
-							</Reveal>
 						</div>
 					</div>
 				</section>
 			)}
 
-			{/* ══════════ تماس ══════════ */}
-			<section id="contact" className="stage stage--c relative px-[var(--pad)] py-[var(--sec)]">
-				<MarkBackdrop className="pointer-events-none absolute -bottom-[18%] right-[-14%] hidden h-[min(70vh,640px)] w-[min(70vh,640px)] opacity-70 md:block" />
-
-				<div className="relative z-10">
-					<h2 className="display max-w-[14ch]">
-						<RevealLines className="sheen" step={130} lines={[c.contactLine1, c.contactLine2]} />
-					</h2>
-
-					<Reveal delay={280} className="mt-10">
-						<p className="body-t max-w-[52ch]">{c.contactLead}</p>
-					</Reveal>
-
-					<Reveal delay={420} className="mt-14 flex flex-wrap items-center gap-x-14 gap-y-8">
-						<Magnetic strength={0.22}>
-							<Link href="/request-project" className="btn btn--solid">
-								{c.contactCta}
-							</Link>
-						</Magnetic>
-						<a href="mailto:info@virgule.studio" className="link-u tap h3 font-latin" dir="ltr">
-							info@virgule.studio
-						</a>
-						<a href="tel:+989999571001" className="link-u tap num h3" dir="ltr">
-							0999 957 1001
-						</a>
-					</Reveal>
-				</div>
-			</section>
+			<Closing lines={[c.contactLine1, c.contactLine2]} lead={c.contactLead} cta={c.contactCta} />
 		</>
 	)
 }

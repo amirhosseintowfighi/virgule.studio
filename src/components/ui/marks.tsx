@@ -1,11 +1,5 @@
 import { clsx } from "clsx"
 
-type Props = {
-	className?: string
-	/** نمایش نوشتار کنار نشان */
-	withWordmark?: boolean
-}
-
 const NIB_PATH =
 	"M 258.007812 139.054688 L 98.941406 297.347656 C 95.238281 283.875 92.921875 277.152344 92.921875 260.078125 L 221.828125 131.355469 C 235.054688 131.644531 245.84375 135.113281 258.007812 139.054688"
 
@@ -20,16 +14,11 @@ export function LogoMark({ className }: { className?: string }) {
 	)
 }
 
-export function Logo({ className, withWordmark = true }: Props) {
+/** پیکانِ «ادامه». در راست‌به‌چپ، جلو یعنی چپ. */
+export function Arrow({ className }: { className?: string }) {
 	return (
-		<span className={clsx("flex items-center gap-2 font-extrabold", className)}>
-			<LogoMark className="h-9" />
-			{withWordmark && (
-				<span className="flex items-baseline gap-1 text-lg leading-none">
-					<span className="font-latin text-[var(--color-primary)]">Virgule</span>
-					<span>ویرگول</span>
-				</span>
-			)}
-		</span>
+		<svg viewBox="0 0 24 24" fill="none" className={clsx("arrow", className)} aria-hidden="true">
+			<path d="M20 12H4m0 0 6-6m-6 6 6 6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+		</svg>
 	)
 }

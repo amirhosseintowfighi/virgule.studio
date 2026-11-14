@@ -7,13 +7,12 @@ export default function manifest(): MetadataRoute.Manifest {
 		description: "استودیوی طراحی و توسعه‌ی وب در تهران — مکثی که دیده می‌شود.",
 		start_url: "/",
 		display: "standalone",
-		background_color: "#0c0a10",
-		theme_color: "#0c0a10",
+		background_color: "#f3f1ec",
+		theme_color: "#f3f1ec",
 		lang: "fa",
 		dir: "rtl",
-		icons: [
-			{ src: "/icon-192.png", sizes: "192x192", type: "image/png" },
-			{ src: "/icon-512.png", sizes: "512x512", type: "image/png" },
-		],
+		// فقط همان آیکنی که واقعاً وجود دارد (src/app/icon.svg)؛ مسیرهای PNG قبلی ۴۰۴ می‌دادند
+		icons: [{ src: "/icon.svg", sizes: "any", type: "image/svg+xml" }],
+
 	}
 }

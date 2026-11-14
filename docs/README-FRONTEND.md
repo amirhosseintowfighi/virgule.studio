@@ -1,51 +1,70 @@
-# ویرگول — مرحله ۵: Frontend (صفحات عمومی)
+# ویرگول — Frontend (صفحات عمومی)
 
-لایه‌ی نمایشی سایت با **Next.js 15 (App Router) + React 19 + TypeScript + Tailwind** و زبان طراحی **Material 3**.
+لایه‌ی نمایشی سایت با **Next.js 15 (App Router) + React 19 + TypeScript + Tailwind**.
 
-## ویژگی‌ها
-- **RTL کامل** + فونت وزیرمتن (فارسی) و Inter (لاتین/اعداد)
-- **حالت روشن/تاریک** با ذخیره‌سازی و تشخیص ترجیح سیستم
-- **توکن‌های طراحی** (رنگ، فاصله، گردی، Elevation، Motion) به صورت CSS Variables
-- **SEO**: Metadata API، OpenGraph، JSON-LD (Schema)، breadcrumb
-- **دسترس‌پذیری**: focus-visible، aria، prefers-reduced-motion
+## زبان طراحی: مینیمال، برداری، شیشه
 
-## صفحات پیاده‌شده
+سه لایه، به ترتیبِ اهمیت:
+
+1. **مینیمالیسم ساختار را می‌سازد.** زمینه‌ی خنثیِ گرم، مرکب، خطِ مویی و فضای خالی. هر بخش با یک «سرصفحه» (`Folio`: خطِ مرکبی + شماره + نام بخش) شروع می‌شود و چیدمانِ زیرش در هر بخش فرق می‌کند.
+2. **تصویرِ برداری شخصیت را.** همه‌ی تصویرها SVG اصلی‌اند و از یک الفبای کوچک ساخته می‌شوند: اجزای نشانِ ویرگول (دایره، خطِ اُریبِ قلم، ویرگول) و زبانِ ابزارِ قلم (منحنی، گره، دستگیره). در `src/components/ui/art.tsx`:
+   - `HeroArt` — ترکیبِ بخش معرفی
+   - `Composition` — پنج ترکیبِ هندسی برای جلدِ پروژه‌ها، سرصفحه‌ها و پایانِ صفحه
+   - `Glyph` — نشانه‌ی کوچکِ هر ردیفِ خدمات
+3. **شیشه فقط عمق می‌دهد** (`.glass`)، و فقط جایی که چیزی پشتش هست: نوارِ ناوبری هنگام اسکرول، برچسبِ روی جلدِ پروژه، کارتِ قول‌ها روی تصویرِ معرفی و کارتِ تماسِ پایانِ صفحه. روی زمینه‌ی خالی شیشه نداریم.
+
+### رنگ
+| نقش | مقدار |
+|---|---|
+| زمینه | `#f3f1ec` |
+| مرکب (متن) | `#141413` |
+| شنگرف (تنها رنگِ تأکیدِ رابط) | `#c63d1f` |
+| رنگ‌های تصویر (فقط در SVG) | شنگرف `#dc4a2a`، آبی `#2f48b8`، اُخرا `#e2a93a` |
+
+کلاس `.ink` همان سیستم را وارونه می‌کند (نوارهای تیره‌ی تعهدها و پایانِ صفحه). همه‌ی توکن‌ها در `src/styles/tokens.css` هستند.
+
+### تایپوگرافی
+- **تیترها:** Markazi Text (نسخ، متغیر ۴۰۰–۷۰۰، OFL) — self-hosted در `public/fonts`
+- **متن و رابط:** IRANYekan
+- **لاتینِ ریز:** Inter
+- رقم‌ها فارسی نمایش داده می‌شوند (`src/lib/fa.ts`: `faNum`، `faIndex`، `faDate`).
+
+### حرکت
+یک قاعده: آرام از پایین، یک‌بار (`Reveal`، `RevealLines`). خطوطِ تصویرها هنگام ورود کشیده می‌شوند. کرسرِ سفارشی، پری‌لودر، اسکرولِ نرم و قفلِ اسکرولِ افقی حذف شده‌اند. `prefers-reduced-motion` و حالتِ بدون جاوااسکریپت پشتیبانی می‌شوند (محتوا هیچ‌وقت پشتِ انیمیشن پنهان نمی‌ماند).
+
+## صفحات
 
 ```
-/                     → خانه (Hero + خدمات + فرآیند + FAQ + CTA)
-/services             → لیست خدمات (از دیتابیس)
-/services/[slug]      → جزئیات خدمت
-/portfolio            → گالری نمونه‌کارها
-/blog                 → لیست مقالات + جستجو + صفحه‌بندی
-/blog/[slug]          → صفحه‌ی مقاله (breadcrumb + زمان مطالعه + مرتبط + JSON-LD)
-/pricing              → پلن‌های قیمت
-/about                → درباره ما
-/contact              → فرم تماس (متصل به Server Action + Honeypot)
-/faq                  → سوالات متداول (آکاردئون)
-not-found             → صفحه‌ی ۴۰۴
+/                     → خانه (معرفی، نمونه‌کارها، استودیو، خدمات، روش کار، تعهدها، پرسش‌ها، دعوت)
+/services             → فهرست خدمات          /services/[slug]   → جزئیات خدمت
+/portfolio            → نمونه‌کارها            /portfolio/[slug]  → روایت پروژه + «پروژه‌ی بعدی»
+/blog                 → یادداشت‌ها + جستجو    /blog/[slug]       → مقاله
+/about  /contact  /faq  /request-project  /legal/privacy  /legal/terms
+not-found             → ۴۰۴
 ```
 
 ## ساختار
 
 ```
 src/
-├─ app/
-│  ├─ layout.tsx              # لایه ریشه (RTL، فونت، ThemeProvider، Metadata)
-│  ├─ not-found.tsx
-│  └─ (marketing)/            # گروه مسیر صفحات عمومی
-│     ├─ layout.tsx           # Navbar + Footer
-│     ├─ page.tsx             # خانه
-│     ├─ services / [slug]
-│     ├─ portfolio
-│     ├─ blog / [slug]
-│     ├─ pricing / about / contact / faq
+├─ app/(marketing)/           # صفحه‌های عمومی + layout (Navbar, Footer)
 ├─ components/
-│  ├─ providers/theme-provider.tsx
-│  ├─ ui/ (button, card, container/section)
-│  └─ marketing/ (navbar, footer, faq-accordion, contact-form)
+│  ├─ ui/
+│  │  ├─ art.tsx              # تصویرهای برداری
+│  │  ├─ marks.tsx            # نشان و پیکان
+│  │  ├─ section.tsx          # Folio, PageHead
+│  │  ├─ cta.tsx              # Cta (دکمه), More (پیوند)
+│  │  └─ reveal.tsx           # Reveal, RevealLines
+│  └─ marketing/
+│     ├─ navbar, footer, closing (دعوتِ پایانِ هر صفحه)
+│     ├─ work-card, project-cover (جلدِ ساخته‌شده وقتی پروژه تصویر ندارد)
+│     ├─ faq-accordion, legal-page
+│     └─ contact-form, project-request-form, form-parts
 ├─ styles/ (tokens.css, globals.css)
-└─ lib/fonts.ts
+└─ lib/ (fonts.ts, fa.ts, content.ts, seo.tsx)
 ```
+
+متن‌های صفحه‌ها از `src/lib/content.ts` می‌آیند و از پنل مدیریت قابل بازنویسی‌اند.
 
 ## اجرا
 
@@ -55,4 +74,4 @@ npx prisma generate
 npm run dev
 ```
 
-> صفحات `services`، `portfolio`، `blog`، `pricing` و `faq` داده‌ها را از دیتابیس (مرحله ۳) می‌خوانند؛ ابتدا `prisma migrate` و `seed` را اجرا کنید.
+> صفحات `services`، `portfolio`، `blog` و `faq` داده‌ها را از دیتابیس می‌خوانند؛ ابتدا `prisma migrate` و `seed` را اجرا کنید.

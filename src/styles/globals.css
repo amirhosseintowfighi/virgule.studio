@@ -3,13 +3,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   پایه
+   ========================================================================== */
 * { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
-/* اسکرول نرم با Lenis کنترل می‌شود */
-html.lenis, html.lenis body { height: auto; }
-.lenis.lenis-smooth { scroll-behavior: auto !important; }
-.lenis.lenis-stopped { overflow: hidden; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 96px; }
+@media (prefers-reduced-motion: no-preference) {
+	html { scroll-behavior: smooth; }
+}
 
 body {
 	margin: 0;
@@ -23,419 +25,389 @@ body {
 }
 body.lock { overflow: hidden; }
 
-/* لاتین و اعداد با Inter */
-.font-latin { font-family: var(--font-inter), sans-serif; }
-
 a { color: inherit; text-decoration: none; }
 img, svg, video { display: block; max-width: 100%; }
 h1, h2, h3, h4 { margin: 0; line-height: 1.12; font-weight: 500; }
 p { margin: 0; }
 ul, ol { margin: 0; padding: 0; list-style: none; }
 
+/* لاتین و اعداد لاتین با Inter */
+.font-latin { font-family: var(--font-inter), sans-serif; }
+.num { font-variant-numeric: tabular-nums; }
+
 ::selection { background: var(--accent, var(--color-primary)); color: var(--on-accent, #fff); }
 
 :focus-visible {
-	outline: 1px solid var(--accent, var(--color-primary));
-	outline-offset: 4px;
-	border-radius: var(--radius-sm);
+	outline: 2px solid var(--accent, var(--color-primary));
+	outline-offset: 3px;
 }
 
 .skip-link {
-	position: absolute; inset-inline-start: -9999px; top: 0; z-index: 100001;
-	background: var(--accent); color: var(--on-accent);
-	padding: 12px 22px; border-radius: 0 0 var(--radius-md) var(--radius-md);
+	position: absolute; inset-inline-start: -9999px; top: 0; z-index: 100;
+	background: var(--fg); color: var(--bg);
+	padding: 12px 22px;
 }
 .skip-link:focus { inset-inline-start: 16px; }
 
+.site { position: relative; isolation: isolate; }
+
+/* قابِ صفحه: حاشیه‌ی افقیِ یکسان، و سقفِ عرض روی نمایشگرهای خیلی بزرگ */
+.wrap {
+	width: 100%; max-width: 1760px; margin-inline: auto;
+	padding-inline: var(--pad);
+}
+
+/* شبکه‌ی دوازده‌ستونی — زیر ۷۶۸ یک ستون */
+.g12 { display: grid; gap: clamp(28px, 5vw, 48px) var(--gap); }
+@media (min-width: 768px) {
+	.g12 { grid-template-columns: repeat(12, minmax(0, 1fr)); row-gap: 0; }
+}
+
 /* ==========================================================================
-   تایپوگرافی — بزرگ ولی سبک. وزن کم + فضای زیاد = گران.
-   فارسی letter-spacing نمی‌گیرد؛ فقط روی متن لاتین اعمال می‌شود.
+   تایپوگرافی
+   تیترها با نسخ (Markazi)، متن با سن‌سریف. فارسی letter-spacing نمی‌گیرد.
    ========================================================================== */
-.display { font-size: var(--t-display); line-height: 1.02; font-weight: 500; }
-.h1 { font-size: var(--t-h1); line-height: 1.1; font-weight: 500; }
-.h2 { font-size: var(--t-h2); line-height: 1.16; font-weight: 500; }
-.h3 { font-size: var(--t-h3); line-height: 1.42; font-weight: 500; }
-.body-t { font-size: var(--t-body); line-height: 2.05; color: var(--fg-2); }
-/* .meta فقط برای متن لاتین و عدد است: Inter گلیف فارسی ندارد و متن فارسی
-   به فونت پیش‌فرض سیستم می‌افتد. برای برچسب فارسی از .meta-fa استفاده کنید. */
+.display, .h1, .h2, .h3, .serif {
+	font-family: var(--font-display);
+	font-weight: 500;
+	text-wrap: balance;
+}
+.display { font-size: var(--t-display); line-height: 1; }
+.h1 { font-size: var(--t-h1); line-height: 1.02; }
+.h2 { font-size: var(--t-h2); line-height: 1.04; }
+.h3 { font-size: var(--t-h3); line-height: 1.22; }
+
+/* عنوانِ کوچکِ سن‌سریف — برای ردیف‌ها و ستون‌های متنی */
+.t-title { font-size: 1.06rem; line-height: 1.6; font-weight: 700; }
+
+.body-t { font-size: var(--t-body); line-height: 2.05; color: var(--fg-2); text-wrap: pretty; }
+.lead {
+	font-size: clamp(1.08rem, 1.45vw, 1.34rem);
+	line-height: 1.95; color: var(--fg); text-wrap: pretty;
+}
+/* بندِ بزرگِ نسخ — برای جمله‌هایی که باید مثل نقل‌قول خوانده شوند */
+.statement {
+	font-family: var(--font-display); font-weight: 400;
+	font-size: clamp(1.9rem, 3.5vw, 3.35rem); line-height: 1.32;
+	text-wrap: pretty;
+}
+
+/* برچسبِ ریز. .meta فقط برای لاتین است (حروف بزرگ و فاصله‌دار). */
+.meta-fa { font-size: var(--t-meta); line-height: 1.7; color: var(--fg-3); font-weight: 500; }
 .meta {
-	font-size: var(--t-meta); line-height: 1; color: var(--fg-3);
 	font-family: var(--font-inter), sans-serif;
-	letter-spacing: .26em; text-transform: uppercase; font-weight: 500;
+	font-size: .7rem; line-height: 1.6; color: var(--fg-3);
+	letter-spacing: .16em; text-transform: uppercase; font-weight: 500;
 }
-.meta-fa {
-	font-size: var(--t-meta); line-height: 1.7; color: var(--fg-3);
-	font-weight: 500; letter-spacing: 0;
-}
-.num { font-family: var(--font-inter), sans-serif; font-variant-numeric: tabular-nums; }
 
 .accent { color: var(--accent); }
-.stroke-text { color: transparent; -webkit-text-stroke: 1px var(--line-2); }
 
-/* بند آغازین.
-   نکته: drop cap در خط فارسی کار نمی‌کند — حرف اول از بقیه‌ی کلمه جدا می‌شود و
-   اتصال حروف می‌شکند. به‌جایش وزن و اندازه‌ی بند بالا می‌رود. */
-.lead {
-	font-size: clamp(1.1rem, 1.6vw, 1.42rem);
-	line-height: 1.95;
-	color: var(--fg);
-	font-weight: 400;
-}
-
-/* نقل‌قول برجسته — بدون کادر، فقط یک خط مویی شامپاینی */
-.pull {
-	border-inline-start: 1px solid var(--accent-line);
-	padding-inline-start: clamp(18px, 2.6vw, 36px);
-	font-size: clamp(1.25rem, 2.1vw, 1.85rem);
-	line-height: 1.62; font-weight: 500; color: var(--fg);
-}
-
-/* برچسب ریز (تکنولوژی، دسته‌بندی) */
-.tag {
-	display: inline-block; border: 1px solid var(--line-2);
-	border-radius: var(--radius-full);
-	padding: 6px 14px; font-size: var(--t-meta); line-height: 1.3; color: var(--fg-2);
-	transition: border-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
-}
-.tag:hover { border-color: var(--accent-line); color: var(--accent); }
-
-/* سطح برجسته — نرم، با خط مویی و سایه‌ی پخش */
-.card {
-	background: var(--bg-2);
-	border: 1px solid var(--line);
-	border-radius: var(--radius-lg);
-	box-shadow: var(--soft-1);
-	transition: border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease),
-		transform var(--dur-2) var(--ease);
-}
-.card:hover, .card:focus-within {
-	border-color: var(--accent-line);
-	box-shadow: var(--soft-2);
-	transform: translateY(-4px);
-}
+/* شماره‌ی شنگرفی — رقم فارسی با نسخ */
+.numeral { font-family: var(--font-display); color: var(--accent); font-weight: 500; line-height: 1; }
 
 /* ==========================================================================
-   حرکت — قاعده‌ی واحد: همه‌چیز آرام از پایین می‌آید و دیر می‌ایستد.
-   هیچ‌چیز نمی‌پرد، هیچ‌چیز تند نیست.
+   سرصفحه‌ی بخش — مثل سرصفحه‌ی کتاب: خطِ مرکبی، شماره، نام بخش
    ========================================================================== */
-.js .rv { opacity: 0; transform: translateY(30px); }
+.folio {
+	display: flex; align-items: baseline; justify-content: space-between; gap: 24px;
+	border-top: 1px solid var(--fg);
+	padding-top: 14px;
+	font-size: var(--t-meta); font-weight: 500; color: var(--fg-2);
+}
+.folio__n { font-size: 1.35rem; margin-inline-end: 14px; }
+
+/* ==========================================================================
+   حرکت — یک قاعده: آرام از پایین، یک‌بار. هیچ‌چیز نمی‌چرخد و نمی‌درخشد.
+   ========================================================================== */
+.js .rv { opacity: 0; transform: translateY(20px); }
 .rv.in {
 	opacity: 1; transform: none;
-	transition: opacity var(--dur-3) var(--ease), transform var(--dur-3) var(--ease);
+	transition: opacity .9s var(--ease), transform .9s var(--ease);
 }
 
-/* ورودِ نرم‌تر: با محوشدگی، مثل فوکوسِ لنز */
-.js .rv-blur { opacity: 0; transform: translateY(26px) scale(.985); filter: blur(10px); }
-.rv-blur.in {
-	opacity: 1; transform: none; filter: none;
-	transition: opacity var(--dur-4) var(--ease), transform var(--dur-4) var(--ease),
-		filter var(--dur-4) var(--ease);
-}
-
-/* متن خط‌به‌خط از پشت ماسک بالا می‌آید */
-.line-mask { display: block; overflow: hidden; padding-block: .06em; }
-.line-mask > span { display: block; transition: transform var(--dur-4) var(--ease); }
-.js .line-mask > span { transform: translateY(108%); }
+/* تیتر خط‌به‌خط از پشت ماسک بالا می‌آید.
+   padding و margin منفی: نقطه‌ها و دنباله‌ی حروف فارسی از کادرِ خط بیرون می‌زنند. */
+/* ستونِ flex: حاشیه‌های منفیِ خط‌های پیاپی نباید در هم ادغام شوند */
+.lines { display: flex; flex-direction: column; }
+.line-mask { display: block; overflow: hidden; padding-block: .2em; margin-block: -.2em; }
+.line-mask > span { display: block; transition: transform 1.2s var(--ease); }
+.js .line-mask > span { transform: translateY(125%); }
 .in .line-mask > span, .line-mask.in > span { transform: none; }
 
-/* تصویر: پرده کنار می‌رود و تصویر آرام به مقیاس ۱ می‌رسد */
-.img-rv { position: relative; overflow: hidden; border-radius: var(--radius-lg); }
-.img-rv::after {
-	content: ""; position: absolute; inset: 0; z-index: 2; background: var(--bg);
-	transform-origin: bottom; transition: transform var(--dur-4) var(--ease);
-	transform: scaleY(0);
-}
-.js .img-rv::after { transform: none; }
-.img-rv > * { transition: transform 1.8s var(--ease); }
-.js .img-rv > * { transform: scale(1.14); }
-.img-rv.in::after { transform: scaleY(0); }
-.img-rv.in > * { transform: none; }
+/* تصویر از بالا باز می‌شود.
+   برش روی فرزند است، نه خودِ عنصرِ زیرِ نظر: IntersectionObserver ناحیه‌ی بریده‌شده
+   را «نادیدنی» حساب می‌کند و عنصری که کامل بریده شده هیچ‌وقت وارد نمی‌شود. */
+.js .img-rv > * { clip-path: inset(0 0 100% 0); }
+.js .img-rv.in > * { clip-path: inset(0); transition: clip-path 1.3s var(--ease-io); }
 
-/* خط جداکننده‌ی مویی که هنگام ورود کشیده می‌شود */
+/* خطی که هنگام ورود از راست کشیده می‌شود */
 .rule { height: 1px; background: var(--line-2); transform-origin: right; }
+.rule--ink { background: var(--fg); }
 .js .rule { transform: scaleX(0); }
-.rule.in { transform: none; transition: transform var(--dur-4) var(--ease); }
-.rule--accent { background: var(--accent-line); }
-
-/* درخششی که یک‌بار از روی عنوان رد می‌شود — لهجه‌ی لوکس، نه تزئین دائمی */
-.sheen { position: relative; }
-.sheen.in::after {
-	content: ""; position: absolute; inset: 0; pointer-events: none;
-	background: linear-gradient(-100deg, transparent 38%, var(--accent-soft) 50%, transparent 62%);
-	background-size: 260% 100%;
-	animation: sheenPass 2.1s var(--ease) .5s 1 both;
-}
-/* شفافیت هم انیمیت می‌شود، وگرنه نوار روشن در فریم آخر روی عنوان جا می‌ماند */
-@keyframes sheenPass {
-	0%   { background-position: -60% 0; opacity: 0; }
-	18%  { opacity: 1; }
-	82%  { opacity: 1; }
-	100% { background-position: 170% 0; opacity: 0; }
-}
-
-/* شناوریِ بسیار آرام — فقط برای عناصر تزئینی */
-.float { animation: floatY 9s ease-in-out infinite; }
-@keyframes floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
-
-/* نشانِ پس‌زمینه: خیلی آرام می‌چرخد و نفس می‌کشد — حرکتی که حس می‌شود، نه دیده */
-.mark-bd { animation: markDrift 34s ease-in-out infinite; transform-origin: 60% 60%; }
-@keyframes markDrift {
-	0%, 100% { transform: rotate(-2.5deg) scale(1); opacity: .85; }
-	50%      { transform: rotate(2.5deg) scale(1.035); opacity: 1; }
-}
-
-/* پارالاکس بومی مرورگر — بدون جاوااسکریپت، فقط جایی که پشتیبانی شود */
-@supports (animation-timeline: view()) {
-	@media (prefers-reduced-motion: no-preference) {
-		.parallax > * {
-			animation: parallaxY linear both;
-			animation-timeline: view();
-			animation-range: entry 0% exit 100%;
-		}
-		@keyframes parallaxY { from { transform: translateY(-6%); } to { transform: translateY(6%); } }
-	}
-}
+.js .rule.in { transform: none; transition: transform 1.3s var(--ease-io); }
 
 /* ==========================================================================
-   ریزتعامل‌ها — کند، ولی نه تنبل.
+   پیوندها و دکمه‌ها
    ========================================================================== */
-/* پیوند ناوبری — متن دولایه: لایه‌ی بالا می‌رود و لایه‌ی طلایی جایش را می‌گیرد */
-/* ارتفاع باید دقیقاً یک سطر باشد، وگرنه هر دو لایه هم‌زمان دیده می‌شوند */
-.nav-l { display: inline-block; overflow: hidden; vertical-align: bottom; height: 1.5em; line-height: 1.5; }
-.nav-l__in { display: block; transition: transform var(--dur-2) var(--ease); }
-.nav-l__in > span { display: block; height: 1.5em; line-height: 1.5; }
-.nav-l__in > span + span { color: var(--accent); }
-.nav-l:hover .nav-l__in,
-.nav-l:focus-visible .nav-l__in { transform: translateY(-50%); }
-
-/* زیرخط مویی که از راست باز می‌شود (RTL) */
+/* زیرخطی که از راست باز می‌شود */
 .link-u { position: relative; display: inline-block; }
 .link-u::after {
-	content: ""; position: absolute; inset-inline-end: 0; bottom: -4px;
-	width: 100%; height: 1px; background: var(--accent);
-	transform: scaleX(0); transform-origin: right;
+	content: ""; position: absolute; inset-inline: 0; bottom: -3px;
+	height: 1px; background: currentColor;
+	transform: scaleX(0); transform-origin: left;
 	transition: transform var(--dur-2) var(--ease);
 }
-.link-u:hover::after, .link-u:focus-visible::after { transform: none; }
+.link-u:hover::after, .link-u:focus-visible::after { transform: none; transform-origin: right; }
 
-/* دکمه: قرصی با خط مویی؛ رنگ آرام از پایین بالا می‌آید */
+/* پیوندِ همیشه‌زیرخط‌دار — برای پیوندهای درونِ متن و «بیشتر» */
+.link-a {
+	display: inline-flex; align-items: center; gap: 10px;
+	font-weight: 500;
+	border-bottom: 1px solid var(--line-2);
+	padding-bottom: 4px;
+	transition: color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+}
+.link-a:hover, .link-a:focus-visible { color: var(--accent); border-color: var(--accent); }
+.link-a .arrow { transition: transform var(--dur-2) var(--ease); }
+.link-a:hover .arrow, .link-a:focus-visible .arrow { transform: translateX(-5px); }
+
+/* پیکان — RTL: «جلو» یعنی چپ */
+.arrow { flex: none; width: 1.15em; height: 1.15em; }
+
+/* دکمه: چهارگوش، خط مرکبی. با هاور، مرکب از پایین بالا می‌آید. */
 .btn {
 	position: relative; overflow: hidden; isolation: isolate;
-	display: inline-flex; align-items: center; justify-content: center; gap: 12px;
-	min-height: 52px; /* هدف لمسی ۴۴px+ */
-	padding: 16px 38px; border-radius: var(--radius-full);
-	font-size: .92rem; font-weight: 500; line-height: 1;
+	display: inline-flex; align-items: center; justify-content: center; gap: 14px;
+	min-height: 56px; padding: 0 30px;
+	font-size: .95rem; font-weight: 500; line-height: 1.2;
 	color: var(--fg);
-	border: 1px solid var(--line-2);
+	border: 1px solid var(--fg);
+	border-radius: var(--r-sm);
 	cursor: pointer;
 	transition: color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
 }
 .btn::before {
 	content: ""; position: absolute; inset: 0; z-index: -1;
-	background: var(--accent); transform: translateY(101%);
+	background: var(--fg); transform: translateY(101%);
 	transition: transform var(--dur-2) var(--ease);
 }
-.btn:hover, .btn:focus-visible { color: var(--on-accent); border-color: var(--accent); }
+.btn:hover, .btn:focus-visible { color: var(--bg); }
 .btn:hover::before, .btn:focus-visible::before { transform: none; }
+.btn .arrow { transition: transform var(--dur-2) var(--ease); }
+.btn:hover .arrow, .btn:focus-visible .arrow { transform: translateX(-5px); }
 
-.btn--solid {
-	background: var(--accent); color: var(--on-accent); border-color: var(--accent);
-	font-weight: 700;
-}
-.btn--solid::before { background: var(--fg); }
-.btn--solid:hover, .btn--solid:focus-visible { color: var(--bg); border-color: var(--fg); }
+.btn--solid { background: var(--fg); color: var(--bg); }
+.btn--solid::before { background: var(--accent); }
+.btn--solid:hover, .btn--solid:focus-visible { color: var(--on-accent); border-color: var(--accent); }
 
-/* ردیف‌های فهرست (خدمات، مقالات) — بدون پرشدن تند؛ فقط یک تابش ملایم */
-.row-i { position: relative; display: block; }
-.row-i::before {
-	content: ""; position: absolute; inset: 0 calc(var(--pad) * -.4); z-index: 0;
-	border-radius: var(--radius-lg);
-	background: linear-gradient(90deg, transparent, var(--accent-soft));
-	opacity: 0; transition: opacity var(--dur-2) var(--ease);
-}
-.row-i:hover::before, .row-i:focus-within::before { opacity: 1; }
-.row-i__t { transition: transform var(--dur-2) var(--ease), color var(--dur-2) var(--ease); }
-.row-i:hover .row-i__t, .row-i:focus-within .row-i__t { transform: translateX(-14px); color: var(--accent); }
-.row-i__n { transition: color var(--dur-2) var(--ease); }
-.row-i:hover .row-i__n, .row-i:focus-within .row-i__n { color: var(--accent); }
-.row-i__go {
-	opacity: 0; transform: translateX(18px); color: var(--accent);
-	transition: opacity var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
-}
-.row-i:hover .row-i__go, .row-i:focus-within .row-i__go { opacity: 1; transform: none; }
+.btn:disabled { opacity: .5; cursor: progress; }
 
 /* ==========================================================================
-   کرسر سفارشی — یک حلقه‌ی نازک شامپاینی
+   ناوبری
    ========================================================================== */
-@media (hover: hover) and (pointer: fine) {
-	.has-cursor, .has-cursor * { cursor: none !important; }
-}
-.cur {
-	position: fixed; top: 0; left: 0; z-index: 99999;
-	display: grid; place-items: center;
-	width: 8px; height: 8px; border-radius: 999px;
-	background: var(--accent); color: var(--on-accent);
-	pointer-events: none; will-change: transform;
-	border: 1px solid transparent;
-	transition: width var(--dur-2) var(--ease), height var(--dur-2) var(--ease),
-		background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
-}
-.cur__label {
-	/* خط فارسی letter-spacing نمی‌گیرد — حروف را از هم جدا می‌کند */
-	font-size: 12px; font-weight: 700; letter-spacing: 0;
-	opacity: 0; transform: scale(.6);
-	transition: opacity var(--dur-1) var(--ease), transform var(--dur-2) var(--ease);
-	white-space: nowrap;
-}
-.cur.is-link { width: 52px; height: 52px; background: transparent; border-color: var(--accent-line); }
-.cur.is-label { width: 104px; height: 104px; background: var(--accent); border-color: var(--accent); }
-.cur.is-label .cur__label { opacity: 1; transform: none; }
-
-/* ==========================================================================
-   نوار پیشرفت + مارکی
-   ========================================================================== */
-.scroll-progress {
-	position: fixed; top: 0; inset-inline: 0; height: 1px; z-index: 9998;
+.nav-l { position: relative; color: var(--fg-2); transition: color var(--dur-1) var(--ease); }
+.nav-l:hover, .nav-l:focus-visible, .nav-l[aria-current="page"] { color: var(--fg); }
+.nav-l::after {
+	content: ""; position: absolute; inset-inline: 0; bottom: -6px; height: 1px;
 	background: var(--accent); transform: scaleX(0); transform-origin: right;
+	transition: transform var(--dur-2) var(--ease);
 }
-/* ==========================================================================
-   پری‌لودر
-   ========================================================================== */
-.pre { position: fixed; inset: 0; z-index: 100000; background: #0c0a10; display: grid; place-items: center; transition: opacity .9s var(--ease), visibility .9s; }
-.pre.done { opacity: 0; visibility: hidden; }
-.pre__glow { position: absolute; width: 64vmin; height: 64vmin; border-radius: 50%; background: radial-gradient(circle, rgba(201,171,114,.22), transparent 68%); filter: blur(50px); }
-.pre__box { position: relative; text-align: center; color: #f2efe9; }
-.pre__mark { width: clamp(74px, 13vw, 112px); margin-inline: auto; color: #f2efe9; }
-.vm-pen { stroke-dasharray: 458; stroke-dashoffset: 458; animation: drawPen .9s var(--ease) .1s forwards; }
-.vm-ring { stroke-dasharray: 878; stroke-dashoffset: 878; transform: rotate(132deg); transform-origin: 218.1px 256.5px; animation: drawRing 1.3s var(--ease) .7s forwards; }
-.vm-nib { opacity: 0; animation: preFadeIn .6s ease 1.8s forwards; }
-@keyframes drawPen { to { stroke-dashoffset: 0; } }
-@keyframes drawRing { to { stroke-dashoffset: 0; } }
-@keyframes preFadeIn { to { opacity: 1; } }
-.pre__word { margin-top: 20px; font-size: 11px; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; color: #a9a49e; opacity: 0; animation: preFadeIn .8s ease 1.9s forwards; }
-.pre__bar { margin: 16px auto 0; width: 120px; height: 1px; background: rgba(242,239,233,.12); overflow: hidden; }
-.pre__bar i { display: block; height: 100%; width: 0; background: #c9ab72; }
-.pre__num { margin-top: 10px; font-size: 11px; color: rgba(242,239,233,.4); }
+.nav-l:hover::after, .nav-l:focus-visible::after, .nav-l[aria-current="page"]::after { transform: none; }
 
-/* ==========================================================================
-   منوی تمام‌صفحه
-   ========================================================================== */
-.menu { position: fixed; inset: 0; z-index: 9990; background: var(--bg); clip-path: inset(0 0 100% 0); transition: clip-path 1s var(--ease); }
-.menu.open { clip-path: inset(0 0 0 0); }
+/* نوارِ ناوبری پس از اسکرول شیشه می‌شود: محتوای صفحه از زیرش می‌گذرد */
+.site-nav.is-glass {
+	background: var(--glass-bg);
+	-webkit-backdrop-filter: blur(18px) saturate(1.5);
+	backdrop-filter: blur(18px) saturate(1.5);
+	border-color: var(--line);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	.site-nav.is-glass { background: var(--bg); }
+}
+
+/* منوی تمام‌صفحه‌ی موبایل */
+.menu {
+	position: fixed; inset: 0; z-index: 40; background: var(--bg);
+	clip-path: inset(0 0 100% 0); visibility: hidden;
+	transition: clip-path .8s var(--ease-io), visibility 0s .8s;
+	overflow-y: auto;
+}
+.menu.open { clip-path: inset(0); visibility: visible; transition: clip-path .8s var(--ease-io), visibility 0s; }
 .menu-item { display: block; overflow: hidden; }
-.menu-item > span { display: block; transform: translateY(108%); transition: transform var(--dur-4) var(--ease); }
+.menu-item > span { display: block; transform: translateY(110%); transition: transform 1s var(--ease); }
 .menu.open .menu-item > span { transform: none; }
 
 /* ==========================================================================
-   کمکی‌ها + سازگاری با پنل مدیریت
+   شیشه
+   فقط روی چیزی که پشتش واقعاً چیزی هست: تصویرِ برداری، جلدِ پروژه، یا صفحه‌ای
+   که زیرِ ناوبری اسکرول می‌شود. لبه‌ی بالاییِ روشن = بازتابِ نور؛ بدون تابش.
    ========================================================================== */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-.tilt { transform-style: preserve-3d; transition: transform .18s var(--ease); will-change: transform; }
-
-.reveal { transition: opacity var(--dur-3) var(--ease), transform var(--dur-3) var(--ease); }
-.js .reveal { opacity: 0; transform: translateY(24px); }
-.reveal.in { opacity: 1; transform: none; }
-.text-gradient {
-	background-image: linear-gradient(96deg, #10026f 0%, #ac2ebc 55%, #dc1d49 100%);
-	-webkit-background-clip: text; background-clip: text;
-	-webkit-text-fill-color: transparent; color: transparent;
+.glass {
+	background: var(--glass-bg);
+	-webkit-backdrop-filter: blur(18px) saturate(1.5);
+	backdrop-filter: blur(18px) saturate(1.5);
+	border: 1px solid var(--glass-line);
+	border-radius: var(--r);
+	box-shadow: inset 0 1px 0 var(--glass-line), var(--glass-shadow);
+}
+/* شیشه‌ی تیره (روی جلدِ مرکبی): .ink زمینه‌ی مات می‌دهد، اینجا دوباره شفاف می‌شود */
+.site .ink.glass { background: var(--glass-bg); }
+/* مرورگری که blur ندارد: سطحِ مات، تا متن خوانا بماند */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	.glass { background: var(--bg); }
 }
 
 /* ==========================================================================
-   پس‌زمینه‌ها
-   دانه روی کل سایت پخش است (یک لایه‌ی ثابت)، و هر بخش تابشِ خودش را دارد که
-   جای متفاوتی می‌نشیند. یکنواختی همان چیزی است که صفحه را «تولیدشده» می‌کند.
+   تصویرِ برداری
    ========================================================================== */
-
-/* دانه‌ی فیلم — یک لایه‌ی ثابت روی کل سایت، نه به‌ازای هر بخش */
-.site::before {
-	content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-	opacity: .26; mix-blend-mode: overlay;
-	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='.36'/></svg>");
-	background-size: 160px 160px;
+.art { display: block; width: 100%; height: auto; overflow: visible; }
+/* خطوطِ تصویر هنگام ورود کشیده می‌شوند؛ سطح‌ها آرام ظاهر می‌شوند. یک‌بار. */
+.js .art-rv .art__draw { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.js .art-rv .art__fade { opacity: 0; transform: scale(.94); }
+.art__fade { transform-box: fill-box; transform-origin: center; }
+.js .art-rv.in .art__draw { stroke-dashoffset: 0; transition: stroke-dashoffset 1.8s var(--ease-io) .2s; }
+.js .art-rv.in .art__fade {
+	opacity: 1; transform: none;
+	transition: opacity 1s var(--ease) calc(var(--d, 0) * 110ms), transform 1.4s var(--ease) calc(var(--d, 0) * 110ms);
 }
 
-/* بستر بخش — تابش گرم، با موقعیت قابل تنظیم از طریق متغیر */
-.stage {
-	position: relative; isolation: isolate; overflow: clip;
-	--glow-x: 26%;
-	--glow-y: 46%;
-	--glow-a: .2;
-	--glow-size: min(92vw, 1120px);
+/* نشانه‌ی کوچکِ برداری کنار هر ردیف */
+.glyph { flex: none; width: 48px; height: 48px; }
+
+/* ==========================================================================
+   فهرست — ردیف‌های خط‌کشی‌شده (خدمات، یادداشت‌ها)
+   ========================================================================== */
+.idx { border-top: 1px solid var(--line-2); }
+.idx__row {
+	position: relative; display: grid; align-items: baseline;
+	gap: 10px var(--gap);
+	grid-template-columns: 3.2rem minmax(0, 1fr);
+	padding-block: clamp(24px, 3vw, 40px);
+	border-bottom: 1px solid var(--line);
+	transition: border-color var(--dur-2) var(--ease);
 }
-.stage::before {
-	content: ""; position: absolute; z-index: -2; pointer-events: none;
-	left: 50%; top: 50%;
-	width: var(--glow-size); aspect-ratio: 1.2;
-	translate: calc(var(--glow-x) - 50%) calc(var(--glow-y) - 50%);
-	background:
-		radial-gradient(44% 44% at 50% 50%, rgba(201, 171, 114, var(--glow-a)), transparent 68%),
-		radial-gradient(34% 34% at 76% 22%, rgba(120, 70, 170, .07), transparent 72%);
-	filter: blur(50px);
+.idx__row > * { grid-column: 2; }
+.idx__row > .idx__n { grid-column: 1; grid-row: 1; }
+.idx__n { font-family: var(--font-display); font-size: 1.5rem; line-height: 1.3; color: var(--fg-3); transition: color var(--dur-1) var(--ease); }
+.idx__t { transition: transform var(--dur-2) var(--ease); }
+.idx__go {
+	display: none; justify-self: end; align-self: center; color: var(--accent);
+	opacity: 0; transform: translateX(14px);
+	transition: opacity var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
+}
+@media (min-width: 900px) {
+	.idx__row { grid-template-columns: 4.5rem minmax(0, 5fr) minmax(0, 5fr) 3rem; }
+	.idx__row > *, .idx__row > .idx__n { grid-column: auto; grid-row: auto; }
+	.idx__go { display: block; }
+}
+a.idx__row:hover, a.idx__row:focus-visible { border-bottom-color: var(--fg); }
+a.idx__row:hover .idx__n, a.idx__row:focus-visible .idx__n { color: var(--accent); }
+a.idx__row:hover .idx__t, a.idx__row:focus-visible .idx__t { transform: translateX(-14px); }
+a.idx__row:hover .idx__go, a.idx__row:focus-visible .idx__go { opacity: 1; transform: none; }
+
+/* فهرستِ ویژگی‌ها — هر مورد با یک خطِ تیره‌ی شنگرفی */
+.feat { display: flex; align-items: baseline; gap: 14px; }
+.feat::before {
+	content: ""; flex: none; width: 14px; height: 1px; background: var(--accent);
+	translate: 0 -.35em;
 }
 
-/* گونه‌های موقعیت — هر بخش تابشش از جای دیگری می‌آید */
-.stage--l  { --glow-x: 12%; --glow-y: 40%; --glow-a: .16; --glow-size: min(74vw, 860px); }
-.stage--r  { --glow-x: 88%; --glow-y: 34%; --glow-a: .14; --glow-size: min(70vw, 800px); }
-.stage--br { --glow-x: 78%; --glow-y: 86%; --glow-a: .13; --glow-size: min(78vw, 900px); }
-.stage--tl { --glow-x: 16%; --glow-y: 12%; --glow-a: .12; --glow-size: min(66vw, 760px); }
-.stage--c  { --glow-x: 50%; --glow-y: 52%; --glow-a: .11; --glow-size: min(96vw, 1180px); }
+/* نامِ تکنولوژی‌ها: یک سطرِ ساده با جداکننده، نه قرص */
+.techs { display: flex; flex-wrap: wrap; gap: 4px 0; font-size: .78rem; color: var(--fg-3); }
+.techs > li + li::before { content: "/"; margin-inline: 10px; color: var(--line-2); }
 
-/* نورِ دنبال‌کننده‌ی اشاره‌گر — فقط در بخش معرفی. مختصات را cursor.tsx می‌نویسد. */
-.spot::after {
-	content: ""; position: absolute; z-index: -1; inset: 0; pointer-events: none;
-	background: radial-gradient(
-		420px circle at var(--mx, 50%) var(--my, 40%),
-		rgba(201, 171, 114, .085),
-		transparent 62%
-	);
-	opacity: 0; transition: opacity 1.2s var(--ease);
+/* برچسب — چهارگوش، خط مویی */
+.tag {
+	display: inline-block; border: 1px solid var(--line-2);
+	padding: 6px 14px; font-size: var(--t-meta); line-height: 1.4; color: var(--fg-2);
+	transition: border-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
 }
-.spot:hover::after { opacity: 1; }
-@media (hover: none) { .spot::after { display: none; } }
+a.tag:hover, a.tag:focus-visible { border-color: var(--accent); color: var(--accent); }
 
-/* خطِ عمودیِ روش کار — با اسکرول پر می‌شود.
-   ponytail: بومی مرورگر (scroll-timeline). جایی که پشتیبانی نشود، خط ثابت و کم‌رنگ می‌ماند. */
-.track {
-	position: relative;
-	/* یک متغیر برای هر دو: تورفتگی متن، و جای گره‌ها روی خط.
-	   اگر جدا نوشته شوند، گره‌ها از خط فاصله می‌گیرند. */
-	--track-pad: 2rem;
-	padding-inline-start: var(--track-pad);
-}
-@media (min-width: 768px) { .track { --track-pad: 3.5rem; } }
+/* ==========================================================================
+   نمونه‌کار — جلد
+   ========================================================================== */
+.work { display: block; }
+.work__cover { position: relative; overflow: hidden; background: var(--bg-2); border-radius: var(--r); }
+.work__cover > * { transition: transform 1.4s var(--ease); }
+.work:hover .work__cover > *, .work:focus-visible .work__cover > * { transform: scale(1.035); }
 
-/* گرهِ روی خط — با هاورِ همان مرحله روشن می‌شود */
-.track__dot {
-	position: absolute; top: 4.6rem;
-	inset-inline-start: calc(var(--track-pad) * -1 - 3px);
-	width: 7px; height: 7px; border-radius: 999px;
-	background: var(--line-2);
-	transition: background-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease);
+/* برچسبِ شیشه‌ای روی جلد: نام، دسته و سال. روی عکسِ واقعی هم خوانا می‌ماند. */
+.work__label {
+	position: absolute; inset-inline: clamp(10px, 1.4vw, 18px); bottom: clamp(10px, 1.4vw, 18px);
+	display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+	padding: 12px 18px;
+	transform: none !important;
 }
-.group:hover > .track__dot {
-	background: var(--accent);
-	box-shadow: 0 0 0 5px var(--accent-soft);
+
+/* ==========================================================================
+   پرسش‌ها
+   ========================================================================== */
+.faq__sign { position: relative; flex: none; width: 18px; height: 18px; align-self: center; }
+.faq__sign::before, .faq__sign::after {
+	content: ""; position: absolute; inset-inline: 0; top: 50%; height: 1px; background: currentColor;
+	transition: transform var(--dur-2) var(--ease);
 }
-.track::before {
-	content: ""; position: absolute; inset-block: 0; inset-inline-start: 0;
-	width: 1px; background: var(--line);
+.faq__sign::after { transform: rotate(90deg); }
+[aria-expanded="true"] .faq__sign::after { transform: rotate(0deg); }
+
+/* ==========================================================================
+   فرم‌ها — بدون کادر، فقط یک خط
+   ========================================================================== */
+.field {
+	width: 100%;
+	min-height: 52px;
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	border-bottom: 1px solid var(--line-2, var(--color-border));
+	padding: 14px 2px;
+	font: inherit;
+	font-size: 16px; /* زیر ۱۶px، سافاری موبایل هنگام فوکوس صفحه را زوم می‌کند */
+	color: var(--fg, var(--color-ink));
+	outline: none;
+	transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease);
 }
-.track::after {
-	content: ""; position: absolute; top: 0; inset-inline-start: 0;
-	width: 1px; height: 100%; background: var(--accent);
-	transform-origin: top; transform: scaleY(0);
+.field::placeholder { color: var(--fg-3, var(--color-muted)); opacity: .75; }
+.field:hover { border-bottom-color: var(--fg, var(--color-ink)); }
+.field:focus {
+	border-bottom-color: var(--accent, var(--color-primary));
+	box-shadow: 0 1px 0 0 var(--accent, var(--color-primary));
 }
-@supports (animation-timeline: view()) {
-	@media (prefers-reduced-motion: no-preference) {
-		.track::after {
-			animation: trackFill linear both;
-			animation-timeline: view();
-			animation-range: entry 90% exit 10%;
-		}
-		@keyframes trackFill { from { transform: scaleY(0); } to { transform: scaleY(1); } }
-	}
+.field:focus-visible { outline: none; }
+.field[aria-invalid="true"] { border-bottom-color: var(--color-error); }
+textarea.field { resize: vertical; line-height: 1.9; }
+select.field {
+	appearance: none; cursor: pointer; padding-inline-end: 28px;
+	background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(-45deg, transparent 50%, currentColor 50%);
+	background-size: 5px 5px; background-position: 6px 55%, 11px 55%; background-repeat: no-repeat;
+}
+select.field option { background: var(--bg, var(--color-surface)); color: var(--fg, var(--color-ink)); }
+
+.label {
+	display: block; margin-bottom: 4px;
+	font-size: var(--t-meta, .8rem); font-weight: 500;
+	color: var(--fg-2, var(--color-muted));
+	transition: color var(--dur-1) var(--ease);
+}
+.site label:focus-within > .label { color: var(--accent); }
+
+/* ==========================================================================
+   متنِ بلند (یادداشت‌ها، صفحه‌های قانونی)
+   ========================================================================== */
+.prose-v > * + * { margin-top: 1.6em; }
+.prose-v p { font-size: clamp(1.02rem, 1.1vw, 1.14rem); line-height: 2.15; color: var(--fg); text-wrap: pretty; }
+.prose-v h2 { font-family: var(--font-display); font-size: var(--t-h3); line-height: 1.25; margin-top: 2.2em; }
+.prose-v h2 + * { margin-top: .8em; }
+
+/* ==========================================================================
+   هدف لمسی
+   پیوندهای متنی از نظر بصری کوچک‌اند ولی روی صفحه‌ی لمسی باید دست‌کم ۴۴ پیکسل
+   جای زدن داشته باشند. فقط روی نشانگر درشت (انگشت) اعمال می‌شود.
+   ========================================================================== */
+@media (pointer: coarse) {
+	.tap { padding-block: 12px; margin-block: -12px; }
+	.tap-inline { display: inline-block; padding-block: 10px; margin-block: -10px; }
 }
 
 /* ==========================================================================
@@ -446,825 +418,16 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 		animation-duration: .01ms !important;
 		animation-iteration-count: 1 !important;
 		transition-duration: .01ms !important;
+		transition-delay: 0s !important;
 	}
-	.rv, .rv-blur, .reveal { opacity: 1 !important; transform: none !important; filter: none !important; }
-	.line-mask > span, .img-rv > * { transform: none !important; }
-	.img-rv::after { display: none; }
-	.rule { transform: none !important; }
-	.sheen.in::after { display: none; }
-	.float, .mark-bd { animation: none !important; }
-	.track::after { transform: none; animation: none !important; }
-	.nav-l__in { transform: none !important; }
-	.vm-pen, .vm-ring { stroke-dashoffset: 0; }
-	.vm-nib, .pre__word { opacity: 1; }
-}
-
-/* ==========================================================================
-   فرم‌ها — بدون کادر، فقط یک خط. تمرکز روی خود متن.
-   ========================================================================== */
-.field {
-	width: 100%;
-	min-height: 52px;
-	background: transparent;
-	border: 0;
-	border-bottom: 1px solid var(--line-2);
-	padding: 16px 2px;
-	font: inherit;
-	font-size: 16px; /* زیر ۱۶px، سافاری موبایل هنگام فوکوس صفحه را زوم می‌کند */
-	color: var(--fg, var(--color-ink));
-	outline: none;
-	transition: border-color var(--dur-2) var(--ease);
-}
-.field::placeholder { color: var(--fg-3); }
-.field:focus { border-color: var(--accent); }
-.field:focus-visible { outline: none; }
-.field[aria-invalid="true"] { border-color: var(--color-error); }
-select.field option { background: var(--bg-2); color: var(--fg); }
-
-/* برچسب فرم — همیشه دیده می‌شود، هیچ‌وقت فقط placeholder */
-.label {
-	display: block; margin-bottom: 6px;
-	font-size: var(--t-meta); font-weight: 500; letter-spacing: .1em;
-	color: var(--fg-2, var(--color-muted));
-}
-
-/* ==========================================================================
-   پشته‌ی خدمات
-   هر خدمت یک تخته‌ی کامل است که به بالا می‌چسبد و بعدی رویش سر می‌خورد.
-   با position: sticky انجام می‌شود — بدون جاوااسکریپت، بدون کتابخانه.
-   هر تخته چند پیکسل پایین‌تر از قبلی می‌ایستد تا لبه‌ی زیرین دیده شود و
-   عمقِ واقعی حس شود، نه یک تعویض ساده.
-   ========================================================================== */
-.stack { --stack-top: 96px; --stack-step: 14px; }
-/* روی موبایل تخته‌ها بلندترند: پله باید کوچک‌تر شود وگرنه آخرین تخته‌ی چسبیده
-   از پایینِ صفحه بیرون می‌زند و انتهایش هیچ‌وقت دیده نمی‌شود. */
-@media (max-width: 767px) {
-	.stack { --stack-top: 84px; --stack-step: 6px; }
-}
-.stack__i {
-	position: sticky;
-	top: calc(var(--stack-top) + var(--i) * var(--stack-step));
-	padding-bottom: var(--stack-step);
-}
-
-.panel {
-	position: relative; isolation: isolate; overflow: hidden;
-	border: 1px solid var(--line);
-	border-radius: var(--radius-xl);
-	background: var(--bg-2);
-	box-shadow: var(--soft-2);
-	transition: border-color var(--dur-2) var(--ease);
-}
-.panel:hover { border-color: var(--accent-line); }
-
-/* تابش گوشه‌ای مخصوص هر تخته — زاویه با شماره‌ی تخته می‌چرخد، پس هیچ دوتایی مثل هم نیست */
-.panel::before {
-	content: ""; position: absolute; z-index: -1; pointer-events: none;
-	inset: -30%;
-	background: radial-gradient(
-		38% 38% at calc(18% + var(--i) * 13%) calc(24% + var(--i) * 9%),
-		rgba(201, 171, 114, .16),
-		transparent 70%
-	);
-	filter: blur(40px);
-}
-
-/* خطی که از لبه‌ی بالای تخته کشیده می‌شود */
-.panel__edge {
-	position: absolute; inset-block-start: 0; inset-inline: 0; height: 1px;
-	background: linear-gradient(90deg, transparent, var(--accent-line), transparent);
-}
-
-/* شماره‌ی محو در پس‌زمینه — بافت، نه اطلاعات. از صفحه‌خوان پنهان است. */
-.panel__ghost {
-	position: absolute; z-index: -1; pointer-events: none; user-select: none;
-	inset-inline-start: clamp(-8px, -1vw, 0px); bottom: -.28em;
-	font-family: var(--font-inter), sans-serif; font-weight: 700;
-	font-size: clamp(9rem, 22vw, 20rem); line-height: .8;
-	color: transparent; -webkit-text-stroke: 1px rgba(242, 239, 233, .045);
-}
-
-/* فهرست ویژگی‌ها — هر مورد با یک خط تیره‌ی شامپاینی */
-.feat { display: flex; align-items: baseline; gap: 14px; }
-.feat::before {
-	content: ""; flex: none; width: 14px; height: 1px; background: var(--accent);
-	opacity: .7; translate: 0 -.35em;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.stack__i { position: static; }
-}
-
-/* ==========================================================================
-   ریلِ افقی نمونه‌کارها
-
-   دو حالت دارد:
-   ۱) پایه — اسکرول افقی بومی با snap. همه‌جا کار می‌کند، روی موبایل با انگشت.
-   ۲) قفل‌شده — روی دسکتاپ و مرورگرهایی که scroll-driven animation دارند:
-      بخش به بالا می‌چسبد و اسکرولِ عمودی به حرکتِ افقی ترجمه می‌شود.
-
-   حالت دوم با view-timeline بومی انجام می‌شود، نه با listener اسکرول: مرورگر
-   خودش حرکت را روی compositor می‌برد، پس هیچ فریمی از دست نمی‌رود.
-   ========================================================================== */
-.rail {
-	display: flex;
-	gap: clamp(16px, 2.2vw, 36px);
-	overflow-x: auto;
-	scroll-snap-type: x mandatory;
-	overscroll-behavior-x: contain;
-	/* لبه‌ها هم‌تراز با حاشیه‌ی صفحه بمانند ولی کارت‌ها بتوانند تا لبه بروند */
-	margin-inline: calc(var(--pad) * -1);
-	padding-inline: var(--pad);
-	scroll-padding-inline-start: var(--pad);
-	padding-bottom: 8px;
-	scrollbar-width: none;
-}
-.rail::-webkit-scrollbar { display: none; }
-
-.rail__i {
-	flex: 0 0 clamp(260px, 82vw, 560px);
-	scroll-snap-align: start;
-}
-@media (min-width: 768px) {
-	.rail__i { flex-basis: clamp(400px, 44vw, 660px); }
-}
-
-/* پارالاکسِ افقی: جلد داخل قابش برخلاف جهت حرکت می‌لغزد.
-   scale لازم است وگرنه هنگام لغزش لبه‌ی خالی پیدا می‌شود. */
-.rail__par { overflow: hidden; border-radius: var(--radius-lg); }
-.rail__par > * { will-change: transform; }
-@supports (animation-timeline: view(inline)) {
-	@media (prefers-reduced-motion: no-preference) {
-		.rail__par > * {
-			animation: railPar linear both;
-			animation-timeline: view(inline);
-			animation-range: entry 0% exit 100%;
-		}
-		@keyframes railPar {
-			from { transform: translateX(7%) scale(1.16); }
-			to   { transform: translateX(-7%) scale(1.16); }
-		}
-	}
-}
-
-/* دکمه‌های حرکت ریل — فقط در حالت پایه لازم‌اند */
-.rail-nav {
-	display: inline-grid; place-items: center;
-	width: 48px; height: 48px; border-radius: 999px;
-	border: 1px solid var(--line-2); color: var(--fg);
-	transition: border-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease),
-		background-color var(--dur-2) var(--ease);
-}
-.rail-nav:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
-.rail-nav:disabled { opacity: .3; cursor: not-allowed; }
-
-/* نوار پیشرفتِ افقی — در حالت قفل‌شده نشان می‌دهد چقدر از کارها را دیده‌اید */
-.hscroll__bar { display: none; height: 1px; background: var(--line); }
-.hscroll__bar i { display: block; height: 100%; background: var(--accent); transform-origin: right; transform: scaleX(0); }
-
-/* ---------------- حالت قفل‌شده ----------------
-   بخش به بالای صفحه می‌چسبد و اسکرولِ عمودی به حرکت افقی ترجمه می‌شود.
-
-   کلاس is-pinned را WorkRail می‌گذارد و فقط وقتی که کارت‌ها واقعاً از عرض صفحه
-   بیرون بزنند — وگرنه قفل‌کردن فقط اسکرولِ بی‌دلیل اضافه می‌کند.
-
-   منبعِ حرکت دو حالت دارد:
-   ۱) اگر مرورگر scroll-driven animation داشته باشد، view-timeline کار را
-      می‌کند و همه‌چیز روی compositor می‌ماند (کروم، فایرفاکس).
-   ۲) وگرنه WorkRail پیشرفت را در متغیر --p می‌نویسد (سافاری).
-   چیدمان در هر دو یکی است.
-   ------------------------------------------------------------------ */
-.hscroll.is-pinned {
-	/* ارتفاع سرعتِ حرکت را تعیین می‌کند. روی موبایل کارت‌ها نسبت به عرض صفحه
-	   عریض‌ترند، پس مسیر افقی بلندتر است و فضای بیشتری می‌خواهد. */
-	height: calc(100svh + var(--n, 4) * 58vh);
-	margin-inline: calc(var(--pad) * -1);
-}
-@media (min-width: 768px) {
-	.hscroll.is-pinned { height: calc(100svh + var(--n, 4) * 42vh); }
-}
-
-.hscroll.is-pinned .hscroll__pin {
-	position: sticky; top: 0;
-	display: flex; align-items: center;
-	/* 100vw شامل عرض اسکرول‌بار است و صفحه را سرریز افقی می‌کند — 100% درست است */
-	height: 100svh; width: 100%;
-	overflow: hidden;
-}
-
-.hscroll.is-pinned .rail {
-	/* دیگر کاربر اسکرولش نمی‌کند؛ اسکرولِ عمودی جابه‌جایش می‌کند */
-	overflow: visible;
-	scroll-snap-type: none;
-	width: max-content;
-	margin-inline: 0;
-	will-change: transform;
-	/* RTL: محتوا به سمت چپ سرریز می‌کند، پس ریل به راست کشیده می‌شود */
-	transform: translateX(calc(max(0px, 100% - 100vw) * var(--p, 0)));
-}
-
-/* روی موبایل باریک‌ترشان می‌کنیم تا مسیر افقی بی‌اندازه بلند نشود */
-.hscroll.is-pinned .rail__i { flex-basis: clamp(240px, 74vw, 560px); }
-@media (min-width: 768px) {
-	.hscroll.is-pinned .rail__i { flex-basis: clamp(400px, 44vw, 660px); }
-}
-
-.hscroll.is-pinned + .hscroll__bar { display: block; }
-.hscroll.is-pinned + .hscroll__bar i { transform: scaleX(var(--p, 0)); }
-
-/* در حالت قفل‌شده دکمه‌ها معنا ندارند */
-.hscroll.is-pinned ~ .rail-nav-row { display: none; }
-
-/* مسیر بومی: همان چیدمان، ولی پیشرفت را مرورگر می‌دهد نه جاوااسکریپت */
-@supports (animation-timeline: view()) {
-	@media (prefers-reduced-motion: no-preference) {
-		.hscroll.is-pinned { view-timeline: --hs block; }
-		.hscroll.is-pinned .rail {
-			animation: railSlide linear both;
-			animation-timeline: --hs;
-			animation-range: contain 0% contain 100%;
-		}
-		@keyframes railSlide {
-			from { transform: translateX(0); }
-			to   { transform: translateX(max(0px, calc(100% - 100vw))); }
-		}
-		.hscroll.is-pinned + .hscroll__bar i {
-			animation: railBar linear both;
-			animation-timeline: --hs;
-			animation-range: contain 0% contain 100%;
-		}
-		@keyframes railBar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-	}
-}
-
-/* ==========================================================================
-   پشته‌ی خدمات
-   هر خدمت یک تخته‌ی کامل است که به بالا می‌چسبد و بعدی رویش سر می‌خورد.
-   با position: sticky انجام می‌شود — بدون جاوااسکریپت، بدون کتابخانه.
-   هر تخته چند پیکسل پایین‌تر از قبلی می‌ایستد تا لبه‌ی زیرین دیده شود و
-   عمقِ واقعی حس شود، نه یک تعویض ساده.
-   ========================================================================== */
-.stack { --stack-top: 96px; --stack-step: 14px; }
-/* روی موبایل تخته‌ها بلندترند: پله باید کوچک‌تر شود وگرنه آخرین تخته‌ی چسبیده
-   از پایینِ صفحه بیرون می‌زند و انتهایش هیچ‌وقت دیده نمی‌شود. */
-@media (max-width: 767px) {
-	.stack { --stack-top: 84px; --stack-step: 6px; }
-}
-.stack__i {
-	position: sticky;
-	top: calc(var(--stack-top) + var(--i) * var(--stack-step));
-	padding-bottom: var(--stack-step);
-}
-
-.panel {
-	position: relative; isolation: isolate; overflow: hidden;
-	border: 1px solid var(--line);
-	border-radius: var(--radius-xl);
-	background: var(--bg-2);
-	box-shadow: var(--soft-2);
-	transition: border-color var(--dur-2) var(--ease);
-}
-.panel:hover { border-color: var(--accent-line); }
-
-/* تابش گوشه‌ای مخصوص هر تخته — زاویه با شماره‌ی تخته می‌چرخد، پس هیچ دوتایی مثل هم نیست */
-.panel::before {
-	content: ""; position: absolute; z-index: -1; pointer-events: none;
-	inset: -30%;
-	background: radial-gradient(
-		38% 38% at calc(18% + var(--i) * 13%) calc(24% + var(--i) * 9%),
-		rgba(201, 171, 114, .16),
-		transparent 70%
-	);
-	filter: blur(40px);
-}
-
-/* خطی که از لبه‌ی بالای تخته کشیده می‌شود */
-.panel__edge {
-	position: absolute; inset-block-start: 0; inset-inline: 0; height: 1px;
-	background: linear-gradient(90deg, transparent, var(--accent-line), transparent);
-}
-
-/* شماره‌ی محو در پس‌زمینه — بافت، نه اطلاعات. از صفحه‌خوان پنهان است. */
-.panel__ghost {
-	position: absolute; z-index: -1; pointer-events: none; user-select: none;
-	inset-inline-start: clamp(-8px, -1vw, 0px); bottom: -.28em;
-	font-family: var(--font-inter), sans-serif; font-weight: 700;
-	font-size: clamp(9rem, 22vw, 20rem); line-height: .8;
-	color: transparent; -webkit-text-stroke: 1px rgba(242, 239, 233, .045);
-}
-
-/* فهرست ویژگی‌ها — هر مورد با یک خط تیره‌ی شامپاینی */
-.feat { display: flex; align-items: baseline; gap: 14px; }
-.feat::before {
-	content: ""; flex: none; width: 14px; height: 1px; background: var(--accent);
-	opacity: .7; translate: 0 -.35em;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.stack__i { position: static; }
-}
-
-/* ==========================================================================
-   ریلِ افقی نمونه‌کارها
-
-   دو حالت دارد:
-   ۱) پایه — اسکرول افقی بومی با snap. همه‌جا کار می‌کند، روی موبایل با انگشت.
-   ۲) قفل‌شده — روی دسکتاپ و مرورگرهایی که scroll-driven animation دارند:
-      بخش به بالا می‌چسبد و اسکرولِ عمودی به حرکتِ افقی ترجمه می‌شود.
-
-   حالت دوم با view-timeline بومی انجام می‌شود، نه با listener اسکرول: مرورگر
-   خودش حرکت را روی compositor می‌برد، پس هیچ فریمی از دست نمی‌رود.
-   ========================================================================== */
-.rail {
-	display: flex;
-	gap: clamp(16px, 2.2vw, 36px);
-	overflow-x: auto;
-	scroll-snap-type: x mandatory;
-	overscroll-behavior-x: contain;
-	/* لبه‌ها هم‌تراز با حاشیه‌ی صفحه بمانند ولی کارت‌ها بتوانند تا لبه بروند */
-	margin-inline: calc(var(--pad) * -1);
-	padding-inline: var(--pad);
-	scroll-padding-inline-start: var(--pad);
-	padding-bottom: 8px;
-	scrollbar-width: none;
-}
-.rail::-webkit-scrollbar { display: none; }
-
-.rail__i {
-	flex: 0 0 clamp(260px, 82vw, 560px);
-	scroll-snap-align: start;
-}
-@media (min-width: 768px) {
-	.rail__i { flex-basis: clamp(400px, 44vw, 660px); }
-}
-
-/* پارالاکسِ افقی: جلد داخل قابش برخلاف جهت حرکت می‌لغزد.
-   scale لازم است وگرنه هنگام لغزش لبه‌ی خالی پیدا می‌شود. */
-.rail__par { overflow: hidden; border-radius: var(--radius-lg); }
-.rail__par > * { will-change: transform; }
-@supports (animation-timeline: view(inline)) {
-	@media (prefers-reduced-motion: no-preference) {
-		.rail__par > * {
-			animation: railPar linear both;
-			animation-timeline: view(inline);
-			animation-range: entry 0% exit 100%;
-		}
-		@keyframes railPar {
-			from { transform: translateX(7%) scale(1.16); }
-			to   { transform: translateX(-7%) scale(1.16); }
-		}
-	}
-}
-
-/* دکمه‌های حرکت ریل — فقط در حالت پایه لازم‌اند */
-.rail-nav {
-	display: inline-grid; place-items: center;
-	width: 48px; height: 48px; border-radius: 999px;
-	border: 1px solid var(--line-2); color: var(--fg);
-	transition: border-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease),
-		background-color var(--dur-2) var(--ease);
-}
-.rail-nav:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
-.rail-nav:disabled { opacity: .3; cursor: not-allowed; }
-
-/* نوار پیشرفتِ افقی — در حالت قفل‌شده نشان می‌دهد چقدر از کارها را دیده‌اید */
-.hscroll__bar { display: none; height: 1px; background: var(--line); }
-.hscroll__bar i { display: block; height: 100%; background: var(--accent); transform-origin: right; transform: scaleX(0); }
-
-/* ---------------- حالت قفل‌شده ----------------
-   بخش به بالای صفحه می‌چسبد و اسکرولِ عمودی به حرکت افقی ترجمه می‌شود.
-
-   پیشرفت را جاوااسکریپت در متغیر --p می‌نویسد (WorkRail)، نه view-timeline.
-   دلیلش دو چیز است: سافاری هنوز scroll-driven animation ندارد، و یک مسیرِ
-   واحد که همه‌جا یکسان رفتار کند از دو مسیرِ نصفه بهتر است. هزینه‌اش یک
-   نوشتنِ سبک در هر فریم است؛ خودِ جابه‌جایی همچنان transform است، پس روی
-   compositor می‌ماند.
-
-   کلاس is-pinned فقط وقتی اضافه می‌شود که چیدمان واقعاً جا داشته باشد؛
-   در غیر این صورت همان ریلِ اسکرولیِ ساده با دکمه‌های کناری باقی می‌ماند.
-   ------------------------------------------------------------------ */
-.hscroll.is-pinned {
-	/* ارتفاع سرعتِ حرکت را تعیین می‌کند. روی موبایل کارت‌ها نسبت به عرض صفحه
-	   عریض‌ترند، پس مسیر افقی بلندتر است و فضای بیشتری می‌خواهد. */
-	height: calc(100svh + var(--n, 4) * 58vh);
-	margin-inline: calc(var(--pad) * -1);
-}
-@media (min-width: 768px) {
-	.hscroll.is-pinned { height: calc(100svh + var(--n, 4) * 42vh); }
-}
-
-.hscroll.is-pinned .hscroll__pin {
-	position: sticky; top: 0;
-	display: flex; align-items: center;
-	/* 100vw شامل عرض اسکرول‌بار است و صفحه را سرریز افقی می‌کند — 100% درست است */
-	height: 100svh; width: 100%;
-	overflow: hidden;
-}
-
-.hscroll.is-pinned .rail {
-	/* دیگر کاربر اسکرولش نمی‌کند؛ اسکرولِ عمودی جابه‌جایش می‌کند */
-	overflow: visible;
-	scroll-snap-type: none;
-	width: max-content;
-	margin-inline: 0;
-	/* RTL: محتوا به سمت چپ سرریز می‌کند، پس ریل به راست کشیده می‌شود */
-	transform: translateX(calc(max(0px, 100% - 100vw) * var(--p, 0)));
-	will-change: transform;
-}
-
-/* روی موبایل باریک‌ترشان می‌کنیم تا مسیر افقی بی‌اندازه بلند نشود */
-.hscroll.is-pinned .rail__i { flex-basis: clamp(240px, 74vw, 560px); }
-@media (min-width: 768px) {
-	.hscroll.is-pinned .rail__i { flex-basis: clamp(400px, 44vw, 660px); }
-}
-
-.hscroll.is-pinned + .hscroll__bar { display: block; }
-.hscroll.is-pinned + .hscroll__bar i { transform: scaleX(var(--p, 0)); }
-
-/* در حالت قفل‌شده دکمه‌ها معنا ندارند */
-.hscroll.is-pinned ~ .rail-nav-row { display: none; }
-
-/* ==========================================================================
-   پشته‌ی خدمات
-   هر خدمت یک تخته‌ی کامل است که به بالا می‌چسبد و بعدی رویش سر می‌خورد.
-   با position: sticky انجام می‌شود — بدون جاوااسکریپت، بدون کتابخانه.
-   هر تخته چند پیکسل پایین‌تر از قبلی می‌ایستد تا لبه‌ی زیرین دیده شود و
-   عمقِ واقعی حس شود، نه یک تعویض ساده.
-   ========================================================================== */
-.stack { --stack-top: 96px; --stack-step: 14px; }
-/* روی موبایل تخته‌ها بلندترند: پله باید کوچک‌تر شود وگرنه آخرین تخته‌ی چسبیده
-   از پایینِ صفحه بیرون می‌زند و انتهایش هیچ‌وقت دیده نمی‌شود. */
-@media (max-width: 767px) {
-	.stack { --stack-top: 84px; --stack-step: 6px; }
-}
-.stack__i {
-	position: sticky;
-	top: calc(var(--stack-top) + var(--i) * var(--stack-step));
-	padding-bottom: var(--stack-step);
-}
-
-.panel {
-	position: relative; isolation: isolate; overflow: hidden;
-	border: 1px solid var(--line);
-	border-radius: var(--radius-xl);
-	background: var(--bg-2);
-	box-shadow: var(--soft-2);
-	transition: border-color var(--dur-2) var(--ease);
-}
-.panel:hover { border-color: var(--accent-line); }
-
-/* تابش گوشه‌ای مخصوص هر تخته — زاویه با شماره‌ی تخته می‌چرخد، پس هیچ دوتایی مثل هم نیست */
-.panel::before {
-	content: ""; position: absolute; z-index: -1; pointer-events: none;
-	inset: -30%;
-	background: radial-gradient(
-		38% 38% at calc(18% + var(--i) * 13%) calc(24% + var(--i) * 9%),
-		rgba(201, 171, 114, .16),
-		transparent 70%
-	);
-	filter: blur(40px);
-}
-
-/* خطی که از لبه‌ی بالای تخته کشیده می‌شود */
-.panel__edge {
-	position: absolute; inset-block-start: 0; inset-inline: 0; height: 1px;
-	background: linear-gradient(90deg, transparent, var(--accent-line), transparent);
-}
-
-/* شماره‌ی محو در پس‌زمینه — بافت، نه اطلاعات. از صفحه‌خوان پنهان است. */
-.panel__ghost {
-	position: absolute; z-index: -1; pointer-events: none; user-select: none;
-	inset-inline-start: clamp(-8px, -1vw, 0px); bottom: -.28em;
-	font-family: var(--font-inter), sans-serif; font-weight: 700;
-	font-size: clamp(9rem, 22vw, 20rem); line-height: .8;
-	color: transparent; -webkit-text-stroke: 1px rgba(242, 239, 233, .045);
-}
-
-/* فهرست ویژگی‌ها — هر مورد با یک خط تیره‌ی شامپاینی */
-.feat { display: flex; align-items: baseline; gap: 14px; }
-.feat::before {
-	content: ""; flex: none; width: 14px; height: 1px; background: var(--accent);
-	opacity: .7; translate: 0 -.35em;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.stack__i { position: static; }
-}
-
-/* ==========================================================================
-   ریلِ افقی نمونه‌کارها
-
-   دو حالت دارد:
-   ۱) پایه — اسکرول افقی بومی با snap. همه‌جا کار می‌کند، روی موبایل با انگشت.
-   ۲) قفل‌شده — روی دسکتاپ و مرورگرهایی که scroll-driven animation دارند:
-      بخش به بالا می‌چسبد و اسکرولِ عمودی به حرکتِ افقی ترجمه می‌شود.
-
-   حالت دوم با view-timeline بومی انجام می‌شود، نه با listener اسکرول: مرورگر
-   خودش حرکت را روی compositor می‌برد، پس هیچ فریمی از دست نمی‌رود.
-   ========================================================================== */
-.rail {
-	display: flex;
-	gap: clamp(16px, 2.2vw, 36px);
-	overflow-x: auto;
-	scroll-snap-type: x mandatory;
-	overscroll-behavior-x: contain;
-	/* لبه‌ها هم‌تراز با حاشیه‌ی صفحه بمانند ولی کارت‌ها بتوانند تا لبه بروند */
-	margin-inline: calc(var(--pad) * -1);
-	padding-inline: var(--pad);
-	scroll-padding-inline-start: var(--pad);
-	padding-bottom: 8px;
-	scrollbar-width: none;
-}
-.rail::-webkit-scrollbar { display: none; }
-
-.rail__i {
-	flex: 0 0 clamp(260px, 82vw, 560px);
-	scroll-snap-align: start;
-}
-@media (min-width: 768px) {
-	.rail__i { flex-basis: clamp(400px, 44vw, 660px); }
-}
-
-/* پارالاکسِ افقی: جلد داخل قابش برخلاف جهت حرکت می‌لغزد.
-   scale لازم است وگرنه هنگام لغزش لبه‌ی خالی پیدا می‌شود. */
-.rail__par { overflow: hidden; border-radius: var(--radius-lg); }
-.rail__par > * { will-change: transform; }
-@supports (animation-timeline: view(inline)) {
-	@media (prefers-reduced-motion: no-preference) {
-		.rail__par > * {
-			animation: railPar linear both;
-			animation-timeline: view(inline);
-			animation-range: entry 0% exit 100%;
-		}
-		@keyframes railPar {
-			from { transform: translateX(7%) scale(1.16); }
-			to   { transform: translateX(-7%) scale(1.16); }
-		}
-	}
-}
-
-/* دکمه‌های حرکت ریل — فقط در حالت پایه لازم‌اند */
-.rail-nav {
-	display: inline-grid; place-items: center;
-	width: 48px; height: 48px; border-radius: 999px;
-	border: 1px solid var(--line-2); color: var(--fg);
-	transition: border-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease),
-		background-color var(--dur-2) var(--ease);
-}
-.rail-nav:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
-.rail-nav:disabled { opacity: .3; cursor: not-allowed; }
-
-/* نوار پیشرفتِ افقی — در حالت قفل‌شده نشان می‌دهد چقدر از کارها را دیده‌اید */
-.hscroll__bar { display: none; height: 1px; background: var(--line); }
-.hscroll__bar i { display: block; height: 100%; background: var(--accent); transform-origin: right; transform: scaleX(0); }
-
-/* ==========================================================================
-   پشته‌ی خدمات
-   هر خدمت یک تخته‌ی کامل است که به بالا می‌چسبد و بعدی رویش سر می‌خورد.
-   با position: sticky انجام می‌شود — بدون جاوااسکریپت، بدون کتابخانه.
-   هر تخته چند پیکسل پایین‌تر از قبلی می‌ایستد تا لبه‌ی زیرین دیده شود و
-   عمقِ واقعی حس شود، نه یک تعویض ساده.
-   ========================================================================== */
-.stack { --stack-top: 96px; --stack-step: 14px; }
-/* روی موبایل تخته‌ها بلندترند: پله باید کوچک‌تر شود وگرنه آخرین تخته‌ی چسبیده
-   از پایینِ صفحه بیرون می‌زند و انتهایش هیچ‌وقت دیده نمی‌شود. */
-@media (max-width: 767px) {
-	.stack { --stack-top: 84px; --stack-step: 6px; }
-}
-.stack__i {
-	position: sticky;
-	top: calc(var(--stack-top) + var(--i) * var(--stack-step));
-	padding-bottom: var(--stack-step);
-}
-
-.panel {
-	position: relative; isolation: isolate; overflow: hidden;
-	border: 1px solid var(--line);
-	border-radius: var(--radius-xl);
-	background: var(--bg-2);
-	box-shadow: var(--soft-2);
-	transition: border-color var(--dur-2) var(--ease);
-}
-.panel:hover { border-color: var(--accent-line); }
-
-/* تابش گوشه‌ای مخصوص هر تخته — زاویه با شماره‌ی تخته می‌چرخد، پس هیچ دوتایی مثل هم نیست */
-.panel::before {
-	content: ""; position: absolute; z-index: -1; pointer-events: none;
-	inset: -30%;
-	background: radial-gradient(
-		38% 38% at calc(18% + var(--i) * 13%) calc(24% + var(--i) * 9%),
-		rgba(201, 171, 114, .16),
-		transparent 70%
-	);
-	filter: blur(40px);
-}
-
-/* خطی که از لبه‌ی بالای تخته کشیده می‌شود */
-.panel__edge {
-	position: absolute; inset-block-start: 0; inset-inline: 0; height: 1px;
-	background: linear-gradient(90deg, transparent, var(--accent-line), transparent);
-}
-
-/* شماره‌ی محو در پس‌زمینه — بافت، نه اطلاعات. از صفحه‌خوان پنهان است. */
-.panel__ghost {
-	position: absolute; z-index: -1; pointer-events: none; user-select: none;
-	inset-inline-start: clamp(-8px, -1vw, 0px); bottom: -.28em;
-	font-family: var(--font-inter), sans-serif; font-weight: 700;
-	font-size: clamp(9rem, 22vw, 20rem); line-height: .8;
-	color: transparent; -webkit-text-stroke: 1px rgba(242, 239, 233, .045);
-}
-
-/* فهرست ویژگی‌ها — هر مورد با یک خط تیره‌ی شامپاینی */
-.feat { display: flex; align-items: baseline; gap: 14px; }
-.feat::before {
-	content: ""; flex: none; width: 14px; height: 1px; background: var(--accent);
-	opacity: .7; translate: 0 -.35em;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.stack__i { position: static; }
-}
-
-/* ==========================================================================
-   ریلِ افقی نمونه‌کارها
-
-   دو حالت دارد:
-   ۱) پایه — اسکرول افقی بومی با snap. همه‌جا کار می‌کند، روی موبایل با انگشت.
-   ۲) قفل‌شده — روی دسکتاپ و مرورگرهایی که scroll-driven animation دارند:
-      بخش به بالا می‌چسبد و اسکرولِ عمودی به حرکتِ افقی ترجمه می‌شود.
-
-   حالت دوم با view-timeline بومی انجام می‌شود، نه با listener اسکرول: مرورگر
-   خودش حرکت را روی compositor می‌برد، پس هیچ فریمی از دست نمی‌رود.
-   ========================================================================== */
-.rail {
-	display: flex;
-	gap: clamp(16px, 2.2vw, 36px);
-	overflow-x: auto;
-	scroll-snap-type: x mandatory;
-	overscroll-behavior-x: contain;
-	/* لبه‌ها هم‌تراز با حاشیه‌ی صفحه بمانند ولی کارت‌ها بتوانند تا لبه بروند */
-	margin-inline: calc(var(--pad) * -1);
-	padding-inline: var(--pad);
-	scroll-padding-inline-start: var(--pad);
-	padding-bottom: 8px;
-	scrollbar-width: none;
-}
-.rail::-webkit-scrollbar { display: none; }
-
-.rail__i {
-	flex: 0 0 clamp(260px, 82vw, 560px);
-	scroll-snap-align: start;
-}
-@media (min-width: 768px) {
-	.rail__i { flex-basis: clamp(400px, 44vw, 660px); }
-}
-
-/* پارالاکسِ افقی: جلد داخل قابش برخلاف جهت حرکت می‌لغزد.
-   scale لازم است وگرنه هنگام لغزش لبه‌ی خالی پیدا می‌شود. */
-.rail__par { overflow: hidden; border-radius: var(--radius-lg); }
-.rail__par > * { will-change: transform; }
-@supports (animation-timeline: view(inline)) {
-	@media (prefers-reduced-motion: no-preference) {
-		.rail__par > * {
-			animation: railPar linear both;
-			animation-timeline: view(inline);
-			animation-range: entry 0% exit 100%;
-		}
-		@keyframes railPar {
-			from { transform: translateX(7%) scale(1.16); }
-			to   { transform: translateX(-7%) scale(1.16); }
-		}
-	}
-}
-
-/* دکمه‌های حرکت ریل — فقط در حالت پایه لازم‌اند */
-.rail-nav {
-	display: inline-grid; place-items: center;
-	width: 48px; height: 48px; border-radius: 999px;
-	border: 1px solid var(--line-2); color: var(--fg);
-	transition: border-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease),
-		background-color var(--dur-2) var(--ease);
-}
-.rail-nav:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
-.rail-nav:disabled { opacity: .3; cursor: not-allowed; }
-
-/* نوار پیشرفتِ افقی — در حالت قفل‌شده نشان می‌دهد چقدر از کارها را دیده‌اید */
-.hscroll__bar { display: none; height: 1px; background: var(--line); }
-.hscroll__bar i { display: block; height: 100%; background: var(--accent); transform-origin: right; transform: scaleX(0); }
-
-/* ---------------- حالت قفل‌شده ---------------- */
-@supports (animation-timeline: view()) {
-	@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-		.hscroll {
-			/* ارتفاع فقط سرعتِ حرکت را تعیین می‌کند؛ خودِ نگاشت با بازه‌ی contain است */
-			height: calc(100svh + var(--n, 4) * 42vh);
-			view-timeline: --hs block;
-			margin-inline: calc(var(--pad) * -1);
-		}
-		.hscroll__pin {
-			position: sticky; top: 0;
-			display: flex; align-items: center;
-			/* 100vw شامل عرض اسکرول‌بار است و صفحه را سرریز افقی می‌کند — 100% درست است */
-			height: 100svh; width: 100%;
-			overflow: hidden;
-		}
-		.hscroll .rail {
-			/* دیگر کاربر اسکرولش نمی‌کند؛ اسکرولِ عمودی جابه‌جایش می‌کند */
-			overflow: visible;
-			scroll-snap-type: none;
-			width: max-content;
-			margin-inline: 0;
-			animation: railSlide linear both;
-			animation-timeline: --hs;
-			animation-range: contain 0% contain 100%;
-		}
-		/* RTL: محتوا به سمت چپ سرریز می‌کند، پس ریل به راست کشیده می‌شود */
-		@keyframes railSlide {
-			from { transform: translateX(0); }
-			to   { transform: translateX(max(0px, calc(100% - 100vw))); }
-		}
-
-		.hscroll__bar { display: block; }
-		.hscroll__bar i {
-			animation: railBar linear both;
-			animation-timeline: --hs;
-			animation-range: contain 0% contain 100%;
-		}
-		@keyframes railBar { to { transform: scaleX(1); } }
-
-		/* در این حالت دکمه‌ها معنا ندارند */
-		.rail-nav-row { display: none; }
-	}
-}
-
-/* ==========================================================================
-   هدف لمسی
-   پیوندهای متنی از نظر بصری کوچک‌اند (۲۰ تا ۳۰ پیکسل ارتفاع) ولی روی صفحه‌ی
-   لمسی باید دست‌کم ۴۴ پیکسل جای زدن داشته باشند. با padding عمودی و margin
-   منفیِ هم‌اندازه، محدوده‌ی لمس بزرگ می‌شود بدون اینکه چیدمان جابه‌جا شود.
-   فقط روی نشانگر درشت (انگشت) اعمال می‌شود، نه روی ماوس.
-   ========================================================================== */
-@media (pointer: coarse) {
-	.tap {
-		padding-block: 12px;
-		margin-block: -12px;
-	}
-	/* پیوندهای درون بند، جایی که padding عمودی خطوط را جابه‌جا می‌کند */
-	.tap-inline {
-		display: inline-block;
-		padding-block: 10px;
-		margin-block: -10px;
-	}
-}
-
-/* ==========================================================================
-   کارت تعهد
-   روی موبایل یک سطح مستقل با لبه‌ی شامپاینی و شماره‌ی درشتِ کم‌رنگ — چون
-   فهرستِ «عنوان + بند» پشت سر هم، روی صفحه‌ی باریک فقط یک ستون متن می‌شود.
-   روی دسکتاپ همان ریتم پلکانی می‌ماند و کارت‌ها سبک‌تر می‌شوند.
-   ========================================================================== */
-.vow {
-	position: relative; isolation: isolate; overflow: hidden;
-	border: 1px solid var(--line);
-	border-radius: var(--radius-lg);
-	background: var(--bg-2);
-	padding: clamp(22px, 5vw, 34px);
-	transition: border-color var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
-}
-.vow::before {
-	content: ""; position: absolute; inset-block-start: 0; inset-inline: 0; height: 1px;
-	background: linear-gradient(90deg, transparent, var(--accent-line), transparent);
-}
-/* تابشِ گوشه — زاویه‌اش با شماره‌ی کارت می‌چرخد، پس دو کارت مثل هم نیست */
-.vow::after {
-	content: ""; position: absolute; z-index: -1; pointer-events: none;
-	inset-inline-end: -30%; top: -60%;
-	width: 70%; aspect-ratio: 1; border-radius: 50%;
-	background: radial-gradient(circle, var(--accent-soft), transparent 68%);
-	filter: blur(30px);
-	transform: rotate(calc(var(--i, 0) * 28deg));
-}
-.vow:hover { border-color: var(--accent-line); }
-
-/* شماره: بزرگ، تُهی، پشتِ عنوان */
-.vow__n {
-	position: absolute; z-index: -1; pointer-events: none; user-select: none;
-	inset-inline-end: clamp(8px, 3vw, 22px); inset-block-start: -.18em;
-	font-family: var(--font-inter), sans-serif; font-weight: 700;
-	font-size: clamp(4.4rem, 17vw, 7rem); line-height: 1;
-	color: transparent; -webkit-text-stroke: 1px rgba(242, 239, 233, .07);
-}
-
-@media (min-width: 768px) {
-	.vow {
-		background: transparent;
-		border-color: transparent;
-		border-block-start-color: var(--line);
-		border-radius: 0;
-		padding-inline: 0;
-		padding-block: clamp(32px, 4vw, 48px);
-	}
-	.vow::before { background: none; }
-	.vow:hover { border-color: transparent; border-block-start-color: var(--accent-line); }
-	.vow__n { inset-inline-end: 0; font-size: clamp(4rem, 6vw, 6.5rem); }
+	.rv, .art__fade { opacity: 1 !important; transform: none !important; }
+	.art__draw { stroke-dashoffset: 0 !important; }
+	.line-mask > span, .rule { transform: none !important; }
+	.img-rv > * { clip-path: none !important; }
+}
+
+/* چاپ: کاغذِ واقعی دانه و ناوبری نمی‌خواهد */
+@media print {
+	.site-nav, .menu { display: none !important; }
+	.rv, .line-mask > span, .rule, .img-rv > * { opacity: 1 !important; transform: none !important; clip-path: none !important; }
 }

@@ -1,12 +1,13 @@
-import Link from "next/link"
 import prisma from "@/lib/prisma"
 import { safe } from "@/lib/safe"
-import { PageHead } from "@/components/ui/container"
-import { Reveal, RevealLines } from "@/components/ui/reveal"
-import { Magnetic } from "@/components/fx/magnetic"
+import { PageHead, Folio } from "@/components/ui/section"
+import { Reveal } from "@/components/ui/reveal"
+import { More } from "@/components/ui/cta"
 import { FaqAccordion } from "@/components/marketing/faq-accordion"
+import { Closing } from "@/components/marketing/closing"
 import { buildMetadata, JsonLd, faqJsonLd, breadcrumbJsonLd } from "@/lib/seo"
 import { getContent } from "@/lib/content"
+import { faNum } from "@/lib/fa"
 
 export const metadata = buildMetadata({
 	title: "پرسش‌های متداول درباره‌ی طراحی سایت",
@@ -28,25 +29,19 @@ export default async function FaqPage() {
 			{items.length > 0 && <JsonLd data={faqJsonLd(items)} />}
 			<JsonLd data={breadcrumbJsonLd([{ name: "پرسش‌های متداول", path: "/faq" }])} />
 
-			<PageHead
-				lines={[c.headLine1, c.headLine2]}
-				lead={c.headLead}
-			/>
+			<PageHead label="پرسش‌ها" art={3} lines={[c.headLine1, c.headLine2]} lead={c.headLead} />
 
-			<section className="stage stage--l px-[var(--pad)] pb-[var(--sec)]">
-				<div className="grid gap-14 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-24">
-					<div className="lg:sticky lg:top-32 lg:h-fit">
-						<Reveal>
-							<p className="body-t max-w-[32ch]">{c.sideNote}</p>
-						</Reveal>
-						<Reveal delay={160} className="mt-8">
-							<Link href="/contact" className="link-u tap accent font-medium">
-								پرسیدن سوال ←
-							</Link>
-						</Reveal>
-					</div>
+			<section className="wrap pb-[var(--sec)]">
+				<Folio label="پاسخ‌ها" aside={items.length > 0 ? `${faNum(items.length)} پرسش` : undefined} />
+				<div className="g12 mt-[clamp(32px,4vw,56px)]">
+					<Reveal className="md:sticky md:top-28 md:col-span-4 md:h-fit">
+						<p className="h3 max-w-[18ch]">{c.sideNote}</p>
+						<More href="/contact" className="mt-8">
+							پرسیدن سوال
+						</More>
+					</Reveal>
 
-					<div>
+					<div className="md:col-span-7 md:col-start-6">
 						{items.length === 0 ? (
 							<p className="body-t">سوالی برای نمایش نیست.</p>
 						) : (
@@ -56,22 +51,7 @@ export default async function FaqPage() {
 				</div>
 			</section>
 
-			<section className="stage stage--c px-[var(--pad)] py-[var(--sec)]">
-				<Reveal as="rule" className="mb-[var(--sec)]" />
-				<h2 className="h2 max-w-[18ch]">
-					<RevealLines className="sheen" lines={[c.ctaLine1, c.ctaLine2]} />
-				</h2>
-				<Reveal delay={240} className="mt-10">
-					<p className="body-t max-w-[52ch]">{c.ctaLead}</p>
-				</Reveal>
-				<Reveal delay={380} className="mt-12">
-					<Magnetic strength={0.22}>
-						<Link href="/contact" className="btn btn--solid">
-							تماس با ما
-						</Link>
-					</Magnetic>
-				</Reveal>
-			</section>
+			<Closing lines={[c.ctaLine1, c.ctaLine2]} lead={c.ctaLead} cta="تماس با ما" href="/contact" />
 		</>
 	)
 }
