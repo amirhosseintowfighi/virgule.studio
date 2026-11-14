@@ -1,15 +1,20 @@
 import { clsx } from "clsx"
 
-const NIB_PATH =
-	"M 258.007812 139.054688 L 98.941406 297.347656 C 95.238281 283.875 92.921875 277.152344 92.921875 260.078125 L 221.828125 131.355469 C 235.054688 131.644531 245.84375 135.113281 258.007812 139.054688"
+/** ویرگولِ نشان — در کادر ۶۴×۶۴، روی خطِ کرسیِ y=58. */
+const COMMA_PATH =
+	"M26 58C18.09 58 12.24 51.81 12.24 43.55C12.24 29.79 21.87 18.1 36.32 11.22C28.06 18.78 23.94 25.66 23.94 30.82C24.62 30.57 25.31 30.48 26 30.48C33.91 30.48 39.76 36.33 39.76 44.24C39.76 51.81 33.91 58 26 58Z"
 
-/** نشان ویرگول — همان مسیرهای img/mark.svg، درون‌خط تا رنگش از currentColor بیاید. */
+/**
+ * نشان ویرگول — «تعادل هندسی و مکث».
+ * ویرگولِ فارسی با انحنای کاملش، و یک مربعِ ۱۰×۱۰ روی همان خطِ کرسی: منحنی در
+ * برابر زاویه‌ی قائم. بدنه رنگش را از currentColor می‌گیرد و مربع از توکنِ شنگرف،
+ * پس روی نوارِ مرکبی (‎.ink) خودبه‌خود روشن‌تر می‌شود.
+ */
 export function LogoMark({ className }: { className?: string }) {
 	return (
-		<svg viewBox="0 0 366 404" fill="none" className={clsx("h-9 w-auto", className)} aria-hidden="true">
-			<circle cx="218.1" cy="256.5" r="139.6" stroke="currentColor" strokeWidth="12" />
-			<line x1="329" y1="6" x2="6" y2="329" stroke="currentColor" strokeWidth="12" strokeLinecap="round" />
-			<path d={NIB_PATH} fill="currentColor" />
+		<svg viewBox="0 0 64 64" className={clsx("h-9 w-auto", className)} aria-hidden="true">
+			<path d={COMMA_PATH} fill="currentColor" />
+			<rect x="46" y="48" width="10" height="10" fill="var(--accent, #c63d1f)" />
 		</svg>
 	)
 }

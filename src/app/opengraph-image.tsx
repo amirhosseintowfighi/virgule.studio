@@ -7,7 +7,7 @@ export const contentType = "image/png"
 
 /**
  * تصویر اشتراک‌گذاری. متن لاتین است چون موتورِ این تصویر حروف فارسی را به هم
- * وصل نمی‌کند؛ خودِ ترکیب همان زبانِ برداریِ سایت است (دایره، ربع، خطِ قلم).
+ * وصل نمی‌کند؛ کنارش خودِ نشان می‌نشیند.
  */
 export default async function OgImage() {
 	return new ImageResponse(
@@ -29,12 +29,10 @@ export default async function OgImage() {
 					<div style={{ fontSize: 34, marginTop: 22, color: "#55524c" }}>Web design &amp; development studio</div>
 					<div style={{ fontSize: 26, marginTop: 10, color: "#c63d1f" }}>virgule.studio</div>
 				</div>
-				<svg width="420" height="420" viewBox="0 0 420 420">
-					<rect x="230" y="20" width="170" height="170" fill="#dad6cb" />
-					<circle cx="200" cy="240" r="150" fill="#2f48b8" />
-					<path d="M50 240A150 150 0 0 0 200 390V240Z" fill="#dc4a2a" />
-					<circle cx="330" cy="90" r="40" fill="#e2a93a" />
-					<line x1="410" y1="10" x2="20" y2="400" stroke="#141413" strokeWidth="3" />
+				{/* نشانِ ویرگول: ویرگول و مربعِ روی خطِ کرسی */}
+				<svg width="400" height="400" viewBox="0 0 64 64">
+					<path fill="#141413" d="M26 58C18.09 58 12.24 51.81 12.24 43.55C12.24 29.79 21.87 18.1 36.32 11.22C28.06 18.78 23.94 25.66 23.94 30.82C24.62 30.57 25.31 30.48 26 30.48C33.91 30.48 39.76 36.33 39.76 44.24C39.76 51.81 33.91 58 26 58Z" />
+					<rect x="46" y="48" width="10" height="10" fill="#c63d1f" />
 				</svg>
 			</div>
 		),

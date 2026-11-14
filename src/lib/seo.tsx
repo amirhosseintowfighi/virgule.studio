@@ -105,7 +105,8 @@ export function organizationJsonLd() {
 		telephone: STUDIO.phone,
 		foundingDate: STUDIO.founded,
 		image: `${BASE}/opengraph-image`,
-		logo: { "@type": "ImageObject", url: `${BASE}/icon-512.png`, width: 512, height: 512 },
+		// icon-512.png هیچ‌وقت وجود نداشت و ۴۰۴ می‌داد؛ نشانِ واقعی همین SVG است
+		logo: { "@type": "ImageObject", url: `${BASE}/icon.svg` },
 		description:
 			"استودیوی طراحی و توسعه‌ی وب در تهران. طراحی سایت اختصاصی، فروشگاه اینترنتی و اپلیکیشن وب با Next.js.",
 		address: { "@type": "PostalAddress", addressLocality: STUDIO.city, addressCountry: STUDIO.country },
