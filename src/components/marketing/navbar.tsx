@@ -61,7 +61,7 @@ export function Navbar() {
 			>
 				<div className="wrap flex h-[76px] items-center justify-between gap-6">
 					<Link href="/" aria-label="ویرگول، خانه" className="tap flex items-center gap-3">
-						<LogoMark className="h-8 w-8" />
+						<LogoMark className="h-9 w-9" />
 						<span className="serif text-[1.7rem] leading-none">ویرگول</span>
 					</Link>
 

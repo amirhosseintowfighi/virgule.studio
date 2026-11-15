@@ -146,7 +146,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
 								fetchPriority="high"
 							/>
 						) : (
-							<ProjectCover title={project.title} index={Math.max(at, 0)} />
+							<ProjectCover index={Math.max(at, 0)} />
 						)}
 					</div>
 				</Reveal>
