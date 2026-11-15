@@ -52,7 +52,7 @@ export function WorkCard({
 								className="h-full w-full object-cover"
 							/>
 						) : (
-							<ProjectCover index={index} />
+							<ProjectCover slug={p.slug} title={p.title} index={index} />
 						)}
 						{/* شیشه روی تصویر: نامِ کارفرما و دسته، خوانا روی هر جلدی */}
 						<div className={clsx("work__label glass", !p.coverImage && index % 3 === 0 && "ink")}>

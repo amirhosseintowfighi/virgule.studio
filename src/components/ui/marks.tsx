@@ -28,3 +28,12 @@ export function Arrow({ className }: { className?: string }) {
 		</svg>
 	)
 }
+
+/** پیکانِ «بیرون از سایت» — برای پیوندهایی که در زبانه‌ی تازه باز می‌شوند. */
+export function ArrowOut({ className }: { className?: string }) {
+	return (
+		<svg viewBox="0 0 24 24" fill="none" className={clsx("arrow", className)} aria-hidden="true">
+			<path d="M7 17 17 7m0 0H8.5m8.5 0v8.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+		</svg>
+	)
+}

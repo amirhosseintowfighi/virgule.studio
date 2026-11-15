@@ -5,11 +5,12 @@ import prisma from "@/lib/prisma"
 import { safe } from "@/lib/safe"
 import { Reveal, RevealLines } from "@/components/ui/reveal"
 import { Folio } from "@/components/ui/section"
-import { Arrow } from "@/components/ui/marks"
+import { Arrow, ArrowOut } from "@/components/ui/marks"
 import { ProjectCover } from "@/components/marketing/project-cover"
 import { Closing } from "@/components/marketing/closing"
 import { buildMetadata, JsonLd, projectJsonLd, breadcrumbJsonLd } from "@/lib/seo"
 import { faIndex, faNum } from "@/lib/fa"
+import { projectMedia, hostOf, SCREENSHOT_SIZE } from "@/lib/project-media"
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -24,6 +25,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 		path: `/portfolio/${project.slug}`,
 		...(project.coverImage ? { image: project.coverImage } : {}),
 	})
+}
+
+/**
+ * دکمه‌ی «سایتِ زنده»: هم بالای صفحه می‌آید هم پایانِ روایت، تا بازدیدکننده هر جا که
+ * قانع شد بتواند خودِ کار را ببیند. نام دامنه چپ‌به‌راست نوشته می‌شود.
+ */
+function LiveLink({ url, className }: { url: string; className?: string }) {
+	return (
+		<a href={url} target="_blank" rel="noopener noreferrer" className={`btn btn--solid ${className ?? ""}`}>
+			<span>مشاهده وب‌سایت زنده</span>
+			<span className="font-latin text-[.86em] opacity-80" dir="ltr">
+				{hostOf(url)}
+			</span>
+			<ArrowOut />
+		</a>
+	)
 }
 
 /** شماره‌ی فصل‌ها بر اساس فصل‌هایی که واقعاً داده دارند ساخته می‌شود، نه یک قالب ثابت. */
@@ -68,6 +85,9 @@ export default async function PortfolioDetailPage({ params }: Props) {
 		project.year && { k: "سال", v: faNum(project.year) },
 	].filter(Boolean) as { k: string; v: string }[]
 
+	const media = projectMedia(project.slug)
+	const name = project.title.split(" — ")[0]
+
 	let n = 0
 
 	return (
@@ -108,7 +128,13 @@ export default async function PortfolioDetailPage({ params }: Props) {
 					)}
 				</div>
 
-				{(facts.length > 0 || project.url) && (
+				{project.url && (
+					<Reveal delay={260} className="mt-[clamp(28px,3.4vw,48px)]">
+						<LiveLink url={project.url} />
+					</Reveal>
+				)}
+
+				{facts.length > 0 && (
 					<Reveal delay={300}>
 						<dl className="mt-[clamp(40px,5vw,72px)] grid grid-cols-2 gap-x-[var(--gap)] gap-y-6 border-t border-[var(--line-2)] pt-6 md:grid-cols-4">
 							{facts.map((f) => (
@@ -117,17 +143,6 @@ export default async function PortfolioDetailPage({ params }: Props) {
 									<dd className="t-title m-0 mt-1">{f.v}</dd>
 								</div>
 							))}
-							{project.url && (
-								<div>
-									<dt className="meta-fa">نشانی</dt>
-									<dd className="m-0 mt-1">
-										<a href={project.url} target="_blank" rel="noopener noreferrer" className="link-a tap">
-											مشاهده‌ی سایت
-											<Arrow />
-										</a>
-									</dd>
-								</div>
-							)}
 						</dl>
 					</Reveal>
 				)}
@@ -146,13 +161,43 @@ export default async function PortfolioDetailPage({ params }: Props) {
 								fetchPriority="high"
 							/>
 						) : (
-							<ProjectCover index={Math.max(at, 0)} />
+							<ProjectCover slug={project.slug} title={project.title} index={Math.max(at, 0)} />
 						)}
 					</div>
 				</Reveal>
 			</div>
 
 			<div className="wrap pb-[var(--sec)]">
+				{media.screenshot && (
+					<section className="pt-[clamp(56px,7vw,112px)]">
+						<Folio n={++n} label="صفحه‌ی اصلی" aside="نمای دسکتاپ" />
+						<Reveal className="mt-[clamp(32px,4vw,64px)]">
+							<figure className="browser m-0">
+								<div className="browser__bar" aria-hidden="true">
+									<span className="browser__dots">
+										<i />
+										<i />
+										<i />
+									</span>
+									<span className="font-latin" dir="ltr">
+										{project.url ? hostOf(project.url) : name}
+									</span>
+									<span />
+								</div>
+								{/* eslint-disable-next-line @next/next/no-img-element */}
+								<img
+									src={media.screenshot}
+									alt={`صفحه‌ی اصلی وب‌سایت ${name}، نمای دسکتاپ`}
+									width={SCREENSHOT_SIZE.width}
+									height={SCREENSHOT_SIZE.height}
+									loading="lazy"
+									decoding="async"
+								/>
+							</figure>
+						</Reveal>
+					</section>
+				)}
+
 				{paragraphs.length > 0 && (
 					<Chapter n={++n} title="روایت پروژه">
 						<Reveal>
@@ -220,6 +265,13 @@ export default async function PortfolioDetailPage({ params }: Props) {
 							))}
 						</div>
 					</Chapter>
+				)}
+
+				{project.url && (
+					<div className="mt-[clamp(56px,7vw,112px)] flex flex-wrap items-center justify-between gap-6 border-t border-[var(--line-2)] pt-8">
+						<p className="h3 max-w-[22ch]">خودِ کار را ببینید.</p>
+						<LiveLink url={project.url} />
+					</div>
 				)}
 
 				{next && (

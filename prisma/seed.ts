@@ -13,7 +13,9 @@ async function main() {
 	await prisma.project.deleteMany({
 		where: { slug: { in: ["aria-tech", "mana-shop", "raha-clinic", "naghsh-studio", "fars-env-housing"] } },
 	})
-	await prisma.post.deleteMany({ where: { slug: { in: ["why-material-design-3"] } } })
+	await prisma.post.deleteMany({
+		where: { slug: { in: ["why-material-design-3", "technical-seo-2025", "web-performance-guide"] } },
+	})
 
 	console.log("🌱 شروع Seed ویرگول...")
 
@@ -345,7 +347,7 @@ async function main() {
 				"۱. محدودیت تعداد: در کل سایت، افکت شیشه‌ای تنها در چهار نقطه کلیدی (نوار ناوبری هنگام اسکرول، برچسب روی کاور نمونه‌کارها، کارت تعهدات در بخش هیرو و کارت تماس پایانی) به کار رفته است.",
 				"۲. خط دور و کنتراست دقیق: شیشه واقعی با لبه نوری ظریف شناخته می‌شود. یک کادر ۱ پیکسلی با شفافیت کنترل‌شده در کنار پس‌زمینه‌ای که خوانایی متن روی آن تضمین شده باشد، مرز کارت را بدون نیاز به سایه‌های سنگین مشخص می‌کند.",
 				"۳. پشتیبانی از مرورگرهای قدیمی (@supports fallback): برای مرورگرها یا دستگاه‌هایی که از فیلتر بلور پشتیبانی نمی‌کنند، رنگ پس‌زمینه کدر و هم‌خوان با تم کاغذی/تیره به صورت خودکار جایگزین می‌شود.",
-				"۴. تلفیق با بافت کاغذ (SVG Grain): اضافه کردن یک لایه نویز بسیار ظریف مبتنی بر SVG با شفافیت کنترل‌شده در موبایل، به سطوح دیجیتال حس ملموس کاغذ چاپ‌شده را می‌دهد؛ بدون آنکه بار پردازشی اضافه‌ای به کارت گرافیک تحمیل کند.",
+				"۴. تلفیق با بافت کاغذ (SVG Grain): اضافه کردن یک لایه نویز بسیار ظریف مبتنی بر SVG به سطوح دیجیتال حس ملموس کاغذ چاپ‌شده را می‌دهد؛ با تنظیم دقیق شفافیت در موبایل، تا کمترین اثر را بر روان بودن اسکرول داشته باشد.",
 				"نتیجه این رویکرد، سایتی است که هم از نظر بصری عمیق و متمایز است و هم در عمل، سریع و روان بارگذاری می‌شود.",
 			].join("\n\n"),
 		},
@@ -362,6 +364,15 @@ async function main() {
 				tags: { connect: tagIdx.map((i) => ({ id: tags[i].id })) },
 			},
 		})
+	}
+
+	// نوشته‌ها فقط ساخته می‌شوند و ویرایش‌های پنل دست‌نخورده می‌مانند؛ پس اصلاحِ یک جمله در
+	// متنِ پیش‌فرض باید جداگانه به دیتابیس‌های موجود برسد. فقط همان جمله جایگزین می‌شود.
+	const GRAIN_OLD = "با شفافیت کنترل‌شده در موبایل، به سطوح دیجیتال حس ملموس کاغذ چاپ‌شده را می‌دهد؛ بدون آنکه بار پردازشی اضافه‌ای به کارت گرافیک تحمیل کند."
+	const GRAIN_NEW = "به سطوح دیجیتال حس ملموس کاغذ چاپ‌شده را می‌دهد؛ با تنظیم دقیق شفافیت در موبایل، تا کمترین اثر را بر روان بودن اسکرول داشته باشد."
+	const grainPost = await prisma.post.findUnique({ where: { slug: "refined-glassmorphism-and-web-performance" } })
+	if (grainPost?.content.includes(GRAIN_OLD)) {
+		await prisma.post.update({ where: { id: grainPost.id }, data: { content: grainPost.content.replace(GRAIN_OLD, GRAIN_NEW) } })
 	}
 
 	// ---------------- Projects (7) ----------------
@@ -513,9 +524,17 @@ async function main() {
 			technologies: ["Next.js", "TypeScript", "UX Research", "Editorial UI", "Tailwind CSS"],
 		},
 	]
+	// پروژه‌ها هم مثل نوشته‌ها فقط ساخته می‌شوند: اجرای دوباره‌ی seed متن‌هایی را که مدیر در
+	// پنل ویرایش کرده بازنویسی نمی‌کند. تنها چیزی که هر بار اعمال می‌شود ترتیبِ نمایش است
+	// (order و featured)، چون جایگاهِ پروژه‌ها را همین فایل تعیین می‌کند.
+	// برای برگرداندنِ یک پروژه به متنِ پیش‌فرض: در پنل حذفش کنید و seed را دوباره اجرا کنید.
+	// نشان و تصویرِ صفحه‌ی اصلی در src/lib/project-media.ts با اسلاگ وصل می‌شوند، نه اینجا.
 	for (const [i, { category, ...pr }] of projects.entries()) {
-		const data = { ...pr, coverImage: null, categoryId: category.id, order: i }
-		await prisma.project.upsert({ where: { slug: pr.slug }, update: data, create: data })
+		await prisma.project.upsert({
+			where: { slug: pr.slug },
+			update: { order: i, featured: pr.featured },
+			create: { ...pr, coverImage: null, categoryId: category.id, order: i },
+		})
 	}
 
 	// ---------------- Plans (3) ----------------
