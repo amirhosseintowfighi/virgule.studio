@@ -244,7 +244,8 @@ export function projectJsonLd({
 		url: `${BASE}${path}`,
 		inLanguage: STUDIO.language,
 		creator: { "@id": `${BASE}/#studio` },
-		...(year ? { dateCreated: String(year) } : {}),
+		// سالِ پروژه‌ها شمسی ذخیره می‌شود؛ schema.org میلادی می‌خواهد (۱۴۰۵ ← ۲۰۲۶)
+		...(year ? { dateCreated: String(Number(year) < 1700 ? Number(year) + 621 : year) } : {}),
 		...(image ? { image: [image] } : {}),
 	}
 }
