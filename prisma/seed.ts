@@ -444,7 +444,8 @@ async function main() {
 				"بخش نمایش پروژه‌های نصب‌شده در کافه‌ها، هتل‌ها و باشگاه‌ها به همراه مجله تخصصی (Insights)",
 				"جریان درخواست مشاوره تخصصی، دریافت کاتالوگ و سفارشی‌سازی برج‌های سرو",
 			],
-			technologies: ["Next.js", "TypeScript", "Multilingual (FA/EN/AR)", "UI/UX Design", "Tailwind CSS"],
+			// از مخزنِ خودِ پروژه: سایتِ کاملاً استاتیک، بدون build و بدون بک‌اند
+			technologies: ["Static HTML", "CSS", "Vanilla JS", "Multilingual (FA/EN/AR)", "UI/UX Design"],
 		},
 		{
 			// جزئیات از مخزنِ خودِ پروژه (amirhosseintowfighi/nena) برداشته شده، نه حدس.
@@ -521,7 +522,8 @@ async function main() {
 				"جریان بررسی ظرفیت، انتخاب تاریخ و رزرو آنلاین اتاق",
 				"راهنمای تعاملی دسترسی و معرفی جاذبه‌های پیاده‌روی در بافت تاریخی یزد",
 			],
-			technologies: ["Next.js", "TypeScript", "UX Research", "Editorial UI", "Tailwind CSS"],
+			// از مخزنِ خودِ پروژه: PHP ساده با MySQL و تقویمِ شمسی برای رزرو
+			technologies: ["PHP", "MySQL", "Vanilla JS", "Jalali Calendar", "JSON-LD SEO"],
 		},
 	]
 	// پروژه‌ها هم مثل نوشته‌ها فقط ساخته می‌شوند: اجرای دوباره‌ی seed متن‌هایی را که مدیر در
@@ -534,6 +536,22 @@ async function main() {
 			where: { slug: pr.slug },
 			update: { order: i, featured: pr.featured },
 			create: { ...pr, coverImage: null, categoryId: category.id, order: i },
+		})
+	}
+
+	// پروژه‌ها فقط ساخته می‌شوند، پس اصلاحِ فهرستِ تکنولوژیِ دو پروژه باید جداگانه به
+	// دیتابیس‌های موجود برسد. فقط وقتی اعمال می‌شود که فهرست هنوز همان مقدارِ نادرستِ
+	// قبلی باشد؛ اگر مدیر در پنل تغییرش داده، دست نمی‌خورد.
+	const techFixes = [
+		{ slug: "carbonix-beverage-systems", was: ["Next.js", "TypeScript", "Multilingual (FA/EN/AR)", "UI/UX Design", "Tailwind CSS"] },
+		{ slug: "manak-ecolodge-yazd", was: ["Next.js", "TypeScript", "UX Research", "Editorial UI", "Tailwind CSS"] },
+	]
+	for (const fix of techFixes) {
+		const now = projects.find((p) => p.slug === fix.slug)
+		if (!now) continue
+		await prisma.project.updateMany({
+			where: { slug: fix.slug, technologies: { equals: fix.was } },
+			data: { technologies: now.technologies },
 		})
 	}
 
