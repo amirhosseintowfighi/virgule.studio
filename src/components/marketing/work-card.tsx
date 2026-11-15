@@ -32,7 +32,10 @@ export function WorkCard({
 	heading?: "h2" | "h3"
 	className?: string
 }) {
-	const meta = [p.category?.name, p.year ? faNum(p.year) : null].filter(Boolean).join(" · ")
+	// عنوان‌ها به شکل «نام — توضیح» نوشته می‌شوند. روی جلد فقط نام می‌آید: برچسبِ شیشه‌ای
+	// باید کوتاه بماند تا تصویر را نپوشاند؛ دسته زیرِ عنوان می‌نشیند.
+	const name = p.title.split(" — ")[0]
+	const year = p.year ? faNum(p.year) : null
 
 	return (
 		<article className={className}>
@@ -49,12 +52,12 @@ export function WorkCard({
 								className="h-full w-full object-cover"
 							/>
 						) : (
-							<ProjectCover title={p.title} index={index} />
+							<ProjectCover index={index} />
 						)}
 						{/* شیشه روی تصویر: نامِ کارفرما و دسته، خوانا روی هر جلدی */}
 						<div className={clsx("work__label glass", !p.coverImage && index % 3 === 0 && "ink")}>
-							<span className={large ? "h3" : "t-title"}>{p.client ?? p.title}</span>
-							{meta && <span className="meta-fa !text-[var(--fg-2)]">{meta}</span>}
+							<span className={clsx("min-w-0 truncate", large ? "h3" : "t-title")}>{name}</span>
+							{year && <span className="meta-fa shrink-0 !text-[var(--fg-2)]">{year}</span>}
 						</div>
 					</div>
 				</Reveal>
@@ -67,6 +70,7 @@ export function WorkCard({
 						<Heading className="h3">
 							<span className="link-u">{p.title}</span>
 						</Heading>
+						{p.category && <p className="meta-fa mt-1">{p.category.name}</p>}
 						{p.summary && <p className="body-t mt-2 max-w-[52ch] text-[.94rem]">{p.summary}</p>}
 						{p.technologies.length > 0 && (
 							<ul className="techs font-latin mt-3" dir="ltr" aria-label="تکنولوژی‌ها">

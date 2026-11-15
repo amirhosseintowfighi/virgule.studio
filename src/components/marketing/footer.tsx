@@ -94,6 +94,15 @@ export async function Footer() {
 							<li className="text-[var(--fg-2)]">{`${STUDIO.city}، ایران`}</li>
 						</ul>
 					</div>
+
+					{/* گره محصولِ خودِ استودیوست — یک سطر، نه یک بنر */}
+					<p className="meta-fa md:col-span-12 md:mt-10">
+						زیرساخت ابری، سرور و دامنه:{" "}
+						<a href="https://gereh.net" target="_blank" rel="noopener noreferrer" className="link-u tap text-[var(--fg)]">
+							گره (gereh.net)
+						</a>
+						{" "}— محصول و زیرمجموعه‌ی استودیو ویرگول.
+					</p>
 				</div>
 
 				<div className="mt-[clamp(48px,6vw,88px)] flex flex-wrap items-center justify-between gap-x-10 gap-y-3 border-t border-[var(--line)] pt-6">

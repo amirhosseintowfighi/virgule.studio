@@ -12,7 +12,8 @@ const COMMA_PATH =
  */
 export function LogoMark({ className }: { className?: string }) {
 	return (
-		<svg viewBox="0 0 64 64" className={clsx("h-9 w-auto", className)} aria-hidden="true">
+		// کادر به اندازه‌ی خودِ نشان بریده شده (شبکه همان ۶۴×۶۴ است) تا کنار نوشته کوچک دیده نشود
+		<svg viewBox="8 8 52 52" className={clsx("h-9 w-auto", className)} aria-hidden="true">
 			<path d={COMMA_PATH} fill="currentColor" />
 			<rect x="46" y="48" width="10" height="10" fill="var(--accent, #c63d1f)" />
 		</svg>
