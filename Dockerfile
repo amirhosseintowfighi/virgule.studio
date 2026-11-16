@@ -13,6 +13,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npx prisma generate
+# فایل‌های مرحله‌ی انتشار: اسکریپتِ SQLِ اسکیما و seedِ کامپایل‌شده. ایمیجِ نهایی CLI پریزما و tsx
+# ندارد؛ scripts/release.mjs این دو را فقط با @prisma/client اجرا می‌کند.
+RUN npm run build:release
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
