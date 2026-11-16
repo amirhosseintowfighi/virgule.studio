@@ -5,6 +5,14 @@ import bcrypt from "bcryptjs"
 const prisma = new PrismaClient()
 
 
+/**
+ * داده‌ی اولیه‌ی سایت.
+ *
+ * اجرای دوباره‌اش روی دیتابیسِ زنده امن است: هر چیزی فقط وقتی ساخته می‌شود که نباشد،
+ * و چیزی که مدیر در پنل ویرایش کرده بازنویسی نمی‌شود. تنها استثناها صریح‌اند و همین
+ * پایین آمده‌اند: حذفِ چند ردیفِ نمونه‌ی قدیمی با اسلاگِ مشخص، ترتیبِ نمایشِ پروژه‌ها، و
+ * چند اصلاحِ هدفمند که فقط روی مقدارِ دقیقِ قبلی اعمال می‌شوند.
+ */
 async function main() {
 	// ---------------- پاک‌سازی داده‌ی نمونه‌ی قدیمی ----------------
 	// نسخه‌های قبلیِ این فایل پروژه‌ها و یک نوشته‌ی ساختگی می‌ساختند. چون بقیه‌ی seed فقط
@@ -228,17 +236,10 @@ async function main() {
 		},
 	]
 	for (const [i, s] of services.entries()) {
+		// فقط ساخته می‌شود: خدمتی که مدیر در پنل ویرایش کرده با اجرای دوباره‌ی seed بازنویسی نمی‌شود
 		await prisma.service.upsert({
 			where: { slug: s.slug },
-			update: {
-				title: s.title,
-				icon: s.icon,
-				summary: s.summary,
-				content: s.content,
-				features: s.features,
-				order: i,
-				active: true,
-			},
+			update: {},
 			create: { ...s, order: i, active: true },
 		})
 	}
@@ -562,7 +563,7 @@ async function main() {
 		{ name: "سازمانی", slug: "enterprise", price: 0, period: "سفارشی", description: "راهکار اختصاصی", features: ["صفحات نامحدود", "توسعه‌ی اختصاصی", "یکپارچگی API", "پشتیبانی ۱۲ ماهه"], order: 2 },
 	]
 	for (const pl of plans) {
-		await prisma.plan.upsert({ where: { slug: pl.slug }, update: pl, create: pl })
+		await prisma.plan.upsert({ where: { slug: pl.slug }, update: {}, create: pl })
 	}
 
 	// ---------------- FAQs ----------------
@@ -579,8 +580,11 @@ async function main() {
 		{ question: "آیا سایت ریسپانسیو است؟", answer: "بله، تمام پروژه‌ها برای همه‌ی دستگاه‌ها بهینه می‌شوند.", category: "فنی", order: 3 },
 		{ question: "کد و داده‌ی پروژه مال کیست؟", answer: "مال شما. پروژه روی دامنه و سرور خودتان اجرا می‌شود و مخزن کد را تحویل می‌گیرید؛ هر توسعه‌دهنده‌ی دیگری می‌تواند کار را ادامه دهد.", category: "عمومی", order: 4 },
 	]
-	await prisma.faq.deleteMany()
-	await prisma.faq.createMany({ data: faqs })
+	// پرسش‌ها فقط وقتی ساخته می‌شوند که جدول خالی باشد. قبلاً هر بار پاک و از نو ساخته
+	// می‌شدند و هر ویرایشی که مدیر در پنل کرده بود از بین می‌رفت.
+	if ((await prisma.faq.count()) === 0) {
+		await prisma.faq.createMany({ data: faqs })
+	}
 
 	// ---------------- Settings ----------------
 	const settings = [
@@ -589,7 +593,7 @@ async function main() {
 		{ key: "seo", value: { metaTitle: "ویرگول | استودیوی طراحی و توسعه‌ی وب", metaDescription: "طراحی و پیاده‌سازی وب‌سایت‌های حرفه‌ای.", keywords: "طراحی سایت، طراحی فروشگاه، سئو", ogImage: "" } },
 	]
 	for (const st of settings) {
-		await prisma.setting.upsert({ where: { key: st.key }, update: { value: st.value }, create: st })
+		await prisma.setting.upsert({ where: { key: st.key }, update: {}, create: st })
 	}
 
 	console.log("✅ Seed کامل شد.")

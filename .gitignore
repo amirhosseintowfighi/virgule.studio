@@ -61,3 +61,7 @@ Thumbs.db
 .pgdata/
 # فقط پوشه‌ی آپلودِ ریشه، نه هر پوشه‌ای به نام uploads
 /uploads/
+
+# ساخته‌شده با npm run build:release
+prisma/schema.sql
+prisma/seed.cjs

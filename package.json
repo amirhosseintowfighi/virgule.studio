@@ -16,7 +16,9 @@
     "prisma:studio": "prisma studio",
     "db:dev": "node scripts/dev-db.mjs start",
     "db:setup": "node scripts/dev-db.mjs init && prisma db push --skip-generate && prisma db seed",
-    "admin": "node scripts/admin.mjs"
+    "admin": "node scripts/admin.mjs",
+    "build:release": "prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script --output prisma/schema.sql && esbuild prisma/seed.ts --bundle --platform=node --format=cjs --external:@prisma/client --external:bcryptjs --outfile=prisma/seed.cjs --log-level=warning",
+    "release": "node scripts/release.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -41,6 +43,7 @@
     "@vitest/coverage-v8": "^2.1.8",
     "autoprefixer": "^10.4.20",
     "embedded-postgres": "^18.4.0-beta.17",
+    "esbuild": "^0.28.2",
     "eslint": "^9.17.0",
     "eslint-config-next": "^15.1.0",
     "postcss": "^8.4.49",
