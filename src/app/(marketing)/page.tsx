@@ -67,20 +67,20 @@ export default async function HomePage() {
 			<section className="wrap pt-[76px]">
 				<div className="g12 items-center pb-[clamp(56px,7vw,112px)] pt-[clamp(32px,5vw,72px)] md:min-h-[calc(100svh-76px)]">
 					<div className="md:col-span-6">
-						<Reveal className="meta-fa flex items-center gap-3">
+						<Reveal now className="meta-fa flex items-center gap-3">
 							<span className="h-px w-8 bg-[var(--accent)]" aria-hidden="true" />
 							{`استودیوی طراحی و توسعه‌ی وب — ${STUDIO.city}، از سال ${STUDIO.foundedFa}`}
 						</Reveal>
 
 						<h1 className="display mt-[clamp(20px,2.4vw,36px)]">
-							<RevealLines step={130} lines={[c.heroLine1, `${c.heroLine2} ${c.heroAccent}`]} />
+							<RevealLines now step={130} lines={[c.heroLine1, `${c.heroLine2} ${c.heroAccent}`]} />
 						</h1>
 
-						<Reveal delay={320} className="mt-[clamp(24px,2.8vw,40px)]">
+						<Reveal now delay={320} className="mt-[clamp(24px,2.8vw,40px)]">
 							<p className="lead max-w-[38ch]">{c.heroLead}</p>
 						</Reveal>
 
-						<Reveal delay={440} className="mt-[clamp(28px,3vw,44px)] flex flex-wrap items-center gap-4">
+						<Reveal now delay={440} className="mt-[clamp(28px,3vw,44px)] flex flex-wrap items-center gap-4">
 							<Cta href="/request-project" solid>
 								{c.heroCtaPrimary}
 							</Cta>
@@ -89,13 +89,13 @@ export default async function HomePage() {
 					</div>
 
 					<div className="relative md:col-span-5 md:col-start-8">
-						<Reveal as="art-rv">
+						<Reveal now as="art-rv">
 							<HeroArt className="mx-auto max-w-[min(100%,58svh)]" />
 						</Reveal>
 
 						{/* قول‌های کوتاه — همان‌هایی که پایین‌تر مفصل آمده‌اند */}
 						{promises.length > 0 && (
-							<Reveal delay={700} className="absolute bottom-[4%] start-0 w-[min(78%,300px)] md:-start-[8%]">
+							<Reveal now delay={700} className="absolute bottom-[4%] start-0 w-[min(78%,300px)] md:-start-[8%]">
 								<ul className="glass divide-y divide-[var(--line)] px-5 py-1 text-[.9rem] font-medium">
 									{promises.map((t) => (
 										<li key={t} className="flex items-center gap-3 py-3">

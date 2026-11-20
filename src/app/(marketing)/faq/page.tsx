@@ -32,7 +32,7 @@ export default async function FaqPage() {
 			<PageHead label="پرسش‌ها" art={3} lines={[c.headLine1, c.headLine2]} lead={c.headLead} />
 
 			<section className="wrap pb-[var(--sec)]">
-				<Folio label="پاسخ‌ها" aside={items.length > 0 ? `${faNum(items.length)} پرسش` : undefined} />
+				<Folio label="پاسخ‌ها" aside={items.length > 0 ? `${faNum(items.length)} پرسش` : undefined} heading />
 				<div className="g12 mt-[clamp(32px,4vw,56px)]">
 					<Reveal className="md:sticky md:top-28 md:col-span-4 md:h-fit">
 						<p className="h3 max-w-[18ch]">{c.sideNote}</p>

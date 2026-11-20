@@ -35,7 +35,16 @@ const nextConfig: NextConfig = {
 		optimizePackageImports: ["@mui/material", "framer-motion"],
 	},
 	async headers() {
-		return [{ source: "/:path*", headers: securityHeaders }]
+		return [
+			{ source: "/:path*", headers: securityHeaders },
+			// تصویرهای public نامِ هش‌دار ندارند، پس immutable نیستند؛ ولی بدون این، مرورگر در هر
+			// بازدید برای هرکدام دوباره درخواست می‌فرستد (max-age=0). یک هفته تازه می‌مانند و تا
+			// یک روز بعد از آن، نسخه‌ی قبلی نمایش داده و در پس‌زمینه به‌روز می‌شود.
+			{
+				source: "/img/:path*",
+				headers: [{ key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=86400" }],
+			},
+		]
 	},
 }
 

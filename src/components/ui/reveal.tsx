@@ -10,6 +10,12 @@ type Props = {
 	delay?: number
 	/** نوع حرکت: جابه‌جایی ساده، بازشدنِ تصویر، خطِ کشیده‌شونده، یا تصویرِ برداری */
 	as?: "rv" | "img-rv" | "rule" | "art-rv"
+	/**
+	 * برای محتوای بالای صفحه (بخش معرفی، سرصفحه‌ها): حرکت با بارگذاریِ صفحه و فقط با CSS
+	 * اجرا می‌شود، نه بعد از رسیدنِ جاوااسکریپت. بدون این، متنِ اصلی تا پایانِ hydration
+	 * پنهان می‌ماند و روی موبایلِ کند چند ثانیه دیرتر دیده می‌شد (LCP).
+	 */
+	now?: boolean
 }
 
 /** یک ناظر برای کل صفحه — به‌جای یک IntersectionObserver به ازای هر عنصر. */
@@ -56,21 +62,21 @@ function observe(el: Element, cb: () => void) {
 }
 
 /** محتوا را هنگام ورود به کادر دید، یک‌بار، ظاهر می‌کند. */
-export function Reveal({ children, className, delay = 0, as = "rv" }: Props) {
+export function Reveal({ children, className, delay = 0, as = "rv", now = false }: Props) {
 	const ref = useRef<HTMLDivElement>(null)
 	const [inView, setInView] = useState(false)
 
 	useEffect(() => {
 		const el = ref.current
-		if (!el) return
+		if (!el || now) return
 		return observe(el, () => setInView(true))
-	}, [])
+	}, [now])
 
 	return (
 		<div
 			ref={ref}
-			style={delay ? { transitionDelay: `${delay}ms` } : undefined}
-			className={clsx(as, inView && "in", className)}
+			style={delay ? (now ? { animationDelay: `${delay}ms` } : { transitionDelay: `${delay}ms` }) : undefined}
+			className={clsx(as, now ? "now" : inView && "in", className)}
 		>
 			{children}
 		</div>
@@ -87,27 +93,30 @@ export function RevealLines({
 	lineClassName,
 	step = 90,
 	delay = 0,
+	now = false,
 }: {
 	lines: React.ReactNode[]
 	className?: string
 	lineClassName?: string
 	step?: number
 	delay?: number
+	/** همان `now` در Reveal: برای تیترِ بالای صفحه، حرکت با CSS و بدون انتظار برای JS */
+	now?: boolean
 }) {
 	const ref = useRef<HTMLDivElement>(null)
 	const [inView, setInView] = useState(false)
 
 	useEffect(() => {
 		const el = ref.current
-		if (!el) return
+		if (!el || now) return
 		return observe(el, () => setInView(true))
-	}, [])
+	}, [now])
 
 	return (
-		<div ref={ref} className={clsx("lines", inView && "in", className)}>
+		<div ref={ref} className={clsx("lines", now ? "now" : inView && "in", className)}>
 			{lines.map((line, i) => (
 				<span key={i} className={clsx("line-mask", lineClassName)}>
-					<span style={{ transitionDelay: `${delay + i * step}ms` }}>{line}</span>
+					<span style={now ? { animationDelay: `${delay + i * step}ms` } : { transitionDelay: `${delay + i * step}ms` }}>{line}</span>
 				</span>
 			))}
 		</div>

@@ -32,7 +32,7 @@ export default async function ContactPage() {
 				<div className="g12">
 					{/* راه‌های تماسِ مستقیم */}
 					<div className="md:col-span-4">
-						<Folio n={1} label="مستقیم" />
+						<Folio n={1} label="مستقیم" heading />
 						<dl className="m-0 mt-2">
 							{channels.map((ch, i) => (
 								<Reveal key={ch.label} delay={i * 80} className="border-b border-[var(--line)] py-6">
@@ -60,7 +60,7 @@ export default async function ContactPage() {
 					</div>
 
 					<div className="md:col-span-7 md:col-start-6">
-						<Folio n={2} label={c.formTitle} />
+						<Folio n={2} label={c.formTitle} heading />
 						<div className="mt-10">
 							<ContactForm />
 						</div>

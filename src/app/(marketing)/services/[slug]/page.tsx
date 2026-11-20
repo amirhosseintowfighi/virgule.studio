@@ -68,7 +68,7 @@ export default async function ServiceDetailPage({ params }: Props) {
 
 			{paragraphs.length > 0 && (
 				<section className="wrap pb-[var(--sec)]">
-					<Folio n={++n} label="این خدمت چیست" />
+					<Folio n={++n} label="این خدمت چیست" heading />
 					<div className="g12 mt-[clamp(40px,6vw,88px)]">
 						<Reveal className="md:col-span-9 md:col-start-4">
 							<p className="statement">{paragraphs[0]}</p>
@@ -88,7 +88,7 @@ export default async function ServiceDetailPage({ params }: Props) {
 
 			{service.features.length > 0 && (
 				<section className="wrap pb-[var(--sec)]">
-					<Folio n={++n} label="چه چیزی شامل می‌شود" />
+					<Folio n={++n} label="چه چیزی شامل می‌شود" heading />
 					<ul className="mt-[clamp(32px,4vw,56px)] grid gap-x-[var(--gap)] border-t border-[var(--line-2)] md:grid-cols-2">
 						{service.features.map((f, i) => (
 							<li key={f} className="border-b border-[var(--line)]">
@@ -106,7 +106,7 @@ export default async function ServiceDetailPage({ params }: Props) {
 
 			{related.length > 0 && (
 				<section className="wrap pb-[var(--sec)]">
-					<Folio n={++n} label="خدمات دیگر" />
+					<Folio n={++n} label="خدمات دیگر" heading />
 					<ul className="idx mt-[clamp(32px,4vw,56px)]">
 						{related.map((r, i) => (
 							<li key={r.id}>

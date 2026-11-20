@@ -40,6 +40,14 @@ export const PROJECT_MEDIA: Record<string, ProjectMedia> = {
 
 export const SCREENSHOT_SIZE = { width: 1600, height: 1000 }
 
+/**
+ * srcset برای تصویرِ صفحه‌ی اصلی. کنارِ هر فایلِ «-home.webp» یک نسخه‌ی ۸۰۰ پیکسلی
+ * («-home-800.webp») هست تا موبایل نسخه‌ی ۱۶۰۰ پیکسلی را دانلود نکند.
+ */
+export function screenshotSrcSet(src: string): string {
+	return `${src.replace(/\.webp$/, "-800.webp")} 800w, ${src} ${SCREENSHOT_SIZE.width}w`
+}
+
 export function projectMedia(slug: string): ProjectMedia {
 	return PROJECT_MEDIA[slug] ?? {}
 }

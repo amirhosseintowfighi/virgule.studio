@@ -10,7 +10,7 @@ import { ProjectCover } from "@/components/marketing/project-cover"
 import { Closing } from "@/components/marketing/closing"
 import { buildMetadata, JsonLd, projectJsonLd, breadcrumbJsonLd } from "@/lib/seo"
 import { faIndex, faNum } from "@/lib/fa"
-import { projectMedia, hostOf, SCREENSHOT_SIZE } from "@/lib/project-media"
+import { projectMedia, hostOf, SCREENSHOT_SIZE, screenshotSrcSet } from "@/lib/project-media"
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -47,7 +47,7 @@ function LiveLink({ url, className }: { url: string; className?: string }) {
 function Chapter({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
 	return (
 		<section className="pt-[clamp(56px,7vw,112px)]">
-			<Folio n={n} label={title} />
+			<Folio n={n} label={title} heading />
 			<div className="g12 mt-[clamp(32px,4vw,64px)]">
 				<div className="md:col-span-8 md:col-start-5">{children}</div>
 			</div>
@@ -119,23 +119,23 @@ export default async function PortfolioDetailPage({ params }: Props) {
 				/>
 				<div className="g12 mt-[clamp(40px,6vw,96px)] items-end">
 					<h1 className="h1 md:col-span-8">
-						<RevealLines lines={[project.title]} />
+						<RevealLines now lines={[project.title]} />
 					</h1>
 					{project.summary && (
-						<Reveal delay={220} className="md:col-span-4 md:pb-3">
+						<Reveal now delay={220} className="md:col-span-4 md:pb-3">
 							<p className="lead">{project.summary}</p>
 						</Reveal>
 					)}
 				</div>
 
 				{project.url && (
-					<Reveal delay={260} className="mt-[clamp(28px,3.4vw,48px)]">
+					<Reveal now delay={260} className="mt-[clamp(28px,3.4vw,48px)]">
 						<LiveLink url={project.url} />
 					</Reveal>
 				)}
 
 				{facts.length > 0 && (
-					<Reveal delay={300}>
+					<Reveal now delay={300}>
 						<dl className="mt-[clamp(40px,5vw,72px)] grid grid-cols-2 gap-x-[var(--gap)] gap-y-6 border-t border-[var(--line-2)] pt-6 md:grid-cols-4">
 							{facts.map((f) => (
 								<div key={f.k}>
@@ -170,7 +170,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
 			<div className="wrap pb-[var(--sec)]">
 				{media.screenshot && (
 					<section className="pt-[clamp(56px,7vw,112px)]">
-						<Folio n={++n} label="صفحه‌ی اصلی" aside="نمای دسکتاپ" />
+						<Folio n={++n} label="صفحه‌ی اصلی" aside="نمای دسکتاپ" heading />
 						<Reveal className="mt-[clamp(32px,4vw,64px)]">
 							<figure className="browser m-0">
 								<div className="browser__bar" aria-hidden="true">
@@ -187,6 +187,9 @@ export default async function PortfolioDetailPage({ params }: Props) {
 								{/* eslint-disable-next-line @next/next/no-img-element */}
 								<img
 									src={media.screenshot}
+									srcSet={screenshotSrcSet(media.screenshot)}
+									// تمام‌عرضِ قاب تا سقفِ ۱۷۶۰ پیکسلِ صفحه، منهای حاشیه‌ها
+									sizes="(min-width: 1760px) 1608px, calc(100vw - 2 * clamp(20px, 4.4vw, 76px))"
 									alt={`صفحه‌ی اصلی وب‌سایت ${name}، نمای دسکتاپ`}
 									width={SCREENSHOT_SIZE.width}
 									height={SCREENSHOT_SIZE.height}
