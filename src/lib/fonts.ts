@@ -1,11 +1,11 @@
 import localFont from "next/font/local"
 
-/** IRANYekan — متن و رابط. self-hosted از public/fonts. */
+/** IRANYekan — متن و رابط. self-hosted از public/fonts، به woff2 (حدود ۲۵٪ کوچک‌تر از woff اصلی). */
 export const iranYekan = localFont({
 	src: [
-		{ path: "../../public/fonts/iranyekanwebregular.woff", weight: "400", style: "normal" },
-		{ path: "../../public/fonts/iranyekanwebmedium.woff", weight: "500", style: "normal" },
-		{ path: "../../public/fonts/iranyekanwebbold.woff", weight: "700", style: "normal" },
+		{ path: "../../public/fonts/iranyekanwebregular.woff2", weight: "400", style: "normal" },
+		{ path: "../../public/fonts/iranyekanwebmedium.woff2", weight: "500", style: "normal" },
+		{ path: "../../public/fonts/iranyekanwebbold.woff2", weight: "700", style: "normal" },
 	],
 	variable: "--font-iranyekan",
 	display: "swap",

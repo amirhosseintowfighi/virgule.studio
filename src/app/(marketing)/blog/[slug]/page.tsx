@@ -124,7 +124,7 @@ export default async function ArticlePage({ params }: Props) {
 
 				{related.length > 0 && (
 					<section className="mt-[var(--sec)]">
-						<Folio label="یادداشت‌های مرتبط" />
+						<Folio label="یادداشت‌های مرتبط" heading />
 						<ul className="idx mt-[clamp(24px,3vw,40px)]">
 							{related.map((r, i) => (
 								<li key={r.id}>

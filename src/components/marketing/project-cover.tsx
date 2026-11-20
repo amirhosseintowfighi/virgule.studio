@@ -31,7 +31,7 @@ export function ProjectCover({ slug, title, index = 0 }: { slug: string; title: 
 				<div className="cover-badge">
 					{logo ? (
 						// eslint-disable-next-line @next/next/no-img-element
-						<img src={logo} alt={`نشان ${name}`} loading="lazy" decoding="async" />
+						<img src={logo} alt={`نشان ${name}`} width={176} height={176} loading="lazy" decoding="async" />
 					) : (
 						<span aria-hidden="true">{monogram}</span>
 					)}

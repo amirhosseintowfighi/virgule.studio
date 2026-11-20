@@ -125,15 +125,29 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 	font-size: var(--t-meta); font-weight: 500; color: var(--fg-2);
 }
 .folio__n { font-size: 1.35rem; margin-inline-end: 14px; }
+/* وقتی برچسبِ سرصفحه عنوانِ بخش است (h2)، ظاهرش همان برچسب می‌ماند */
+.folio__label { font: inherit; color: inherit; margin: 0; }
 
 /* ==========================================================================
    حرکت — یک قاعده: آرام از پایین، یک‌بار. هیچ‌چیز نمی‌چرخد و نمی‌درخشد.
    ========================================================================== */
-.js .rv { opacity: 0; transform: translateY(20px); }
+.js .rv:not(.now) { opacity: 0; transform: translateY(20px); }
 .rv.in {
 	opacity: 1; transform: none;
 	transition: opacity .9s var(--ease), transform .9s var(--ease);
 }
+
+/* محتوای بالای صفحه (.now): همان حرکت‌ها، ولی با keyframe و همراهِ بارگذاری — نه بعد از
+   رسیدنِ جاوااسکریپت. حالتِ پنهانِ بالا (.js …:not(.now)) شاملشان نمی‌شود، پس پایانِ
+   انیمیشن همیشه حالتِ دیده‌شده است و بدون JS هم درست کار می‌کند. */
+/* فقط جابه‌جایی، بدونِ محوشدن: متن از اولین فریم دیده می‌شود و فقط سر جایش می‌نشیند.
+   محوشدن از opacity:0 روی GPU اجرا می‌شود و کروم آن متن را تا repaintِ بعدیِ main thread
+   (بعد از اجرای جاوااسکریپت) «دیده‌نشده» حساب می‌کند؛ روی موبایلِ کند LCP را ۱٫۵ ثانیه
+   عقب می‌انداخت، در حالی که کاربر متن را خیلی زودتر می‌دید. */
+.rv.now { animation: rvIn .9s var(--ease) both; }
+@keyframes rvIn { from { transform: translateY(14px); } }
+.lines.now .line-mask > span { animation: lineIn 1.2s var(--ease) both; }
+@keyframes lineIn { from { transform: translateY(125%); } }
 
 /* تیتر خط‌به‌خط از پشت ماسک بالا می‌آید.
    padding و margin منفی: نقطه‌ها و دنباله‌ی حروف فارسی از کادرِ خط بیرون می‌زنند. */
@@ -141,7 +155,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .lines { display: flex; flex-direction: column; }
 .line-mask { display: block; overflow: hidden; padding-block: .2em; margin-block: -.2em; }
 .line-mask > span { display: block; transition: transform 1.2s var(--ease); }
-.js .line-mask > span { transform: translateY(125%); }
+.js .lines:not(.now) .line-mask > span { transform: translateY(125%); }
 .in .line-mask > span, .line-mask.in > span { transform: none; }
 
 /* تصویر از بالا باز می‌شود.
@@ -272,9 +286,13 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
    ========================================================================== */
 .art { display: block; width: 100%; height: auto; overflow: visible; }
 /* خطوطِ تصویر هنگام ورود کشیده می‌شوند؛ سطح‌ها آرام ظاهر می‌شوند. یک‌بار. */
-.js .art-rv .art__draw { stroke-dasharray: 1; stroke-dashoffset: 1; }
-.js .art-rv .art__fade { opacity: 0; transform: scale(.94); }
+.js .art-rv:not(.now) .art__draw { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.js .art-rv:not(.now) .art__fade { opacity: 0; transform: scale(.94); }
 .art__fade { transform-box: fill-box; transform-origin: center; }
+.art-rv.now .art__draw { stroke-dasharray: 1; animation: artDraw 1.8s var(--ease-io) .2s both; }
+@keyframes artDraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.art-rv.now .art__fade { animation: artFade 1.4s var(--ease) both; animation-delay: calc(var(--d, 0) * 110ms); }
+@keyframes artFade { from { opacity: 0; transform: scale(.94); } }
 .js .art-rv.in .art__draw { stroke-dashoffset: 0; transition: stroke-dashoffset 1.8s var(--ease-io) .2s; }
 .js .art-rv.in .art__fade {
 	opacity: 1; transform: none;
@@ -457,6 +475,7 @@ select.field option { background: var(--bg, var(--color-surface)); color: var(--
 		animation-iteration-count: 1 !important;
 		transition-duration: .01ms !important;
 		transition-delay: 0s !important;
+		animation-delay: 0s !important;
 	}
 	.rv, .art__fade { opacity: 1 !important; transform: none !important; }
 	.art__draw { stroke-dashoffset: 0 !important; }

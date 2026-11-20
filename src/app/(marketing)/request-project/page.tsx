@@ -25,14 +25,14 @@ export default async function RequestProjectPage() {
 				<div className="g12">
 					{/* فرم اول می‌آید — در موبایل هم. تعهدها حاشیه‌ی آن‌اند، نه مانعِ رسیدن به آن. */}
 					<div className="md:col-span-7">
-						<Folio label={c.formTitle} />
+						<Folio label={c.formTitle} heading />
 						<div className="mt-10">
 							<ProjectRequestForm budgets={lines(c.budgets)} />
 						</div>
 					</div>
 
 					<aside className="md:sticky md:top-28 md:col-span-4 md:col-start-9 md:h-fit">
-						<Folio label={c.sideTitle} />
+						<Folio label={c.sideTitle} heading />
 						<ul className="mt-2">
 							{assurances.map((a, i) => (
 								<li key={a.t} className="border-b border-[var(--line)]">
