@@ -131,7 +131,9 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 /* ==========================================================================
    حرکت — یک قاعده: آرام از پایین، یک‌بار. هیچ‌چیز نمی‌چرخد و نمی‌درخشد.
    ========================================================================== */
-.js .rv:not(.now) { opacity: 0; transform: translateY(20px); }
+/* حالتِ پنهان فقط تا وقتی که عنصر نه «now» است نه «in». اگر :not(.in) نباشد، این انتخاب‌گر
+   (سه کلاس) از .rv.in (دو کلاس) قوی‌تر است و محتوا بعد از ورود هم پنهان می‌ماند. */
+.js .rv:not(.now):not(.in) { opacity: 0; transform: translateY(20px); }
 .rv.in {
 	opacity: 1; transform: none;
 	transition: opacity .9s var(--ease), transform .9s var(--ease);
@@ -155,7 +157,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .lines { display: flex; flex-direction: column; }
 .line-mask { display: block; overflow: hidden; padding-block: .2em; margin-block: -.2em; }
 .line-mask > span { display: block; transition: transform 1.2s var(--ease); }
-.js .lines:not(.now) .line-mask > span { transform: translateY(125%); }
+.js .lines:not(.now):not(.in) .line-mask > span { transform: translateY(125%); }
 .in .line-mask > span, .line-mask.in > span { transform: none; }
 
 /* تصویر از بالا باز می‌شود.
